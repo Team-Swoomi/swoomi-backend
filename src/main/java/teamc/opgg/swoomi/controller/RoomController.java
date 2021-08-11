@@ -1,0 +1,46 @@
+package teamc.opgg.swoomi.controller;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import teamc.opgg.swoomi.dto.CommonDto;
+import teamc.opgg.swoomi.dto.RoomDto;
+import teamc.opgg.swoomi.service.RoomService;
+import teamc.opgg.swoomi.util.ConstantStore;
+
+@Controller
+@RequestMapping("/v1/room")
+@Api(tags = {"Room 생성 및 입장 관련 API"})
+public class RoomController {
+
+    @Autowired
+    private RoomService roomService;
+
+    /**
+     * 방장 방 생성
+     * @param body
+     * @return dto
+     */
+    @PostMapping("/")
+    @ResponseBody
+    @ApiOperation(value = "방 생성", response = CommonDto.class)
+    public CommonDto createRoom(@ApiParam(value = "Room 정보", required = true) @RequestBody RoomDto body) {
+        CommonDto dto = new CommonDto();
+        try {
+            roomService.createRoom(body);
+            dto.setMessage(ConstantStore.RESPONSE_SUCCESS);
+            dto.setStatus(200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            dto.setStatus(500);
+            dto.setMessage(e.getMessage());
+        } finally {
+            return dto;
+        }
+    }
+    
+    // RoomNumber로 찾아서 게임 시작 여부 알려주기
+}

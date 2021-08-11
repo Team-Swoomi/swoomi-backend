@@ -31,12 +31,10 @@ public class RoomController {
         CommonDto dto = new CommonDto();
         try {
             roomService.createRoom(body);
-            dto.setMessage(ConstantStore.RESPONSE_SUCCESS);
-            dto.setStatus(200);
+            dto.sucess();
         } catch (Exception e) {
             e.printStackTrace();
-            dto.setStatus(500);
-            dto.setMessage(e.getMessage());
+            dto.failed(e.getMessage());
         } finally {
             return dto;
         }

@@ -16,7 +16,7 @@ public class MatchService {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         boolean inGame = false;
         String message = "";
-        dto.setStatus(200);
+
 
         if (summoner.exists()) {
             CurrentMatch match = Orianna.currentMatchForSummoner(summoner).get();

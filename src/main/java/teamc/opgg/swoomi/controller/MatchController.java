@@ -37,10 +37,10 @@ public class MatchController {
         MatchDto dto = new MatchDto();
         try {
             matchService.getMatchStatus(summonerName, dto);
+            dto.sucess();
         } catch (Exception e) {
             e.printStackTrace();
-            dto.setStatus(500);
-            dto.setMessage(e.getMessage());
+            dto.failed(e.getMessage());
         } finally {
             return dto;
         }

@@ -21,6 +21,7 @@ public class RoomController {
 
     /**
      * 방장 방 생성
+     *
      * @param body
      * @return dto
      */
@@ -39,6 +40,25 @@ public class RoomController {
             return dto;
         }
     }
-    
-    // RoomNumber로 찾아서 게임 시작 여부 알려주기
+
+    /**
+     * RoomNumber로 찾아서 게임 시작 여부 알려주기
+     * @param roomNumber
+     * @return dto
+     */
+    @GetMapping("/{roomNumber}")
+    @ResponseBody
+    @ApiOperation(value = "방 찾아서 게임 시작 여부 리턴", response = RoomDto.class)
+    public RoomDto findRoom(@ApiParam(value = "Room 넘버", required = true) @PathVariable String roomNumber) {
+        RoomDto dto = new RoomDto();
+        try {
+            dto = roomService.findRoom(roomNumber);
+            dto.sucess();
+        } catch (Exception e) {
+            e.printStackTrace();
+            dto.failed(e.getMessage());
+        } finally {
+            return dto;
+        }
+    }
 }

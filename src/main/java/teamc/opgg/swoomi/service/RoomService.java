@@ -8,19 +8,32 @@ import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.dto.RoomDto;
 import teamc.opgg.swoomi.entity.Room;
 import teamc.opgg.swoomi.repository.RoomRepository;
+import teamc.opgg.swoomi.util.ConstantStore;
+
+import java.util.Optional;
 
 @Service
 public class RoomService {
 
     @Autowired
-    RoomRepository roomRepository;
+    private RoomRepository roomRepository;
 
     @Transactional
     public void createRoom(RoomDto body) {
         Room room = body.convertToEntity();
-        boolean inGame = Orianna.summonerNamed(body.getHostSummonerName()).withRegion(Region.KOREA).get().getCurrentMatch().exists();
+        boolean inGame = Orianna.summonerNamed(body.getHostSummonerName())
+                                .withRegion(Region.KOREA)
+                                .get().getCurrentMatch()
+                                .exists();
         room.setMatchStatus(inGame);
-
         roomRepository.save(room);
+    }
+
+    @Transactional(readOnly = true)
+    public RoomDto findRoom(String roomNumber) throws Exception {
+        Room room = roomRepository.findOneByRoomNumber(roomNumber);
+        RoomDto dto = new RoomDto();
+        dto = room.convertToDto();
+        return dto;
     }
 }

@@ -20,7 +20,7 @@ public class Room {
     @Column(name = "match_status", nullable = false)
     private boolean matchStatus;
 
-    @Column(name = "room_number", nullable = false)
+    @Column(name = "room_number", nullable = false, unique = true)
     private String roomNumber;
 
     public RoomDto convertToDto() {

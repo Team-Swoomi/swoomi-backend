@@ -17,7 +17,6 @@ public class MatchService {
         boolean inGame = false;
         String message = "";
 
-
         if (summoner.exists()) {
             CurrentMatch match = Orianna.currentMatchForSummoner(summoner).get();
             inGame = match.exists();

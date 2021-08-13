@@ -19,7 +19,7 @@ public class RoomService {
     private RoomRepository roomRepository;
 
     @Transactional
-    public void createRoom(RoomDto body) {
+    public void createRoom(RoomDto body) throws Exception {
         Room room = body.convertToEntity();
         boolean inGame = Orianna.summonerNamed(body.getHostSummonerName())
                                 .withRegion(Region.KOREA)

@@ -32,8 +32,7 @@ public class RoomService {
     @Transactional(readOnly = true)
     public RoomDto findRoom(String roomNumber) throws Exception {
         Room room = roomRepository.findOneByRoomNumber(roomNumber);
-        RoomDto dto = new RoomDto();
-        dto = room.convertToDto();
+        RoomDto dto = room.convertToDto();
         return dto;
     }
 }

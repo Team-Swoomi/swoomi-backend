@@ -54,6 +54,9 @@ public class RoomController {
         try {
             dto = roomService.findRoom(roomNumber);
             dto.sucess();
+        } catch (NullPointerException n) {
+            n.printStackTrace();
+            dto.failed(ConstantStore.ROOM_NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             dto.failed(e.getMessage());

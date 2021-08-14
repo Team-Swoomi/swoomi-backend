@@ -1,11 +1,17 @@
 package teamc.opgg.swoomi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import teamc.opgg.swoomi.entity.Summoner;
+import org.springframework.stereotype.Repository;
+import teamc.opgg.swoomi.entity.MySummoner;
 
 import java.util.Optional;
 
-public interface SummonerRepo extends JpaRepository<Summoner, Long> {
+@Repository
+public interface SummonerRepo extends JpaRepository<MySummoner, Long> {
 
-    Optional<Summoner> findBySummonerName(String name);
+    Optional<MySummoner> findBySummonerName(String name);
+
+    Optional<MySummoner> findBySummonerId(String summonerId);
+
+    Optional<MySummoner> findByAccountId(String accountId);
 }

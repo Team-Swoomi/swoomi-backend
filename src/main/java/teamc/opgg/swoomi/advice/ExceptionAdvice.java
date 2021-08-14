@@ -1,6 +1,7 @@
 package teamc.opgg.swoomi.advice;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,6 +12,7 @@ import teamc.opgg.swoomi.service.ResponseService;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ExceptionAdvice {
@@ -29,8 +31,10 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult otherException(HttpServletRequest request, Exception e) {
+        log.error(e.toString());
         return responseService.getFailResult(
-                ErrorCode.UnDefinedError.getCode(), ErrorCode.UnDefinedError.getMsg()
+                ErrorCode.UnDefinedError.getCode(),
+                ErrorCode.UnDefinedError.getMsg()
         );
     }
 

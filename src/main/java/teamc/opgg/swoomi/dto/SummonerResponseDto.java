@@ -1,7 +1,7 @@
 package teamc.opgg.swoomi.dto;
 
 import lombok.*;
-import teamc.opgg.swoomi.entity.Summoner;
+import teamc.opgg.swoomi.entity.MySummoner;
 
 @Getter
 @Setter
@@ -16,10 +16,8 @@ public class SummonerResponseDto {
         this.summonerName = summonerName;
     }
 
-    public Summoner toEntity() {
-        return Summoner.builder()
-                .summonerId(summonerId)
-                .summonerName(summonerName)
-                .build();
+    public SummonerResponseDto(MySummoner summoner) {
+        this.summonerId = summoner.getSummonerId();
+        this.summonerName = summoner.getSummonerName();
     }
 }

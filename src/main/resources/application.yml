@@ -7,11 +7,16 @@ spring:
       enabled: true
       path: /h2-console
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:tcp://localhost/~/testdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    properties.hibernate:
+      hbm2ddl.auto: create
+      format_sql: true
+    showSql: true
+    open-in-view: false
   profiles:
     include: private

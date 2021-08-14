@@ -1,5 +1,6 @@
 package teamc.opgg.swoomi.service;
 
+import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.entity.response.CommonResponse;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
@@ -7,6 +8,7 @@ import teamc.opgg.swoomi.entity.response.SingleResult;
 
 import java.util.List;
 
+@Service
 public class ResponseService {
 
     // 단일 결과

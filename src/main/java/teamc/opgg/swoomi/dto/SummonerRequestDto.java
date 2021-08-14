@@ -1,20 +1,20 @@
 package teamc.opgg.swoomi.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import teamc.opgg.swoomi.entity.Summoner;
+import lombok.*;
+import teamc.opgg.swoomi.entity.MySummoner;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class SummonerRequestDto {
     private String summonerName;
 
-    @Builder
-    public SummonerRequestDto(String summonerName) {
-        this.summonerName = summonerName;
+    public MySummoner toEntity() {
+        return MySummoner.builder()
+                .summonerName(summonerName)
+                .build();
     }
 }
 

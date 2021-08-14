@@ -10,7 +10,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Summoner extends BaseTimeEntity {
+@Table(name = "my_summoner")
+public class MySummoner extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

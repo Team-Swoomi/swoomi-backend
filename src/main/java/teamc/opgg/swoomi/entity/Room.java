@@ -1,33 +1,36 @@
 package teamc.opgg.swoomi.entity;
 
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import teamc.opgg.swoomi.dto.RoomDto;
 
 import javax.persistence.*;
 
-@Data
 @Entity
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "room")
 public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long roomSeq;
+    Long roomSeq;
 
     @Column(name = "host_summoner_name", nullable = false)
-    private String hostSummonerName;
+    String hostSummonerName;
 
     @Column(name = "match_status", nullable = false)
-    private boolean matchStatus;
+    boolean matchStatus;
 
     @Column(name = "room_number", nullable = false, unique = true)
-    private String roomNumber;
+    String roomNumber;
 
     public RoomDto convertToDto() {
-        RoomDto dto = new RoomDto();
-        dto.setRoomNumber(this.getRoomNumber());
-        dto.setHostSummonerName(this.getHostSummonerName());
-        dto.setMatchStatus(this.isMatchStatus());
-        return dto;
+        return RoomDto.builder()
+                .roomNumber(this.roomNumber)
+                .matchStatus(this.matchStatus)
+                .hostSummonerName(this.hostSummonerName)
+                .build();
     }
 }

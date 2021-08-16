@@ -14,15 +14,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import teamc.opgg.swoomi.dto.MatchDto;
+import teamc.opgg.swoomi.entity.response.SingleResult;
 import teamc.opgg.swoomi.service.MatchService;
+import teamc.opgg.swoomi.service.ResponseService;
 
 @Controller
 @RequestMapping("/v1/match")
-@Api(tags = {"Match 상태 및 인증 관련 API"})
+@Api(tags = {"2.Match Status"})
 public class MatchController {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private ResponseService responseService;
 
     /**
      * GetMatchStatus
@@ -32,17 +37,9 @@ public class MatchController {
      */
     @GetMapping("/{summonerName}")
     @ResponseBody
-    @ApiOperation(value = "게임 시작 여부 반환", response = MatchDto.class)
-    public MatchDto getMatchStatus(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
-        MatchDto dto = new MatchDto();
-        try {
-            matchService.getMatchStatus(summonerName, dto);
-            dto.sucess();
-        } catch (Exception e) {
-            e.printStackTrace();
-            dto.failed(e.getMessage());
-        } finally {
-            return dto;
-        }
+    @ApiOperation(value = "게임 시작 여부 반환", notes = "소환사명을 받아 현재 게임 시작 여부를 리턴합니다.")
+    public SingleResult<MatchDto> getMatchStatus(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
+        MatchDto dto = matchService.getMatchStatus(summonerName);
+        return responseService.getSingleResult(dto);
     };
 }

@@ -3,14 +3,16 @@ package teamc.opgg.swoomi.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiResponse;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import teamc.opgg.swoomi.entity.Room;
 
 @Getter
 @Setter
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RoomDto extends CommonDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RoomDto {
     private String hostSummonerName;
 
     @ApiModelProperty(hidden = true)
@@ -20,10 +22,10 @@ public class RoomDto extends CommonDto {
     private String roomNumber;
 
     public Room convertToEntity() {
-        Room room = new Room();
-        room.setRoomNumber(this.getRoomNumber());
-        room.setHostSummonerName(this.getHostSummonerName());
-        room.setMatchStatus(this.isMatchStatus());
-        return room;
+        return Room.builder()
+                .roomNumber(this.roomNumber)
+                .hostSummonerName(this.hostSummonerName)
+                .matchStatus(this.matchStatus)
+                .build();
     }
 }

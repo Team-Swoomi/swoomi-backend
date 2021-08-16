@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import teamc.opgg.swoomi.dto.SPELL;
 import teamc.opgg.swoomi.dto.SummonerRequestDto;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.response.SingleResult;
@@ -29,7 +30,18 @@ public class SummonerController {
             @RequestParam String summonerName) {
 
         log.info("summoner Name : " + summonerName);
-        SummonerResponseDto summonerResponseDto = oriannaService.SummonerFindByNameAndSave(summonerName);
-        return responseService.getSingleResult(summonerResponseDto);
+        SummonerResponseDto responseDto = oriannaService.SummonerFindByNameAndSave(summonerName);
+        return responseService.getSingleResult(responseDto);
+    }
+
+    @ApiOperation(value = "스펠 이미지 검색", notes = "스펠 명을 통해 스펠 이미지 URL을 가져옵니다.")
+    @GetMapping("/spellURL")
+    public SingleResult<String> findSpellImgUrl(
+            @ApiParam(value = "스펠 명", required = true)
+            @RequestParam SPELL spellName) {
+
+        log.info("spell Name : " + spellName.name());
+        String spellImgURL = oriannaService.findSpellImageByName(spellName);
+        return responseService.getSingleResult(spellImgURL);
     }
 }

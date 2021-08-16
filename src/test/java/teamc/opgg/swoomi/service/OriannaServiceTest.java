@@ -7,19 +7,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import teamc.opgg.swoomi.dto.SummonerRequestDto;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.MySummoner;
 import teamc.opgg.swoomi.repository.SummonerRepo;
-
-import javax.persistence.EntityManager;
 import javax.swing.undo.CannotUndoException;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
+@Transactional
 @ActiveProfiles("private")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class OriannaServiceTest {

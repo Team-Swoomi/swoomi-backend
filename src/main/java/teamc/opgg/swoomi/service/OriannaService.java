@@ -1,13 +1,17 @@
 package teamc.opgg.swoomi.service;
 
 import com.merakianalytics.orianna.Orianna;
+import com.merakianalytics.orianna.types.common.Platform;
 import com.merakianalytics.orianna.types.common.Region;
+import com.merakianalytics.orianna.types.core.staticdata.Image;
+import com.merakianalytics.orianna.types.core.staticdata.Sprite;
+import com.merakianalytics.orianna.types.core.staticdata.SummonerSpell;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
-import teamc.opgg.swoomi.dto.SummonerRequestDto;
+import teamc.opgg.swoomi.dto.SPELL;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.MySummoner;
 import teamc.opgg.swoomi.repository.SummonerRepo;
@@ -44,5 +48,20 @@ public class OriannaService {
             }
             return new SummonerResponseDto(mySummoner);
         }
+    }
+
+    public String findSpellImageByName(SPELL spell) {
+        SummonerSpell summonerSpell = SummonerSpell
+                .named(spell.getName())
+                .withRegion(Region.KOREA)
+                .withPlatform(Platform.KOREA)
+                .get();
+        Image image = summonerSpell.getImage();
+        String imageURL = image.getURL();
+        log.info("img url: " + imageURL);
+        Sprite sprite = image.getSprite();
+        String spriteURL = sprite.getURL();
+        log.info("sprite url: " + spriteURL);
+        return imageURL;
     }
 }

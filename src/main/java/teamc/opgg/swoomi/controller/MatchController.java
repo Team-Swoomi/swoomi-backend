@@ -14,9 +14,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import teamc.opgg.swoomi.dto.MatchDto;
+import teamc.opgg.swoomi.dto.PlayerDto;
+import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
 import teamc.opgg.swoomi.service.MatchService;
 import teamc.opgg.swoomi.service.ResponseService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/v1/match")
@@ -41,5 +46,13 @@ public class MatchController {
     public SingleResult<MatchDto> getMatchStatus(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
         MatchDto dto = matchService.getMatchStatus(summonerName);
         return responseService.getSingleResult(dto);
-    };
+    }
+
+    @GetMapping("/data/{summonerName}")
+    @ResponseBody
+    @ApiOperation(value ="상대팀 데이터 반환", notes="소환사명을 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
+    public ListResult<PlayerDto> getOpData(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
+        List<PlayerDto> list = matchService.getOpData(summonerName);
+        return responseService.getListResult(list);
+    }
 }

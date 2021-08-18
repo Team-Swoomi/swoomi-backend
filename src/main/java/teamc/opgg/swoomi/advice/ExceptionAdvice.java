@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import teamc.opgg.swoomi.advice.exception.CRoomNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
+import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.service.ResponseService;
 
@@ -19,6 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 public class ExceptionAdvice {
 
     private final ResponseService responseService;
+
+    @ExceptionHandler(CSummonerNotInGameException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult summonerNotInGameException(HttpServletRequest request, Exception e) {
+        return responseService.getFailResult(
+                ErrorCode.SummonerNotInGameException.getCode(),
+                ErrorCode.SummonerNotInGameException.getMsg()
+        );
+    }
 
     @ExceptionHandler(CRoomNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

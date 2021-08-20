@@ -24,10 +24,10 @@ public class SummonerController {
     private final OriannaService oriannaService;
 
     @ApiOperation(value = "소환사 검색", notes = "소환사 명을 통해 소환사 정보를 가져옵니다.")
-    @GetMapping("/summoner")
+    @GetMapping("/summoner/{name}")
     public SingleResult<SummonerResponseDto> findSummonerBySummonerName(
             @ApiParam(value = "소환사 명", required = true)
-            @RequestParam String summonerName) {
+            @PathVariable("name") String summonerName) {
 
         log.info("summoner Name : " + summonerName);
         SummonerResponseDto responseDto = oriannaService.SummonerFindByNameAndSave(summonerName);

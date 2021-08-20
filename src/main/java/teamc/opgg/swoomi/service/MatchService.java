@@ -7,13 +7,17 @@ import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.bcel.Const;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.MatchDto;
+import teamc.opgg.swoomi.dto.MatchStatusDto;
 import teamc.opgg.swoomi.dto.PlayerDto;
+import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.util.ConstantStore;
 
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class MatchService {
+
     public MatchDto getMatchStatus(String summonerName) {
         MatchDto dto = new MatchDto();
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
@@ -65,5 +70,36 @@ public class MatchService {
             playerDtos.add(dto);
         }
         return playerDtos;
+    }
+
+    public MatchStatusDto getMatchTeamCode(String summonerName) {
+
+        boolean isMyTeam = false;
+        long myTeam = 100;
+        Summoner summoner;
+        MatchStatusDto matchStatusDto = MatchStatusDto.builder()
+                .isStarted(false)
+                .matchTeamCode(-1L)
+                .build();
+
+        summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
+        if (!summoner.exists()) {
+            throw new CSummonerNotFoundException();
+        }
+
+        CurrentMatch currentMatch = Orianna.currentMatchForSummoner(summoner).get();
+        if (currentMatch.getId() != 0) {
+            for (int i = 0; i < 5; i++) {
+                Player player = currentMatch.getParticipants().get(i);
+                if (player.getSummoner().getName().equals(summonerName)) {
+                    isMyTeam = true;
+                    break;
+                }
+            }
+            if (!isMyTeam) myTeam = 200;
+            matchStatusDto.setIsStarted(true);
+            matchStatusDto.setMatchTeamCode(currentMatch.getId() * 1000 + myTeam);
+        }
+        return matchStatusDto;
     }
 }

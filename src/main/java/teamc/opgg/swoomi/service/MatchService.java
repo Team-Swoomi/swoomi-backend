@@ -46,13 +46,15 @@ public class MatchService {
             throw new CSummonerNotInGameException();
         }
         List<PlayerDto> playerDtos = new ArrayList<>();
-        SearchableList<Player> sList = summoner.getCurrentMatch().getParticipants();
 
+        // 1. 상대팀 구하기
+        SearchableList<Player> sList = summoner.getCurrentMatch().getParticipants();
         Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(summonerName));
         String teamId = tempPlayer.getTeam().toString();
 
+        // 2. 상대팀 멤버 구하기
         SearchableList<Player> opList = sList.filter((player) -> !player.getTeam().toString().equals(teamId));
-        
+
         for (Player p : opList) {
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
                     .championName(p.getChampion().getName())

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import teamc.opgg.swoomi.advice.exception.CQrCodeFailException;
 import teamc.opgg.swoomi.advice.exception.CRoomNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
@@ -41,10 +42,19 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(CSummonerNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public CommonResult summonerNotFoundException(HttpServletRequest request, Exception e) {
+    public CommonResult summonerNotFoundException(HttpServletRequest request, CSummonerNotFoundException e) {
         return responseService.getFailResult(
                 ErrorCode.SummonerNotFoundException.getCode(),
                 ErrorCode.SummonerNotFoundException.getMsg()
+        );
+    }
+
+    @ExceptionHandler(CQrCodeFailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult qrCodeFailException(HttpServletRequest request, CQrCodeFailException e) {
+        return responseService.getFailResult(
+                ErrorCode.QrCodeFailException.getCode(),
+                ErrorCode.QrCodeFailException.getMsg()
         );
     }
 

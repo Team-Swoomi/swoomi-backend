@@ -7,10 +7,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import teamc.opgg.swoomi.advice.exception.CQrCodeFailException;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import teamc.opgg.swoomi.dto.QrDto;
 
 @Service
 @Slf4j
@@ -23,18 +20,21 @@ public class QrService {
             "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=https://swoomi.com/v1/summoner/";
     private final RestTemplate restTemplate;
 
-    public String getQrCodeURL(String summonerName) {
-        byte[] QRCodeImg;
+    public QrDto getQrCodeURL(String summonerName) {
+        Byte[] qRCodeImg;
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(LOCAL_URL + summonerName + "/");
 
         try {
-            QRCodeImg = restTemplate.getForObject(builder.build().encode().toUri(), byte[].class);
-            if (QRCodeImg == null) throw new CQrCodeFailException();
-            Files.write(Paths.get("/Users/woonsik/Git/web-team-c-backend/src/main/resources/QrCodeImage/qr.png"), QRCodeImg);
-        } catch (RestClientException | IOException e) {
+            qRCodeImg = restTemplate.getForObject(builder.build().encode().toUri(), Byte[].class);
+            if (qRCodeImg == null) throw new CQrCodeFailException();
+        } catch (RestClientException e) {
             throw new CQrCodeFailException();
         }
-        return builder.toUriString();
+
+        return QrDto.builder()
+                .qrCode(qRCodeImg)
+                .qrUrl(builder.toUriString())
+                .build();
     }
 }

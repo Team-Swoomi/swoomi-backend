@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MatchStatusDto {
-    private Boolean isStarted;
-    private Long matchTeamCode;
+public class QrDto {
+    private String qrUrl;
+    private Byte[] qrCode;
 }

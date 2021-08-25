@@ -6,6 +6,7 @@ import com.merakianalytics.orianna.types.common.Region;
 import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
+import com.merakianalytics.orianna.types.core.staticdata.Item;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
-import teamc.opgg.swoomi.dto.MatchDto;
-import teamc.opgg.swoomi.dto.MatchStatusDto;
-import teamc.opgg.swoomi.dto.PlayerDto;
-import teamc.opgg.swoomi.dto.SummonerResponseDto;
+import teamc.opgg.swoomi.dto.*;
+import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 import teamc.opgg.swoomi.util.ConstantStore;
 
 import java.util.ArrayList;
@@ -26,6 +25,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class MatchService {
+
+    @Autowired
+    private ItemPurchaseRepository itemPurchaseRepository;
 
     public MatchDto getMatchStatus(String summonerName) {
         MatchDto dto = new MatchDto();
@@ -103,5 +105,9 @@ public class MatchService {
             matchStatusDto.setMatchTeamCode(currentMatch.getId() * 1000 + myTeam);
         }
         return matchStatusDto;
+    }
+
+    public void postItemPurchase(ItemPurchaseDto body) {
+        itemPurchaseRepository.save(body.convertToEntity());
     }
 }

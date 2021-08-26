@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class MatchStatusDto {
     private Boolean isStarted;
-    private Long matchTeamCode;
+    private String matchTeamCode;
 }

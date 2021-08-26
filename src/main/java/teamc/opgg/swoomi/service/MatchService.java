@@ -78,7 +78,7 @@ public class MatchService {
         Summoner summoner;
         MatchStatusDto matchStatusDto = MatchStatusDto.builder()
                 .isStarted(false)
-                .matchTeamCode(-1L)
+                .matchTeamCode("")
                 .build();
 
         summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
@@ -97,12 +97,26 @@ public class MatchService {
             }
             if (!isMyTeam) myTeam = 200;
             matchStatusDto.setIsStarted(true);
-            matchStatusDto.setMatchTeamCode(currentMatch.getId() * 1000 + myTeam);
+            matchStatusDto.setMatchTeamCode(String.valueOf(currentMatch.getId() * 1000 + myTeam));
         }
         return matchStatusDto;
     }
 
     public void postItemPurchase(ItemPurchaseDto body) {
         itemPurchaseRepository.save(body.convertToEntity());
+    }
+
+    public PayLoadDto[] getInitialCoolTime(String summoner) {
+        // 5명의 초기 스펠, 궁 시간 계산 후 반환
+        PayLoadDto[] fivePayLoad = new PayLoadDto[5];
+        for (int i = 0; i < 5; i++) {
+            fivePayLoad[i] = PayLoadDto.builder()
+                    .summonerName("summonerName")
+                    .dSpellTime(300)
+                    .fSpellTime(300)
+                    .ultTime(100)
+                    .build();
+        }
+        return fivePayLoad;
     }
 }

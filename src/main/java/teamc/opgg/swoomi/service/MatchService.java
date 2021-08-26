@@ -1,23 +1,18 @@
 package teamc.opgg.swoomi.service;
 
 import com.merakianalytics.orianna.Orianna;
-import com.merakianalytics.orianna.datapipeline.kernel.data.SummonerAPI;
 import com.merakianalytics.orianna.types.common.Region;
 import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
-import com.merakianalytics.orianna.types.core.staticdata.Item;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
-import teamc.opgg.swoomi.util.ConstantStore;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import teamc.opgg.swoomi.advice.exception.CQrCodeFailException;
-import teamc.opgg.swoomi.advice.exception.CRoomNotFoundException;
-import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
-import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
+import teamc.opgg.swoomi.advice.exception.*;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.service.ResponseService;
 
@@ -68,4 +65,15 @@ public class ExceptionAdvice {
         );
     }
 
+    /**
+     * -1005
+     */
+    @ExceptionHandler(CMsgRoomNotFoundException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult MsgRoomNotFoundException(HttpServletRequest request, CMsgRoomNotFoundException e) {
+        return responseService.getFailResult(
+                ErrorCode.RoomNotFoundException.getCode(),
+                ErrorCode.MsgRoomNotFoundException.getMsg()
+        );
+    }
 }

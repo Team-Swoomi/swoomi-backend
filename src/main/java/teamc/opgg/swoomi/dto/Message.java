@@ -1,18 +1,15 @@
 package teamc.opgg.swoomi.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Message {
-    public enum MessageType {
-        INITIAL, UPDATE_SPELL, UPDATE_ULT, BROADCAST
-    }
-
-    private MessageType type;
-    private String roomId;
-    private String sender;
     private String whoSummName;
-    private PayLoadDto[] message;
+    private Integer dSpellTime;
+    private Integer fSpellTime;
+    private Integer ultTime;
 }

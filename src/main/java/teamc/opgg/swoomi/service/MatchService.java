@@ -109,18 +109,4 @@ public class MatchService {
             itemPurchaseRepository.save(itemPurchase);
         }
     }
-
-    public PayLoadDto[] getInitialCoolTime(String summoner) {
-        // 5명의 초기 스펠, 궁 시간 계산 후 반환
-        PayLoadDto[] fivePayLoad = new PayLoadDto[5];
-        for (int i = 0; i < 5; i++) {
-            fivePayLoad[i] = PayLoadDto.builder()
-                    .summonerName("summonerName")
-                    .dSpellTime(300)
-                    .fSpellTime(300)
-                    .ultTime(100)
-                    .build();
-        }
-        return fivePayLoad;
-    }
 }

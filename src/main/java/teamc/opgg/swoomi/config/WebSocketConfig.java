@@ -28,7 +28,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         /*
          Message Publish
-         [/pub/comm/message/]
+         1. [/pub/comm/message/]
+         2. [/pub/comm/item/]
          */
         registry.setApplicationDestinationPrefixes("/pub");
     }

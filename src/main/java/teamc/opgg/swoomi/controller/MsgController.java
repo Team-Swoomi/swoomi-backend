@@ -1,38 +1,65 @@
 package teamc.opgg.swoomi.controller;
 
+import com.merakianalytics.orianna.Orianna;
+import com.merakianalytics.orianna.types.common.Region;
+import com.merakianalytics.orianna.types.core.staticdata.Item;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
+import teamc.opgg.swoomi.dto.ItemDto;
+import teamc.opgg.swoomi.dto.ItemMessage;
+import teamc.opgg.swoomi.dto.ItemPurchaseDto;
 import teamc.opgg.swoomi.dto.Message;
-import teamc.opgg.swoomi.dto.PayLoadDto;
 import teamc.opgg.swoomi.service.MatchService;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MsgController {
 
     private final MatchService matchService;
-    private final SimpMessageSendingOperations sendingOperations;
 
     /***
-     * publish [pub/comm/message]
-     * @param message
+     * publish [pub/comm/message/{teamId}]
      */
-    @MessageMapping("/comm/message")
-    public void message(Message message) {
-        if (Message.MessageType.INITIAL.equals(message.getType())) {
-            // TODO : 5명의 궁극기, 스펠 D/F 초기 시간 반환
-            PayLoadDto[] initialCoolTime = matchService.getInitialCoolTime(message.getSender());
-            message.setMessage(initialCoolTime);
-        } else if (Message.MessageType.UPDATE_SPELL.equals(message.getType())) {
-            // TODO : 특점 챔피언 스펠 시간 조정
-        } else if (Message.MessageType.UPDATE_ULT.equals(message.getType())) {
-            // TODO : 특정 챔피언 궁극기 시간 조정
-        }
-        /*
-        PUBLISHER 에게 온 메시지를 모든 Subscriber 에게 BroadCasting
-         */
-        sendingOperations.convertAndSend("/sub/comm/room/" + message.getRoomId(), message);
+    @MessageMapping("/comm/message/{teamId}")
+    @SendTo("/sub/comm/room/{teamId}")
+    public Message message(@DestinationVariable String teamId,
+                           Message message) {
+        log.info("SUB : " + teamId);
+        log.info(message.getWhoSummName());
+        log.info(message.getDSpellTime() + "");
+        log.info(message.getFSpellTime() + "");
+        log.info(message.getUltTime() + "");
+        return message;
+    }
+
+    /*
+    publish [pub/comm/item/{teamId}]
+     */
+    @MessageMapping("/comm/item/{teamId}")
+    @SendTo("/sub/comm/room/{teamId}")
+    public ItemMessage message(@DestinationVariable String teamId,
+                               ItemMessage itemMessage) {
+
+        List<Long> items = new ArrayList<>();
+        // itemMessage.getItemName();
+        items.add(1L);
+
+        ItemPurchaseDto itemPurchaseDto = ItemPurchaseDto.builder()
+                .summonerName(itemMessage.getSummonerName())
+                .matchTeamCode(teamId)
+                .itemIds(items)
+                .build();
+        matchService.postItemPurchase(itemPurchaseDto);
+        return itemMessage;
     }
 }

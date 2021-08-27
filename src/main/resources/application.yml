@@ -20,3 +20,12 @@ spring:
     open-in-view: false
   profiles:
     include: private
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+  freemarker:
+    cache: false
+    template-loader-path: classpath:/templates
+    suffix: .ftlh

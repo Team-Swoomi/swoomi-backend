@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
+import teamc.opgg.swoomi.entity.ItemPurchase;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 
 import java.util.ArrayList;
@@ -103,7 +104,10 @@ public class MatchService {
     }
 
     public void postItemPurchase(ItemPurchaseDto body) {
-        itemPurchaseRepository.save(body.convertToEntity());
+        List<ItemPurchase> list = body.convertToEntity();
+        for (ItemPurchase itemPurchase : list) {
+            itemPurchaseRepository.save(itemPurchase);
+        }
     }
 
     public PayLoadDto[] getInitialCoolTime(String summoner) {

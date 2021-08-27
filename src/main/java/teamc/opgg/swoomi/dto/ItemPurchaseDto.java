@@ -2,7 +2,9 @@ package teamc.opgg.swoomi.dto;
 
 import lombok.*;
 import teamc.opgg.swoomi.entity.ItemPurchase;
-import teamc.opgg.swoomi.entity.Room;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,17 +15,16 @@ public class ItemPurchaseDto {
 
     private String matchTeamCode;
     private String summonerName;
-    private ItemDto item;
+    private List<Long> itemIds;
 
-
-    public ItemPurchase convertToEntity() {
-        return ItemPurchase.builder()
-                .matchTeamCode(this.matchTeamCode)
-                .summonerName(this.summonerName)
-                .englishName(this.item.getEnglishName())
-                .name(this.item.getName())
-                .skillAccel(this.item.getSkillAccel())
-                .src(this.item.getSrc())
-                .build();
+    public List<ItemPurchase> convertToEntity() {
+        List<ItemPurchase> list = new ArrayList<>();
+        for (Long itemId : itemIds) {
+            list.add(ItemPurchase.builder()
+                    .matchTeamCode(this.matchTeamCode)
+                    .summonerName(this.summonerName)
+                    .itemId(itemId).build());
+        }
+        return list;
     }
 }

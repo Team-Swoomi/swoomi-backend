@@ -21,8 +21,5 @@ public class ItemPurchase {
     private Long id;
     private String matchTeamCode;
     private String summonerName;
-    private String name;
-    private int skillAccel;
-    private String englishName;
-    private String src;
+    private Long itemId;
 }

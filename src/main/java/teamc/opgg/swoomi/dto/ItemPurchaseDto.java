@@ -15,15 +15,16 @@ public class ItemPurchaseDto {
 
     private String matchTeamCode;
     private String summonerName;
-    private List<Long> itemIds;
+    private List<String> itemNames;
 
     public List<ItemPurchase> convertToEntity() {
         List<ItemPurchase> list = new ArrayList<>();
-        for (Long itemId : itemIds) {
+        for (String itemName : itemNames) {
             list.add(ItemPurchase.builder()
                     .matchTeamCode(this.matchTeamCode)
                     .summonerName(this.summonerName)
-                    .itemId(itemId).build());
+                    .itemName(itemName)
+                    .build());
         }
         return list;
     }

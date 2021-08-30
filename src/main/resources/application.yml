@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: real, private
+    include: local, local_private
 
   freemarker:
     cache: false

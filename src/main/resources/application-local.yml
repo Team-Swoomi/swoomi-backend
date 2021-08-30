@@ -4,7 +4,7 @@ logging:
     teamc.opgg.swoomi: debug #debug info warn error fatal off
 
 server:
-  port: 8080
+  port: 8070
 
 spring:
   h2:
@@ -23,7 +23,6 @@ spring:
       format_sql: true
     showSql: true
     open-in-view: false
-    generate-ddl: true
   devtools:
     livereload:
       enabled: true
@@ -36,3 +35,11 @@ spring:
   config:
     activate:
       on-profile: local
+
+#local_private.yml, real_private.yml 형태
+#riot:
+#  api:
+#    key:
+#spring:
+#  datasource:
+#    password:

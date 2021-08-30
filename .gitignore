@@ -38,3 +38,5 @@ out/
 
 ## yml
 application-private.yml
+application-local_private.yml
+application-real_private.yml

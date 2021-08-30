@@ -10,23 +10,20 @@ logging:
       max-history: 7
 
 server:
-  port: 8080
+  port: 8070
 
 spring:
   datasource:
-    url: jdbc:mysql://database-web-c.cxadkdwc8e90.ap-northeast-2.rds.amazonaws.com:3306
+    url: jdbc:mysql://${MYSQL_HOST:database-web-c.cxadkdwc8e90.ap-northeast-2.rds.amazonaws.com}:3306/swoomi
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    properties.hibernate:
-      hbm2ddl.auto: none
+    hibernate:
+      ddl-auto: update
       format_sql: true
     generate-ddl: false
     show-sql: true
     open-in-view: false
-  url:
-    base: http://3.34.111.116:9000
   config:
     activate:
       on-profile: real

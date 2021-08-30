@@ -23,23 +23,6 @@ spring:
       format_sql: true
     showSql: true
     open-in-view: false
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: false
-  freemarker:
-    cache: false
-    template-loader-path: classpath:/templates
-    suffix: .ftlh
   config:
     activate:
       on-profile: local
-
-#local_private.yml, real_private.yml 형태
-#riot:
-#  api:
-#    key:
-#spring:
-#  datasource:
-#    password:

@@ -40,7 +40,6 @@ public class MsgService {
     }
 
     public String createRoom(String name) {
-        // TODO : roomId == Summoner MatchId + blue/red Team code
         MatchStatusDto matchTeamCode = matchService.getMatchTeamCode(name);
         if (matchTeamCode.getIsStarted()) {
             String thisRoomEndPoint = matchTeamCode.getMatchTeamCode();

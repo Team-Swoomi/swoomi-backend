@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class QrDto {
     private String qrUrl;
-    private Byte[] qrCode;
+    private byte[] qrCode;
 }

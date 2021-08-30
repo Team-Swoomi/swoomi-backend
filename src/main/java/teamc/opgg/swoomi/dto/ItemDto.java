@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class ItemDto {
     private String name;
-    private int skillAccel;
+    private String skillAccel;
     private String englishName;
     private String src;
 }

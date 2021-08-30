@@ -26,7 +26,7 @@ spring:
     show-sql: true
     open-in-view: false
   url:
-    base: http://3.34.111.116
+    base: http://3.34.111.116:9000
   config:
     activate:
       on-profile: real

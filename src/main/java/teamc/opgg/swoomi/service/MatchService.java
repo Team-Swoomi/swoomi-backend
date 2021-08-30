@@ -18,8 +18,9 @@ import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+
 @Slf4j
+@Service
 public class MatchService {
 
     @Autowired

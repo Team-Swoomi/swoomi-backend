@@ -1,5 +1,10 @@
+logging:
+  level:
+    root: warn
+    teamc.opgg.swoomi: debug #debug info warn error fatal off
+
 server:
-  port: 8070
+  port: 8080
 
 spring:
   h2:
@@ -18,8 +23,7 @@ spring:
       format_sql: true
     showSql: true
     open-in-view: false
-  profiles:
-    include: private
+    generate-ddl: true
   devtools:
     livereload:
       enabled: true
@@ -29,3 +33,6 @@ spring:
     cache: false
     template-loader-path: classpath:/templates
     suffix: .ftlh
+  config:
+    activate:
+      on-profile: local

@@ -1,0 +1,32 @@
+logging:
+  level:
+    root: warn
+    teamc.opgg.swoomi: info
+  file:
+    path: /home/ubuntu/app/log
+
+  logback:
+    rollingpolicy:
+      max-history: 7
+
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://database-web-c.cxadkdwc8e90.ap-northeast-2.rds.amazonaws.com:3306
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: admin
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties.hibernate:
+      hbm2ddl.auto: none
+      format_sql: true
+    generate-ddl: false
+    show-sql: true
+    open-in-view: false
+  url:
+    base: http://3.34.111.116
+  config:
+    activate:
+      on-profile: real

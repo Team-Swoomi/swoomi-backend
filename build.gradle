@@ -1,3 +1,15 @@
+buildscript {
+    ext {
+        springBootVersion = '2.5.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.5.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -16,7 +28,7 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+//    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {

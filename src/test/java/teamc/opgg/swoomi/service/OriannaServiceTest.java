@@ -14,7 +14,7 @@ import javax.swing.undo.CannotUndoException;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("local_private")
+@ActiveProfiles("real_private")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class OriannaServiceTest {
 

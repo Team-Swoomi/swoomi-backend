@@ -21,5 +21,5 @@ public class ItemPurchase {
     private Long id;
     private String matchTeamCode;
     private String summonerName;
-    private Long itemId;
+    private String itemName;
 }

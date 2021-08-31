@@ -106,8 +106,10 @@ public class MatchService {
 
     public void postItemPurchase(ItemPurchaseDto body) {
         List<ItemPurchase> list = body.convertToEntity();
-        for (ItemPurchase itemPurchase : list) {
-            itemPurchaseRepository.save(itemPurchase);
-        }
+        itemPurchaseRepository.saveAll(list);
+    }
+
+    public void postItemPurchaseOne(ItemPurchaseOneDto oneDto) {
+        itemPurchaseRepository.save(oneDto.toEntity());
     }
 }

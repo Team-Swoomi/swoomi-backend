@@ -18,7 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
   jpa:
-    hibernate:
+    properties.hibernate:
       ddl-auto: update
       format_sql: true
     generate-ddl: false

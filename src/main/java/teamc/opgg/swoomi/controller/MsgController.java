@@ -11,10 +11,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
-import teamc.opgg.swoomi.dto.ItemDto;
-import teamc.opgg.swoomi.dto.ItemMessage;
-import teamc.opgg.swoomi.dto.ItemPurchaseDto;
-import teamc.opgg.swoomi.dto.Message;
+import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.service.MatchService;
 
 import java.util.ArrayList;
@@ -34,11 +31,6 @@ public class MsgController {
     @SendTo("/sub/comm/room/{teamId}")
     public Message message(@DestinationVariable String teamId,
                            Message message) {
-        log.info("SUB : " + teamId);
-        log.info(message.getWhoSummName());
-        log.info(message.getDSpellTime() + "");
-        log.info(message.getFSpellTime() + "");
-        log.info(message.getUltTime() + "");
         return message;
     }
 
@@ -50,16 +42,12 @@ public class MsgController {
     public ItemMessage message(@DestinationVariable String teamId,
                                ItemMessage itemMessage) {
 
-        List<Long> items = new ArrayList<>();
-        // itemMessage.getItemName();
-        items.add(1L);
-
-        ItemPurchaseDto itemPurchaseDto = ItemPurchaseDto.builder()
-                .summonerName(itemMessage.getSummonerName())
+        ItemPurchaseOneDto itemDto = ItemPurchaseOneDto.builder()
                 .matchTeamCode(teamId)
-                .itemIds(items)
+                .itemName(itemMessage.getItemName())
+                .summonerName(itemMessage.getSummonerName())
                 .build();
-        matchService.postItemPurchase(itemPurchaseDto);
+        matchService.postItemPurchaseOne(itemDto);
         return itemMessage;
     }
 }

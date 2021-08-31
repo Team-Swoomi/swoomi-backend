@@ -19,7 +19,6 @@ public class MsgRoom {
     private Long id;
 
     @Column(nullable = false)
-    // TODO : roomId는 MatchId + 진영 코드
     private String roomId;
 
     public MsgRoomDto toDto() {

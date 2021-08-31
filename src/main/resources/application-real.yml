@@ -17,6 +17,7 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:database-web-c.cxadkdwc8e90.ap-northeast-2.rds.amazonaws.com}:3306/swoomi
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
+    password: team-web-c-no1
   jpa:
     properties.hibernate:
       ddl-auto: update

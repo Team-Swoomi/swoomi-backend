@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import teamc.opgg.swoomi.dto.ItemPurchaseDto;
-import teamc.opgg.swoomi.dto.MatchDto;
-import teamc.opgg.swoomi.dto.MatchStatusDto;
-import teamc.opgg.swoomi.dto.PlayerDto;
+import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
@@ -65,6 +62,17 @@ public class MatchController {
         return responseService.getSingleResult(matchStatusDto);
     }
 
+    @GetMapping("/frequent/{championName}/{position}")
+    @ApiOperation(value = "챔피언별 자주가는 아이템", notes = "챔피언명과 포지션을 받아서 자주가는 아이템을 리턴 해 줍니다.")
+    public ListResult<ItemDto> getFrequentItems(
+            @ApiParam(value = "챔피언 명", required = true)
+            @PathVariable String championName,
+            @ApiParam(value = "챔피언 포지션", required = true)
+            @PathVariable String position) {
+        List<ItemDto> list = matchService.getFrequentItems(championName, position);
+        return responseService.getListResult(list);
+    }
+
     @PostMapping("/purchase")
     @ApiOperation(value = "아이템 구매", notes="매치내에서 소환사가 아이템 구매 시 정보를 INSERT 합니다.")
     public CommonResult postItemPurchase(
@@ -74,5 +82,6 @@ public class MatchController {
        matchService.postItemPurchase(body);
        return responseService.getSuccessResult();
     }
+
 
 }

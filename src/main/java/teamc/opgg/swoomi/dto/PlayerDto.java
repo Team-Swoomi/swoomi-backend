@@ -2,6 +2,8 @@ package teamc.opgg.swoomi.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,4 +16,5 @@ public class PlayerDto {
     private String ultImgUrl;
     private String spellDImgUrl;
     private String spellFImgUrl;
+    private List<ItemDto> frequentItems;
 }

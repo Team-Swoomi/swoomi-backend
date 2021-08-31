@@ -13,9 +13,9 @@ spring:
     template-loader-path: classpath:/templates
     suffix: .ftlh
 #local_private.yml, real_private.yml 형태
-riot:
-  api:
-    key: RGAPI-fe687d1b-94da-49f3-9829-85fc3dfb5e74
+#riot:
+#  api:
+#    key:
 #spring:
 #  datasource:
 #    password:

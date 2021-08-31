@@ -18,7 +18,7 @@ import teamc.opgg.swoomi.repository.SummonerRepo;
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles("local_private")
+@ActiveProfiles("real_private")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class SummonerServiceTest {
 

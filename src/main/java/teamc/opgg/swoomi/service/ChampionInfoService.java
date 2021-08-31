@@ -13,7 +13,8 @@ import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 public class ChampionInfoService {
 
     private final ChampionInfoRepo championInfoRepo;
-    //private final Orianna orianna;
+
+    private final Orianna orianna;
 
     public int getMainPerksSkillAccel(){
         return 0;

@@ -18,6 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
   jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     properties.hibernate:
       ddl-auto: update
       format_sql: true

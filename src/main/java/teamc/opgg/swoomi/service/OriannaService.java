@@ -34,14 +34,18 @@ public class OriannaService {
                         .summonerNamed(summonerName)
                         .withRegion(Region.KOREA)
                         .get();
-                mySummoner = MySummoner.builder()
-                        .accountId(summoner.getAccountId())
-                        .summonerId(summoner.getId())
-                        .summonerName(summoner.getName())
-                        .summonerLevel(summoner.getLevel())
-                        .profileIconId(summoner.getProfileIcon().getId())
-                        .build();
-                summonerRepo.save(mySummoner);
+                if (!summoner.exists()) {
+                    throw new CSummonerNotFoundException();
+                } else {
+                    mySummoner = MySummoner.builder()
+                            .accountId(summoner.getAccountId())
+                            .summonerId(summoner.getId())
+                            .summonerName(summoner.getName())
+                            .summonerLevel(summoner.getLevel())
+                            .profileIconId(summoner.getProfileIcon().getId())
+                            .build();
+                    summonerRepo.save(mySummoner);
+                }
             } catch (IllegalStateException illegalStateException) {
                 log.error("NO SUMMONER");
                 throw new CSummonerNotFoundException();
@@ -56,12 +60,6 @@ public class OriannaService {
                 .withRegion(Region.KOREA)
                 .withPlatform(Platform.KOREA)
                 .get();
-        Image image = summonerSpell.getImage();
-        String imageURL = image.getURL();
-        log.info("img url: " + imageURL);
-        Sprite sprite = image.getSprite();
-        String spriteURL = sprite.getURL();
-        log.info("sprite url: " + spriteURL);
-        return imageURL;
+        return summonerSpell.getImage().getURL();
     }
 }

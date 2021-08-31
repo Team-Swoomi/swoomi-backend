@@ -31,4 +31,16 @@ public class MySummoner extends BaseTimeEntity {
 
     @Column(nullable = false)
     long summonerLevel;
+
+    @Override
+    public String toString() {
+        return "MySummoner{" +
+                "id=" + id +
+                ", summonerId='" + summonerId + '\'' +
+                ", accountId='" + accountId + '\'' +
+                ", profileIconId=" + profileIconId +
+                ", summonerName='" + summonerName + '\'' +
+                ", summonerLevel=" + summonerLevel +
+                '}';
+    }
 }

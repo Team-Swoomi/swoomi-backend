@@ -2,6 +2,7 @@ package teamc.opgg.swoomi.service;
 
 import com.merakianalytics.orianna.Orianna;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
@@ -9,7 +10,7 @@ import teamc.opgg.swoomi.dto.SummonerRequestDto;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.MySummoner;
 import teamc.opgg.swoomi.repository.SummonerRepo;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SummonerService {

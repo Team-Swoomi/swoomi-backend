@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +47,9 @@ public class MsgController {
                 .matchTeamCode(teamId)
                 .itemName(itemMessage.getItemName())
                 .summonerName(itemMessage.getSummonerName())
+                .championName(itemMessage.getChampionName())
                 .build();
-        matchService.postItemPurchaseOne(itemDto);
+        matchService.postChampionBuyItem(itemDto);
         return itemMessage;
     }
 }

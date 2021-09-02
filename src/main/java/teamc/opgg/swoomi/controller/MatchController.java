@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import teamc.opgg.swoomi.dto.*;
+import teamc.opgg.swoomi.entity.response.CommonResponse;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
@@ -73,15 +74,23 @@ public class MatchController {
         return responseService.getListResult(list);
     }
 
-    @PostMapping("/purchase")
-    @ApiOperation(value = "아이템 구매", notes="매치내에서 소환사가 아이템 구매 시 정보를 INSERT 합니다.")
-    public CommonResult postItemPurchase(
-            @ApiParam(value="매치, 소환사 정보 및 아이템 정보", required = true)
-            @RequestBody ItemPurchaseDto body
-    ) {
-       matchService.postItemPurchase(body);
-       return responseService.getSuccessResult();
-    }
+//    @PostMapping("/purchase")
+//    @ApiOperation(value = "아이템 구매", notes="매치내에서 소환사가 아이템 구매 시 정보를 INSERT 합니다.")
+//    public CommonResult postItemPurchase(
+//            @ApiParam(value="매치, 소환사 정보 및 아이템 정보", required = true)
+//            @RequestBody ItemPurchaseDto body
+//    ) {
+//       matchService.postItemPurchase(body);
+//       return responseService.getSuccessResult();
+//    }
 
+    @PostMapping("/championItem")
+    @ApiOperation(value = "아이템 구매", notes = "챔피언이 구매한 아이템 정보를 저장합니다.")
+    public CommonResult setChampionBuyItem(
+            @ApiParam(value = "구매 아이템", required = true)
+            @RequestBody ItemPurchaseOneDto itemDot) {
+        matchService.postChampionBuyItem(itemDot);
+        return responseService.getSuccessResult();
+    }
 
 }

@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import teamc.opgg.swoomi.dto.ChampionAccelInfoDto;
+import teamc.opgg.swoomi.dto.ChampionCoolInfoDto;
+import teamc.opgg.swoomi.dto.ChampionInfoDto;
 
 import javax.persistence.*;
 
@@ -19,22 +22,40 @@ public class ChampionInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
-
-    @Column(nullable = false)
+    @Column(unique = true)
     private String summonerName;
-
-    @Column(nullable = false)
-    private Integer dSpellTime;
-
-    @Column(nullable = false)
-    private Integer fSpellTime;
-
-    @Column(nullable = false)
-    private Integer rSpellTime;
-
-    @Column(nullable = false)
+    private String championName;
+    private Double dSpellTime;
+    private Double fSpellTime;
+    private Double rSpellTime;
     private Integer spellAccel;
-
-    @Column(nullable = false)
     private Integer skillAccel;
+
+    public ChampionInfoDto toInfoDto() {
+        return ChampionInfoDto.builder()
+                .summonerName(summonerName)
+                .dSpellTime(dSpellTime)
+                .fSpellTime(fSpellTime)
+                .rSpellTime(rSpellTime)
+                .spellAccel(spellAccel)
+                .skillAccel(skillAccel)
+                .build();
+    }
+
+    public ChampionAccelInfoDto toAccelInfoDto() {
+        return ChampionAccelInfoDto.builder()
+                .summonerName(summonerName)
+                .spellAccel(spellAccel)
+                .skillAccel(skillAccel)
+                .build();
+    }
+
+    public ChampionCoolInfoDto toCoolInfoDto() {
+        return ChampionCoolInfoDto
+                .builder()
+                .cooltimeD(dSpellTime)
+                .cooltimeF(fSpellTime)
+                .cooltimeR(rSpellTime)
+                .build();
+    }
 }

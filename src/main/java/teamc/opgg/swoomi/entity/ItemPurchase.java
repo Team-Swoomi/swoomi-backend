@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "ItemPurchase")
+@Table(name = "Item_purchase")
 public class ItemPurchase {
 
     @Id
@@ -21,5 +21,6 @@ public class ItemPurchase {
     private Long id;
     private String matchTeamCode;
     private String summonerName;
+    private String championName;
     private String itemName;
 }

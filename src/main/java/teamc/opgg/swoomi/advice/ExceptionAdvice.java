@@ -76,4 +76,28 @@ public class ExceptionAdvice {
                 ErrorCode.MsgRoomNotFoundException.getMsg()
         );
     }
+
+    /***
+     * -1006
+     */
+    @ExceptionHandler(CSummonerNoRuneInfoException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult noRuneInfoException(HttpServletRequest request, CSummonerNoRuneInfoException e) {
+        return responseService.getFailResult(
+                ErrorCode.SummonerNoRuneInfoException.getCode(),
+                ErrorCode.SummonerNoRuneInfoException.getMsg()
+        );
+    }
+
+    /***
+     * -1007
+     */
+    @ExceptionHandler(CSummonerNoItemInfoException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public CommonResult noItemInfoException(HttpServletRequest request, CSummonerNoItemInfoException e) {
+        return responseService.getFailResult(
+                ErrorCode.SummonerNoItemInfoException.getCode(),
+                ErrorCode.SummonerNoItemInfoException.getMsg()
+        );
+    }
 }

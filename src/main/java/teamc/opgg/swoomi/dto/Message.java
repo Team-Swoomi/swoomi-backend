@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
-    private String whoSummName;
+    private String summonerName;
     private Integer dSpellTime;
     private Integer fSpellTime;
     private Integer ultTime;

@@ -11,12 +11,14 @@ import teamc.opgg.swoomi.entity.ItemPurchase;
 public class ItemPurchaseOneDto {
     String matchTeamCode;
     String summonerName;
+    String championName;
     String itemName;
 
     public ItemPurchase toEntity() {
         return ItemPurchase.builder()
                 .matchTeamCode(matchTeamCode)
                 .summonerName(summonerName)
+                .championName(championName)
                 .itemName(itemName)
                 .build();
     }

@@ -13,9 +13,9 @@ import teamc.opgg.swoomi.entity.ChampionInfo;
 @Builder
 public class ChampionInfoDto {
     private String summonerName;
-    private Integer dSpellTime;
-    private Integer fSpellTime;
-    private Integer rSpellTime;
+    private Double dSpellTime;
+    private Double fSpellTime;
+    private Double rSpellTime;
     private Integer spellAccel;
     private Integer skillAccel;
 

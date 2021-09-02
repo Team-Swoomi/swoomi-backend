@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: real, real_private
+    include: real,real_private
 
   devtools:
     livereload:
@@ -12,10 +12,3 @@ spring:
     cache: false
     template-loader-path: classpath:/templates
     suffix: .ftlh
-#local_private.yml, real_private.yml 형태
-#riot:
-#  api:
-#    key:
-#spring:
-#  datasource:
-#    password:

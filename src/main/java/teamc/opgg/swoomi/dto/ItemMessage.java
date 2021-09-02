@@ -9,5 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ItemMessage {
     private String summonerName;
+    private String championName;
     private String itemName;
 }

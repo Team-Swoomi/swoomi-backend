@@ -9,6 +9,7 @@ import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
@@ -32,6 +33,7 @@ public class MatchService {
     @Autowired
     private ItemPurchaseService itemPurchaseService;
 
+    @Transactional(readOnly = true)
     public MatchDto getMatchStatus(String summonerName) {
         MatchDto dto = new MatchDto();
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
@@ -45,6 +47,7 @@ public class MatchService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
     public List<PlayerDto> getOpData(String summonerName) {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
@@ -79,6 +82,7 @@ public class MatchService {
         return playerDtos;
     }
 
+    @Transactional(readOnly = true)
     public MatchStatusDto getMatchTeamCode(String summonerName) {
 
         boolean isMyTeam = false;
@@ -115,13 +119,15 @@ public class MatchService {
 //        itemPurchaseRepository.saveAll(list);
 //    }
 
+    @Transactional
     public void postChampionBuyItem(ItemPurchaseOneDto oneDto) {
         itemPurchaseService.setItemPurchase(oneDto);
     }
 
+    @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
         List<ItemDto> list = new ArrayList<>();
-        championItemRepository.findAllByChampionNameAndAndPosition(championName, position)
+        championItemRepository.findAllByChampionNameAndPosition(championName, position)
                 .get()
                 .stream()
                 .forEach((i) -> {

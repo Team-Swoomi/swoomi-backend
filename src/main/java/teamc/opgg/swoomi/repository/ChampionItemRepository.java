@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ChampionItemRepository extends JpaRepository<ChampionItem, Long> {
-    Optional<List<ChampionItem>> findAllByChampionNameAndAndPosition(String championName, String position);
+    Optional<List<ChampionItem>> findAllByChampionNameAndPosition(String championName, String position);
 
     Optional<ChampionItem> findFirstByItemNameAndChampionName(String itemName, String ChampionName);
 }

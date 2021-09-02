@@ -3,6 +3,7 @@ package teamc.opgg.swoomi.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNoItemInfoException;
 import teamc.opgg.swoomi.dto.ItemPurchaseOneDto;
 import teamc.opgg.swoomi.dto.ItemPurchaserInfoDto;
@@ -21,9 +22,9 @@ public class ItemPurchaseService {
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
 
+    @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
-        List<ItemPurchase> itemPurchases = itemPurchaseRepository
-                .findAllByMatchTeamCodeAndSummonerName(
+        List<ItemPurchase> itemPurchases = itemPurchaseRepository.findAllByMatchTeamCodeAndSummonerName(
                         purchaseReqDto.getMatchTeamCode(),
                         purchaseReqDto.getSummonerName())
                 .orElseThrow(CSummonerNoItemInfoException::new);
@@ -40,6 +41,7 @@ public class ItemPurchaseService {
         return totalItemSkillAccel;
     }
 
+    @Transactional(readOnly = true)
     public Integer getTotalItemSpellAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
         List<ItemPurchase> itemPurchases = itemPurchaseRepository.findAllByMatchTeamCodeAndSummonerName(
                         purchaseReqDto.getMatchTeamCode(),
@@ -54,6 +56,7 @@ public class ItemPurchaseService {
         return itemSpellAccel;
     }
 
+    @Transactional
     public void setItemPurchase(ItemPurchaseOneDto itemPurchaseOneDto) {
         itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
     }

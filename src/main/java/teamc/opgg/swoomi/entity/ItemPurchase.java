@@ -1,9 +1,6 @@
 package teamc.opgg.swoomi.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import teamc.opgg.swoomi.dto.ItemDto;
 
 import javax.persistence.*;
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Table(name = "Item_purchase")
 public class ItemPurchase {
 

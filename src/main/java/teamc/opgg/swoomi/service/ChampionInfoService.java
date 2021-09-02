@@ -13,7 +13,7 @@ import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 public class ChampionInfoService {
 
     private final ChampionInfoRepo championInfoRepo;
-    
+
 
     public int getMainPerksSkillAccel(){
         return 0;

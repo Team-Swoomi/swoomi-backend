@@ -1,36 +1,203 @@
 package teamc.opgg.swoomi.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.merakianalytics.orianna.Orianna;
+import com.merakianalytics.orianna.types.common.Region;
+import com.merakianalytics.orianna.types.core.searchable.SearchableList;
+import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
+import com.merakianalytics.orianna.types.core.spectator.Player;
+import com.merakianalytics.orianna.types.core.spectator.Runes;
+import com.merakianalytics.orianna.types.core.staticdata.ChampionSpell;
+import com.merakianalytics.orianna.types.core.summoner.Summoner;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import teamc.opgg.swoomi.advice.exception.CSummonerNoRuneInfoException;
+import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
+import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.repository.ChampionInfoRepo;
+
+import java.util.List;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ChampionInfoService {
 
+    private final Gson gson;
+    private final MatchService matchService;
     private final ChampionInfoRepo championInfoRepo;
+    private final ItemPurchaseService itemPurchaseService;
 
-    public int getMainPerksSkillAccel(){
-        return 0;
+    private Player getPlayer(String summonerName) {
+        String matchTeamCode = matchService
+                .getMatchTeamCode(summonerName)
+                .getMatchTeamCode();
+        int teamCode = Integer.parseInt(matchTeamCode.substring(matchTeamCode.length() - 3));
+        Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
+
+        CurrentMatch currentMatch;
+        if (summoner.isInGame()) {
+            currentMatch = summoner.getCurrentMatch();
+        } else throw new CSummonerNotInGameException();
+
+        Player player;
+        if (teamCode == 100) {
+            player = currentMatch
+                    .getBlueTeam()
+                    .getParticipants()
+                    .find(o -> o.getSummoner().getName().equals(summonerName));
+        } else {
+            player = currentMatch
+                    .getRedTeam()
+                    .getParticipants()
+                    .find(o -> o.getSummoner().getName().equals(summonerName));
+        }
+        return player;
     }
 
-    public int getFragmentPerksSkillAccel() {
-        return 0;
+    @Transactional
+    public ChampionAccelInfoDto getInitialRuneInfo(String summonerName) {
+        Player player = getPlayer(summonerName);
+
+        JsonObject runeJson = gson.fromJson(player.getRunes().toJSON(), JsonObject.class);
+        JsonArray RunesData = runeJson.getAsJsonArray("data");
+
+        int skillAccel = 0;
+        int spellAccel = 0;
+
+        for (JsonElement rune : RunesData) {
+            if (rune.getAsInt() == 8347) {
+                spellAccel += 18;
+            } else if (rune.getAsInt() == 5007) {
+                skillAccel += 8;
+            }
+        }
+        return ChampionAccelInfoDto.builder()
+                .summonerName(summonerName)
+                .skillAccel(skillAccel)
+                .spellAccel(spellAccel)
+                .build();
     }
 
-    public int getMainPerksSpellAccel(){
-        return 0;
+    public Integer getTotalItemSkillAccel(ItemPurchaserInfoDto purchaseReqDto) {
+        return itemPurchaseService.getTotalItemSkillAccelFromSummoner(purchaseReqDto);
     }
 
-    public int getFragmentPerksSpellAccel() {
-        return 0;
+    public Integer getTotalItemSpellAccel(ItemPurchaserInfoDto purchaseReqDto) {
+        return itemPurchaseService.getTotalItemSpellAccelFromSummoner(purchaseReqDto);
     }
 
-    public void getAccelFromItem(String itemName) {
+    @Transactional(readOnly = true)
+    public ChampionCoolInfoDto getInitialDFSpellRSkillTime(String summonerName, int ultLevel) {
 
+        if (ultLevel < 0 || ultLevel >= 3) ultLevel = 1;
+
+        Player player = getPlayer(summonerName);
+        Double cooldownDSpell = player.getSummonerSpellD().getCooldowns().get(0);
+        Double cooldownFSpell = player.getSummonerSpellF().getCooldowns().get(0);
+        Double cooldownRSpell = player.getChampion().getSpells().get(3).getCooldowns().get(ultLevel - 1);
+
+        log.info("cooldown D : "+ cooldownDSpell);
+        log.info("cooldown F : "+ cooldownFSpell);
+        log.info("cooldown R : " + cooldownRSpell);
+
+        return ChampionCoolInfoDto.builder()
+                .cooltimeD(cooldownDSpell)
+                .cooltimeF(cooldownFSpell)
+                .cooltimeR(cooldownRSpell)
+                .build();
+    }
+
+    @Transactional
+    public ChampionInfoDto calculateAndSaveChampionInfo(String summonerName, int ultLevel) {
+
+        Player player = getPlayer(summonerName);
+        MatchStatusDto matchTeamCode = matchService.getMatchTeamCode(summonerName);
+        String championName = player.getChampion().getName();
+
+        ItemPurchaserInfoDto purchaserInfoDto = ItemPurchaserInfoDto.builder()
+                .championName(championName)
+                .summonerName(summonerName)
+                .matchTeamCode(matchTeamCode.getMatchTeamCode())
+                .build();
+
+        ChampionAccelInfoDto initialRuneInfo = getInitialRuneInfo(summonerName);
+        int finalSpellAccel = initialRuneInfo.getSpellAccel() + getTotalItemSpellAccel(purchaserInfoDto);
+        int finalSkillAccel = initialRuneInfo.getSkillAccel() + getTotalItemSkillAccel(purchaserInfoDto);
+
+        ChampionCoolInfoDto championCoolInfoDto = getInitialDFSpellRSkillTime(summonerName, ultLevel);
+        Double cooltimeD = championCoolInfoDto.getCooltimeD();
+        Double cooltimeF = championCoolInfoDto.getCooltimeF();
+        Double cooltimeR = championCoolInfoDto.getCooltimeR();
+
+        double spellCooldownPercent = (double) 100 - (10000 / (100 + (double) finalSpellAccel));
+        double skillCooldownPercent = (double) 100 - (10000 / (100 + (double) finalSkillAccel));
+
+        double cooltimeCalcedD = cooltimeD * spellCooldownPercent;
+        double cooltimeCalcedF = cooltimeF * spellCooldownPercent;
+        double cooltimeCalcedR = cooltimeR * skillCooldownPercent;
+
+        ChampionInfo championInfo = ChampionInfo.builder()
+                .summonerName(summonerName)
+                .championName(championName)
+                .dSpellTime(cooltimeCalcedD)
+                .fSpellTime(cooltimeCalcedF)
+                .rSpellTime(cooltimeCalcedR)
+                .skillAccel(finalSkillAccel)
+                .spellAccel(finalSpellAccel)
+                .build();
+        return championInfoRepo.save(championInfo).toInfoDto();
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getRuneSkillAccel(String summonerName) {
+        ChampionInfoDto championInfoDto = championInfoRepo.findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new);
+        return championInfoDto.getSkillAccel();
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getRuneSpellAccel(String summonerName) {
+        ChampionInfoDto championInfoDto = championInfoRepo.findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new);
+        return championInfoDto.getSpellAccel();
+    }
+
+    @Transactional(readOnly = true)
+    public ChampionAccelInfoDto getTotalInfoAboutAccel(ItemPurchaserInfoDto purchaserInfoDto) {
+        String summonerName = purchaserInfoDto.getSummonerName();
+        ChampionInfoDto championInfoDto = championInfoRepo
+                .findBySummonerName(summonerName).orElseThrow(CSummonerNoRuneInfoException::new);
+
+        Integer totalSkillAccel = getTotalItemSkillAccel(purchaserInfoDto) + championInfoDto.getSkillAccel();
+        Integer totalSpellAccel = getTotalItemSpellAccel(purchaserInfoDto) + championInfoDto.getSpellAccel();
+
+        return ChampionAccelInfoDto.builder()
+                .summonerName(summonerName)
+                .skillAccel(totalSkillAccel)
+                .spellAccel(totalSpellAccel)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ChampionCoolInfoDto getCalcedCooltimeInfo(String summonerName, int ultLv) {
+
+        calculateAndSaveChampionInfo(summonerName, ultLv);
+        ChampionInfoDto championInfoDto = championInfoRepo
+                .findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new);
+
+        return ChampionCoolInfoDto.builder()
+                .cooltimeD(championInfoDto.getDSpellTime())
+                .cooltimeF(championInfoDto.getFSpellTime())
+                .cooltimeR(championInfoDto.getRSpellTime())
+                .build();
     }
 }

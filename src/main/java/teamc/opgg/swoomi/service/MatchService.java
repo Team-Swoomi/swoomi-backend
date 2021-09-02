@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
-import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.ItemPurchase;
+import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 
@@ -29,6 +29,8 @@ public class MatchService {
     private ItemPurchaseRepository itemPurchaseRepository;
     @Autowired
     private ChampionItemRepository championItemRepository;
+    @Autowired
+    private ItemPurchaseService itemPurchaseService;
 
     public MatchDto getMatchStatus(String summonerName) {
         MatchDto dto = new MatchDto();
@@ -108,13 +110,13 @@ public class MatchService {
         return matchStatusDto;
     }
 
-    public void postItemPurchase(ItemPurchaseDto body) {
-        List<ItemPurchase> list = body.convertToEntity();
-        itemPurchaseRepository.saveAll(list);
-    }
+//    public void postItemPurchase(ItemPurchaseDto body) {
+//        List<ItemPurchase> list = body.convertToEntity();
+//        itemPurchaseRepository.saveAll(list);
+//    }
 
-    public void postItemPurchaseOne(ItemPurchaseOneDto oneDto) {
-        itemPurchaseRepository.save(oneDto.toEntity());
+    public void postChampionBuyItem(ItemPurchaseOneDto oneDto) {
+        itemPurchaseService.setItemPurchase(oneDto);
     }
 
     public List<ItemDto> getFrequentItems(String championName, String position) {

@@ -1,7 +1,7 @@
 logging:
   level:
     root: warn
-    teamc.opgg.swoomi: info
+    teamc.opgg.swoomi: debug
   file:
     path: /home/ubuntu/app/log
 

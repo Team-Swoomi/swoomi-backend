@@ -58,6 +58,16 @@ public class ChampionInfoController {
         return responseService.getSingleResult(calcedCooltimeInfo);
     }
 
+    @GetMapping("/accelInfo")
+    @ApiOperation(value = "챔피언 스킬/스펠 가속 정보", notes = "소환사 명 입력 시 스킬/스펠의 가속 정보를 반환합니다.")
+    public SingleResult<ChampionAccelInfoDto> findChampionCalcedCooltimeInfo(
+            @ApiParam(value = "소환사명", required = true)
+            @RequestParam String summonerName)
+    {
+        ChampionAccelInfoDto totalInfoAboutAccel = championInfoService.getTotalInfoAboutAccel(summonerName);
+        return responseService.getSingleResult(totalInfoAboutAccel);
+    }
+
     @PostMapping("/calcAndSaveChampionInfo")
     @ApiOperation(value = "챔피언 궁/스펠 쿨감, 쿨타임 저장", notes = "소환사 명 입력 시 룬/아이템의 모든 쿨감을 계산하고, 궁/스펠 쿨타임을 저장합니다.")
     public SingleResult<ChampionInfoDto> saveChampionInfo(

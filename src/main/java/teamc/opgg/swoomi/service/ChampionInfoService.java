@@ -171,10 +171,18 @@ public class ChampionInfoService {
     }
 
     @Transactional(readOnly = true)
-    public ChampionAccelInfoDto getTotalInfoAboutAccel(ItemPurchaserInfoDto purchaserInfoDto) {
-        String summonerName = purchaserInfoDto.getSummonerName();
-        ChampionInfoDto championInfoDto = championInfoRepo
-                .findBySummonerName(summonerName).orElseThrow(CSummonerNoRuneInfoException::new);
+    public ChampionAccelInfoDto getTotalInfoAboutAccel(String summonerName) {
+        String championName = getPlayer(summonerName).getChampion().getName();
+        String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
+
+        ItemPurchaserInfoDto purchaserInfoDto = ItemPurchaserInfoDto.builder()
+                .championName(championName)
+                .summonerName(summonerName)
+                .matchTeamCode(matchTeamCode)
+                .build();
+
+        ChampionInfoDto championInfoDto = championInfoRepo.findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new);
 
         Integer totalSkillAccel = getTotalItemSkillAccel(purchaserInfoDto) + championInfoDto.getSkillAccel();
         Integer totalSpellAccel = getTotalItemSpellAccel(purchaserInfoDto) + championInfoDto.getSpellAccel();
@@ -186,7 +194,7 @@ public class ChampionInfoService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ChampionCoolInfoDto getCalcedCooltimeInfo(String summonerName, int ultLv) {
 
         calculateAndSaveChampionInfo(summonerName, ultLv);

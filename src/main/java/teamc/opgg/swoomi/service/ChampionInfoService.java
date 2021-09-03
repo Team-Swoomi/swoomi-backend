@@ -158,15 +158,19 @@ public class ChampionInfoService {
 
     @Transactional(readOnly = true)
     public Integer getRuneSkillAccel(String summonerName) {
-        ChampionInfoDto championInfoDto = championInfoRepo.findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new);
+        ChampionInfoDto championInfoDto = championInfoRepo
+                .findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new)
+                .toInfoDto();
         return championInfoDto.getSkillAccel();
     }
 
     @Transactional(readOnly = true)
     public Integer getRuneSpellAccel(String summonerName) {
-        ChampionInfoDto championInfoDto = championInfoRepo.findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new);
+        ChampionInfoDto championInfoDto = championInfoRepo
+                .findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new)
+                .toInfoDto();
         return championInfoDto.getSpellAccel();
     }
 
@@ -181,8 +185,10 @@ public class ChampionInfoService {
                 .matchTeamCode(matchTeamCode)
                 .build();
 
-        ChampionInfoDto championInfoDto = championInfoRepo.findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new);
+        ChampionInfoDto championInfoDto = championInfoRepo
+                .findBySummonerName(summonerName)
+                .orElseThrow(CSummonerNoRuneInfoException::new)
+                .toInfoDto();
 
         Integer totalSkillAccel = getTotalItemSkillAccel(purchaserInfoDto) + championInfoDto.getSkillAccel();
         Integer totalSpellAccel = getTotalItemSpellAccel(purchaserInfoDto) + championInfoDto.getSpellAccel();
@@ -200,7 +206,8 @@ public class ChampionInfoService {
         calculateAndSaveChampionInfo(summonerName, ultLv);
         ChampionInfoDto championInfoDto = championInfoRepo
                 .findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new);
+                .orElseThrow(CSummonerNoRuneInfoException::new)
+                .toInfoDto();
 
         return ChampionCoolInfoDto.builder()
                 .cooltimeD(championInfoDto.getDSpellTime())

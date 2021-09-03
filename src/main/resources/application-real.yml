@@ -20,8 +20,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     properties.hibernate:
-      hbm2ddl.ddl-auto: update
-      format_sql: true
+      format_sql: auto
+    hibernate:
+      ddl-auto: update
     generate-ddl: false
     show-sql: true
     open-in-view: false

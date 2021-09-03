@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @ToString
-@Table(name = "Item_purchase")
+@Table(name = "ItemPurchase")
 public class ItemPurchase {
 
     @Id

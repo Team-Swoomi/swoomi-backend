@@ -1,7 +1,6 @@
 package teamc.opgg.swoomi.service;
 
 import com.merakianalytics.orianna.Orianna;
-import com.merakianalytics.orianna.datapipeline.riotapi.exceptions.NotFoundException;
 import com.merakianalytics.orianna.types.common.Region;
 import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
@@ -9,14 +8,11 @@ import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
-import teamc.opgg.swoomi.entity.ItemPurchase;
-import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 

@@ -1,25 +1,18 @@
 package teamc.opgg.swoomi.controller;
 
-import com.merakianalytics.orianna.Orianna;
-import com.merakianalytics.orianna.types.common.Region;
-import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
-import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import teamc.opgg.swoomi.dto.*;
-import teamc.opgg.swoomi.entity.response.CommonResponse;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
 import teamc.opgg.swoomi.service.MatchService;
 import teamc.opgg.swoomi.service.ResponseService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j

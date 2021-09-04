@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface ChampionItemRepository extends JpaRepository<ChampionItem, Long> {
     Optional<List<ChampionItem>> findAllByChampionNameAndPosition(String championName, String position);
 
+    Optional<List<ChampionItem>> findAllByChampionName(String championName);
+
     Optional<ChampionItem> findFirstByItemNameAndChampionName(String itemName, String ChampionName);
 }

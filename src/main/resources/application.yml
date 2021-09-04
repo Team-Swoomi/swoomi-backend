@@ -1,7 +1,6 @@
 spring:
   profiles:
     include: real,real_private
-
   devtools:
     livereload:
       enabled: true

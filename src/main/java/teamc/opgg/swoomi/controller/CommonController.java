@@ -39,6 +39,9 @@ public class CommonController {
         Object obj = restTemplate.getForObject("http://3.34.111.116:9000/champion/item", Object.class);
         Gson gson = new Gson();
 
+        //JsonReader reader = new JsonReader(new FileReader("src/main/resources/customData.json"));
+        //ChampionItemDto[] dtos = gson.fromJson(reader, ChampionItemDto[].class);
+
         JsonObject jobj = (JsonObject) gson.toJsonTree(obj);
         JsonArray jarr = jobj.getAsJsonArray("champData");
 

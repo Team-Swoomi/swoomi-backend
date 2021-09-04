@@ -69,14 +69,16 @@ public class MatchService {
 
         for (Player p : opList) {
             String championName = p.getChampion().getName();
-            List<ItemDto> list = championItemRepository.findAllByChampionName(championName).get().stream().map((e) -> {
-                return ItemDto.builder()
+            List<ItemDto> list = championItemRepository.findAllByChampionName(championName)
+                    .get()
+                    .stream()
+                    .map((e) -> ItemDto.builder()
                         .name(e.getItemName())
                         .englishName(e.getEnglishName())
                         .skillAccel(e.getSkillAccel())
                         .src(e.getSrc())
-                        .build();
-            }).collect(Collectors.toList());
+                        .build())
+                    .collect(Collectors.toList());
 
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
                     .championName(championName)
@@ -136,18 +138,16 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
-        List<ItemDto> list = new ArrayList<>();
-        championItemRepository.findAllByChampionNameAndPosition(championName, position)
+        List<ItemDto> list = championItemRepository.findAllByChampionNameAndPosition(championName, position)
                 .get()
                 .stream()
-                .forEach((i) -> {
-                    list.add(ItemDto.builder()
-                            .name(i.getItemName())
-                            .englishName(i.getEnglishName())
-                            .src(i.getSrc())
-                            .skillAccel(i.getSkillAccel())
-                            .build());
-                })
+                .map((i) -> ItemDto.builder()
+                        .name(i.getItemName())
+                        .englishName(i.getEnglishName())
+                        .src(i.getSrc())
+                        .skillAccel(i.getSkillAccel())
+                        .build())
+                .collect(Collectors.toList())
         ;
         return list;
     }

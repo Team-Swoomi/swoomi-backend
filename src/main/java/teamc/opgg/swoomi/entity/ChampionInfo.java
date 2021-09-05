@@ -28,6 +28,7 @@ public class ChampionInfo {
     private Double rSpellTime;
     private Integer spellAccel;
     private Integer skillAccel;
+    @Builder.Default
     private Boolean updated = true;
 
     public ChampionInfoDto toInfoDto() {

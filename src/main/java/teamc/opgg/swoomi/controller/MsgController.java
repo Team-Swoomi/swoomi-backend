@@ -13,6 +13,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.*;
 import teamc.opgg.swoomi.dto.*;
+import teamc.opgg.swoomi.service.ChampionInfoService;
+import teamc.opgg.swoomi.service.ItemPurchaseService;
 import teamc.opgg.swoomi.service.MatchService;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.List;
 public class MsgController {
 
     private final MatchService matchService;
+    private final ItemPurchaseService itemPurchaseService;
 
     /***
      * publish [pub/comm/message/{teamId}]
@@ -49,7 +52,7 @@ public class MsgController {
                 .summonerName(itemMessage.getSummonerName())
                 .championName(itemMessage.getChampionName())
                 .build();
-        matchService.postChampionBuyItem(itemDto);
+        itemPurchaseService.setItemPurchase(itemDto);
         return itemMessage;
     }
 }

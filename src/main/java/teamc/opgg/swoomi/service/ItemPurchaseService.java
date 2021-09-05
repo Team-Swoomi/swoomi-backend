@@ -1,5 +1,6 @@
 package teamc.opgg.swoomi.service;
 
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,9 @@ import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,27 +35,34 @@ public class ItemPurchaseService {
                 .orElseThrow(CSummonerNoItemInfoException::new);
 
         int totalItemSkillAccel = 0;
-        for (ItemPurchase item : itemPurchases) {
+        Optional<ChampionItem> championItem;
+        for (ItemPurchase item : itemPurchases)
+        {
             String itemName = item.getItemName();
-            ChampionItem championItem = championItemRepository
-                    .findFirstByItemNameAndChampionName(itemName, purchaseReqDto.getChampionName())
-                    .orElseThrow(CSummonerNoItemInfoException::new);
-            String skillAccel = championItem.getSkillAccel();
-            totalItemSkillAccel += Integer.parseInt(skillAccel);
+            championItem = championItemRepository
+                    .findFirstByItemNameAndChampionName(
+                            itemName,
+                            purchaseReqDto.getChampionName());
+            if (championItem.isPresent()) {
+                totalItemSkillAccel += Integer.parseInt(championItem.get().getSkillAccel());
+            } else totalItemSkillAccel += 0;
         }
         return totalItemSkillAccel;
     }
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSpellAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
-        List<ItemPurchase> itemPurchases = itemPurchaseRepository.findAllByMatchTeamCodeAndSummonerName(
+        List<ItemPurchase> itemPurchases = itemPurchaseRepository
+                .findAllByMatchTeamCodeAndSummonerName(
                         purchaseReqDto.getMatchTeamCode(),
                         purchaseReqDto.getSummonerName())
-                .orElseThrow(CSummonerNoItemInfoException::new);
+                .orElse(new ArrayList<>());
+
         int itemSpellAccel = 0;
         for (ItemPurchase item : itemPurchases) {
             if (item.getItemName().equals("명석함의 아이오니아 장화")) {
                 itemSpellAccel += 12;
+                break;
             }
         }
         return itemSpellAccel;

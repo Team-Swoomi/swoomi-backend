@@ -40,7 +40,7 @@ public class ChampionInfoService {
                 .getMatchTeamCode(summonerName)
                 .getMatchTeamCode();
         int teamCode = Integer.parseInt(matchTeamCode.substring(matchTeamCode.length() - 3));
-        Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
+        Summoner summoner = Orianna.summonerNamed(summonerName).get();
 
         CurrentMatch currentMatch;
         if (summoner.isInGame()) {
@@ -59,13 +59,15 @@ public class ChampionInfoService {
                     .getParticipants()
                     .find(o -> o.getSummoner().getName().equals(summonerName));
         }
+        log.info("PLAYER : "+ player.getSummoner().getName());
         return player;
     }
 
     private boolean infoIsUpdated(String summonerName) {
-        ChampionInfo info = championInfoRepo.findBySummonerName(summonerName)
-                .orElse(null);
-        return info == null || info.getUpdated();
+        if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
+            return championInfoRepo.findBySummonerName(summonerName).get().getUpdated();
+        }
+        return true;
     }
 
     @Transactional

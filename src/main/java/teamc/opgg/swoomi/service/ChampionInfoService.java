@@ -166,6 +166,7 @@ public class ChampionInfoService {
                 .rSpellTime(cooltimeCalcedR)
                 .skillAccel(finalSkillAccel)
                 .spellAccel(finalSpellAccel)
+                .updated(false)
                 .build();
 
         if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {

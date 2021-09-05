@@ -13,8 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
+import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
+import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,9 @@ public class MatchService {
     private ItemPurchaseRepository itemPurchaseRepository;
     @Autowired
     private ChampionItemRepository championItemRepository;
+    @Autowired
+    private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
+
     @Autowired
     private ItemPurchaseService itemPurchaseService;
 
@@ -47,7 +52,11 @@ public class MatchService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlayerDto> getOpData(String summonerName) {
+    public List<PlayerDto> getOpData(String data, boolean flag) {
+        String summonerName = data;
+        if (flag) {
+           summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummornerName();
+        }
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
             log.info("NO SUMMONER NAMED : " + summonerName);
@@ -61,7 +70,8 @@ public class MatchService {
 
         // 1. 상대팀 구하기
         SearchableList<Player> sList = summoner.getCurrentMatch().getParticipants();
-        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(summonerName));
+        String finalSummonerName = summonerName;
+        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(finalSummonerName));
         String teamId = tempPlayer.getTeam().toString();
 
         // 2. 상대팀 멤버 구하기
@@ -94,7 +104,7 @@ public class MatchService {
         return playerDtos;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public MatchStatusDto getMatchTeamCode(String summonerName) {
 
         boolean isMyTeam = false;
@@ -120,8 +130,16 @@ public class MatchService {
                 }
             }
             if (!isMyTeam) myTeam = 200;
+            String matchTeamCode = String.valueOf(currentMatch.getId() * 1000 + myTeam);
             matchStatusDto.setIsStarted(true);
-            matchStatusDto.setMatchTeamCode(String.valueOf(currentMatch.getId() * 1000 + myTeam));
+            matchStatusDto.setMatchTeamCode(matchTeamCode);
+
+            MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
+                    .matchTeamCode(matchTeamCode)
+                    .summornerName(summonerName)
+                    .build();
+
+            matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
         }
         return matchStatusDto;
     }
@@ -146,4 +164,6 @@ public class MatchService {
         ;
         return list;
     }
+
+
 }

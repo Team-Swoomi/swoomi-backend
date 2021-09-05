@@ -47,9 +47,17 @@ public class MatchController {
     @GetMapping("/data/{summonerName}")
     @ApiOperation(value ="상대팀 데이터 반환", notes="소환사명을 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
     public ListResult<PlayerDto> getOpData(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
-        List<PlayerDto> list = matchService.getOpData(summonerName);
+        List<PlayerDto> list = matchService.getOpData(summonerName, false);
         return responseService.getListResult(list);
     }
+
+    @GetMapping("/data/matchTeamCode/{matchTeamCode}")
+    @ApiOperation(value ="상대팀 데이터 반환", notes="매치 팀 코드를 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
+    public ListResult<PlayerDto> getOpDataMatchTeamCode(@ApiParam(value = "매치 팀 코드", required = true) @PathVariable String matchTeamCode) {
+        List<PlayerDto> list = matchService.getOpData(matchTeamCode, true);
+        return responseService.getListResult(list);
+    }
+
 
     @GetMapping("/status/{summonerName}")
     @ApiOperation(value = "매치 여부 & 매치 ID + 진영 ID 반환", notes = "매치 상태 T / F 와 매치 ID + 진영정보 B / R 를 합해서 반환합니다.")

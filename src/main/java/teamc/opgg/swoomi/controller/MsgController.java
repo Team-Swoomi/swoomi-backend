@@ -35,6 +35,10 @@ public class MsgController {
     @SendTo("/sub/comm/room/{teamId}")
     public Message message(@DestinationVariable String teamId,
                            Message message) {
+        log.info("TEAM ID : " + teamId);
+        log.info("소환사 명 : "+ message.getSummonerName());
+        log.info("D : "+ message.getDSpellTime());
+        log.info("F : "+ message.getFSpellTime());
         return message;
     }
 

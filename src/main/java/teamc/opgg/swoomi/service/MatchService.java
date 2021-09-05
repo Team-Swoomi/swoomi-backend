@@ -55,7 +55,7 @@ public class MatchService {
     public List<PlayerDto> getOpData(String data, boolean flag) {
         String summonerName = data;
         if (flag) {
-           summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummornerName();
+           summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummonerName();
         }
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
@@ -136,7 +136,7 @@ public class MatchService {
 
             MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
                     .matchTeamCode(matchTeamCode)
-                    .summornerName(summonerName)
+                    .summonerName(summonerName)
                     .build();
 
             matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);

@@ -16,5 +16,5 @@ public class MatchTeamCodeSummoner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String matchTeamCode;
-    private String summornerName;
+    private String summonerName;
 }

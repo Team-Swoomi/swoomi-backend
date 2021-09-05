@@ -1,4 +1,4 @@
-package teamc.opgg.swoomi.dto;
+package teamc.opgg.swoomi.dto.socket;
 
 import lombok.*;
 
@@ -11,4 +11,5 @@ public class ItemMessage {
     private String summonerName;
     private String championName;
     private String itemName;
+    private String type;
 }

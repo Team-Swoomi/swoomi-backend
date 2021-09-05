@@ -112,6 +112,8 @@ public class ChampionInfoService {
         Double cooldownFSpell = player.getSummonerSpellF().getCooldowns().get(0);
         Double cooldownRSpell = player.getChampion().getSpells().get(3).getCooldowns().get(ultLevel - 1);
 
+        if (cooldownFSpell == 0) cooldownFSpell = cooldownDSpell;
+
         log.info("cooldown D : " + cooldownDSpell);
         log.info("cooldown F : " + cooldownFSpell);
         log.info("cooldown R : " + cooldownRSpell);

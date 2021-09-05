@@ -1,15 +1,13 @@
 package teamc.opgg.swoomi.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import teamc.opgg.swoomi.dto.ChampionAccelInfoDto;
 import teamc.opgg.swoomi.dto.ChampionCoolInfoDto;
 import teamc.opgg.swoomi.dto.ChampionInfoDto;
 
 import javax.persistence.*;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +28,7 @@ public class ChampionInfo {
     private Double rSpellTime;
     private Integer spellAccel;
     private Integer skillAccel;
+    private Boolean updated = true;
 
     public ChampionInfoDto toInfoDto() {
         return ChampionInfoDto.builder()

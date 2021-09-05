@@ -41,7 +41,7 @@ public class ChampionInfoController {
             @ApiParam(value = "궁 레벨 (lv 1, 2, 3)", required = true)
             @RequestParam int ultLevel)
     {
-        ChampionCoolInfoDto championCoolInfoDto = championInfoService.getInitialDFSpellRSkillTime(summonerName, ultLevel);
+        ChampionCoolInfoDto championCoolInfoDto = championInfoService.getInitialCooltimeInfo(summonerName, ultLevel);
         return responseService.getSingleResult(championCoolInfoDto);
     }
 

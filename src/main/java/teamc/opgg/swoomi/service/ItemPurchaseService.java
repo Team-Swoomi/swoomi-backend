@@ -9,6 +9,7 @@ import teamc.opgg.swoomi.dto.ItemPurchaseOneDto;
 import teamc.opgg.swoomi.dto.ItemPurchaserInfoDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.ItemPurchase;
+import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemPurchaseService {
 
+    private final ChampionInfoRepo championInfoRepo;
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
 
@@ -58,6 +60,9 @@ public class ItemPurchaseService {
 
     @Transactional
     public void setItemPurchase(ItemPurchaseOneDto itemPurchaseOneDto) {
+        if (championInfoRepo.findBySummonerName(itemPurchaseOneDto.getSummonerName()).isPresent()) {
+            championInfoRepo.findBySummonerName(itemPurchaseOneDto.getSummonerName()).get().setUpdated(true);
+        }
         itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
     }
 }

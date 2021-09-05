@@ -119,11 +119,6 @@ public class MatchService {
 //        itemPurchaseRepository.saveAll(list);
 //    }
 
-    @Transactional
-    public void postChampionBuyItem(ItemPurchaseOneDto oneDto) {
-        itemPurchaseService.setItemPurchase(oneDto);
-    }
-
     @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
         List<ItemDto> list = new ArrayList<>();

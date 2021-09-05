@@ -16,6 +16,7 @@ import teamc.opgg.swoomi.entity.response.CommonResponse;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
+import teamc.opgg.swoomi.service.ItemPurchaseService;
 import teamc.opgg.swoomi.service.MatchService;
 import teamc.opgg.swoomi.service.ResponseService;
 
@@ -30,6 +31,9 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private ItemPurchaseService itemPurchaseService;
 
     @Autowired
     private ResponseService responseService;
@@ -88,8 +92,8 @@ public class MatchController {
     @ApiOperation(value = "아이템 구매", notes = "챔피언이 구매한 아이템 정보를 저장합니다.")
     public CommonResult setChampionBuyItem(
             @ApiParam(value = "구매 아이템", required = true)
-            @RequestBody ItemPurchaseOneDto itemDot) {
-        matchService.postChampionBuyItem(itemDot);
+            @RequestBody ItemPurchaseOneDto itemDto) {
+        itemPurchaseService.setItemPurchase(itemDto);
         return responseService.getSuccessResult();
     }
 

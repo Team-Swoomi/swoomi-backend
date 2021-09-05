@@ -18,8 +18,6 @@ public class CommonService {
 
     @Transactional
     public void refreshFrequentItems(ChampionItemDto dto) {
-        championItemRepository.deleteAll();
-
         for (int i=0; i<dto.getItems().size(); i++) {
             ItemDto item = dto.getItems().get(i);
             if (item.getSkillAccel().isEmpty()) {

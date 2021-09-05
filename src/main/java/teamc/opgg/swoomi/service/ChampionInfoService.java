@@ -59,7 +59,7 @@ public class ChampionInfoService {
                     .getParticipants()
                     .find(o -> o.getSummoner().getName().equals(summonerName));
         }
-        log.info("PLAYER : "+ player.getSummoner().getName());
+        log.info("PLAYER : " + player.getSummoner().getName());
         return player;
     }
 
@@ -151,12 +151,12 @@ public class ChampionInfoService {
         log.info("spell cooldown percent : " + spellCooldownPercent);
         log.info("skill cooldown percent : " + skillCooldownPercent);
 
-        double cooltimeCalcedD = Math.round ((cooltimeD * spellCooldownPercent) * 100) / (double) 100;
-        double cooltimeCalcedF = Math.round ((cooltimeF * spellCooldownPercent) * 100) / (double) 100;
-        double cooltimeCalcedR = Math.round ((cooltimeR * skillCooldownPercent) * 100) / (double) 100;
-        log.info("d : "+cooltimeCalcedD);
-        log.info("f : "+cooltimeCalcedF);
-        log.info("r : "+cooltimeCalcedR);
+        double cooltimeCalcedD = Math.round((cooltimeD * spellCooldownPercent) * 100) / (double) 100;
+        double cooltimeCalcedF = Math.round((cooltimeF * spellCooldownPercent) * 100) / (double) 100;
+        double cooltimeCalcedR = Math.round((cooltimeR * skillCooldownPercent) * 100) / (double) 100;
+        log.info("d : " + cooltimeCalcedD);
+        log.info("f : " + cooltimeCalcedF);
+        log.info("r : " + cooltimeCalcedR);
 
         ChampionInfo championInfo = ChampionInfo.builder()
                 .summonerName(summonerName)
@@ -229,11 +229,15 @@ public class ChampionInfoService {
     @Transactional
     public ChampionCoolInfoDto getCalcedCooltimeInfo(String summonerName, int ultLv) {
 
-        if (infoIsUpdated(summonerName)) calculateAndSaveChampionInfo(summonerName, ultLv);
-        ChampionInfoDto championInfoDto = championInfoRepo
-                .findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new)
-                .toInfoDto();
+        ChampionInfoDto championInfoDto;
+        if (infoIsUpdated(summonerName)) {
+            championInfoDto = calculateAndSaveChampionInfo(summonerName, ultLv);
+        } else {
+            championInfoDto = championInfoRepo
+                    .findBySummonerName(summonerName)
+                    .orElseThrow(CSummonerNoRuneInfoException::new)
+                    .toInfoDto();
+        }
 
         return ChampionCoolInfoDto.builder()
                 .cooltimeD(championInfoDto.getDSpellTime())

@@ -12,5 +12,6 @@ public class Message {
     private Integer dSpellTime;
     private Integer fSpellTime;
     private Integer ultTime;
+    private String changedSpell;
     private String type;
 }

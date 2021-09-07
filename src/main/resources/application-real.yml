@@ -10,7 +10,7 @@ logging:
       max-history: 7
 
 server:
-  port: 8070
+  port: 443
 
 spring:
   datasource:

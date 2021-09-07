@@ -11,3 +11,10 @@ spring:
     cache: false
     template-loader-path: classpath:/templates
     suffix: .ftlh
+
+server:
+  ssl:
+    key-store-type: PKCS12
+    key-store: /home/ubuntu/app/swoomi/backend_swoomi_me.p12
+    key-alias: backend.swoomi.me
+    enabled: true

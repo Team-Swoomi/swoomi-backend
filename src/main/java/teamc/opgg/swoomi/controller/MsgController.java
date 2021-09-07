@@ -47,7 +47,11 @@ public class MsgController {
                 .summonerName(itemMessage.getSummonerName())
                 .championName(itemMessage.getChampionName())
                 .build();
-        itemPurchaseService.setItemPurchase(itemDto);
+        if (itemMessage.getType().equals("DELETE")) {
+            itemPurchaseService.deletePurchaseItem(itemDto);
+        } else {
+            itemPurchaseService.setItemPurchase(itemDto);
+        }
         return itemMessage;
     }
 }

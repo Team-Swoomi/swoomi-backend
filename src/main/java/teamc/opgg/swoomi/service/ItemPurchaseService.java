@@ -1,6 +1,5 @@
 package teamc.opgg.swoomi.service;
 
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import teamc.opgg.swoomi.entity.ItemPurchase;
 import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
+import teamc.opgg.swoomi.repository.MysticItemRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +70,30 @@ public class ItemPurchaseService {
 
     @Transactional
     public void setItemPurchase(ItemPurchaseOneDto itemPurchaseOneDto) {
-        if (championInfoRepo.findBySummonerName(itemPurchaseOneDto.getSummonerName()).isPresent()) {
-            championInfoRepo.findBySummonerName(itemPurchaseOneDto.getSummonerName()).get().setUpdated(true);
+        String itemName = itemPurchaseOneDto.getItemName();
+        String summonerName = itemPurchaseOneDto.getSummonerName();
+        if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
+            championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
         }
+
+        if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
+            championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(true);
+        }
+
         itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
+    }
+
+    @Transactional
+    public void deletePurchaseItem(ItemPurchaseOneDto itemDto) {
+        itemPurchaseRepository.removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(
+                itemDto.getMatchTeamCode(),
+                itemDto.getSummonerName(),
+                itemDto.getItemName()
+        );
+
+        String itemName = itemDto.getItemName();
+        if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
+            championInfoRepo.findBySummonerName(itemName).get().setHasMystic(false);
+        }
     }
 }

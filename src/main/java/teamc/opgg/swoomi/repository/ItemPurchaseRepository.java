@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface ItemPurchaseRepository extends JpaRepository<ItemPurchase, Long> {
 
     Optional<List<ItemPurchase>> findAllByMatchTeamCodeAndSummonerName(String matchTeamCode, String summonerName);
+
+    void removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(String matchTeamCode, String summonerName, String itemName);
 }

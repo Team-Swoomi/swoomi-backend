@@ -28,6 +28,8 @@ public class ChampionInfo {
     private Double rSpellTime;
     private Integer spellAccel;
     private Integer skillAccel;
+    private Boolean hasMystic;
+    private Integer countLegendary;
     @Builder.Default
     private Boolean updated = true;
 

@@ -26,16 +26,11 @@ public class MatchController {
     private MatchService matchService;
 
     @Autowired
-    private ItemPurchaseService itemPurchaseService;
-
-    @Autowired
     private ResponseService responseService;
 
     /**
      * GetMatchStatus
      * 소환사명을 파라미터로 받아 현재 게임 시작 여부를 리턴한다.
-     * @param summonerName
-     * @return dto
      */
     @GetMapping("/{summonerName}")
     @ApiOperation(value = "게임 시작 여부 반환", notes = "소환사명을 받아 현재 게임 시작 여부를 리턴합니다.")
@@ -58,9 +53,8 @@ public class MatchController {
         return responseService.getListResult(list);
     }
 
-
     @GetMapping("/status/{summonerName}")
-    @ApiOperation(value = "매치 여부 & 매치 ID + 진영 ID 반환", notes = "매치 상태 T / F 와 매치 ID + 진영정보 B / R 를 합해서 반환합니다.")
+    @ApiOperation(value = "매치 여부 & 매치 ID + 진영 ID 반환", notes = "매치 상태 T/F 와 매치 ID + 진영정보 B/R를 합해서 반환합니다.")
     public SingleResult<MatchStatusDto> getMatchTeamCode(
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable String summonerName) {
@@ -78,24 +72,4 @@ public class MatchController {
         List<ItemDto> list = matchService.getFrequentItems(championName, position);
         return responseService.getListResult(list);
     }
-
-//    @PostMapping("/purchase")
-//    @ApiOperation(value = "아이템 구매", notes="매치내에서 소환사가 아이템 구매 시 정보를 INSERT 합니다.")
-//    public CommonResult postItemPurchase(
-//            @ApiParam(value="매치, 소환사 정보 및 아이템 정보", required = true)
-//            @RequestBody ItemPurchaseDto body
-//    ) {
-//       matchService.postItemPurchase(body);
-//       return responseService.getSuccessResult();
-//    }
-
-    @PostMapping("/championItem")
-    @ApiOperation(value = "아이템 구매", notes = "챔피언이 구매한 아이템 정보를 저장합니다.")
-    public CommonResult setChampionBuyItem(
-            @ApiParam(value = "구매 아이템", required = true)
-            @RequestBody ItemPurchaseOneDto itemDto) {
-        itemPurchaseService.setItemPurchase(itemDto);
-        return responseService.getSuccessResult();
-    }
-
 }

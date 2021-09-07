@@ -7,12 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNoItemInfoException;
 import teamc.opgg.swoomi.dto.ItemPurchaseOneDto;
 import teamc.opgg.swoomi.dto.ItemPurchaserInfoDto;
+import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.ItemPurchase;
-import teamc.opgg.swoomi.repository.ChampionInfoRepo;
-import teamc.opgg.swoomi.repository.ChampionItemRepository;
-import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
-import teamc.opgg.swoomi.repository.MysticItemRepo;
+import teamc.opgg.swoomi.repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +45,14 @@ public class ItemPurchaseService {
                 totalItemSkillAccel += Integer.parseInt(championItem.get().getSkillAccel());
             } else totalItemSkillAccel += 0;
         }
+
+        Optional<ChampionInfo> championInfo
+                = championInfoRepo.findBySummonerName(purchaseReqDto.getSummonerName());
+
+        if (championInfo.isPresent() && championInfo.get().getHasMystic()) {
+            totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
+        }
+
         return totalItemSkillAccel;
     }
 
@@ -69,11 +75,31 @@ public class ItemPurchaseService {
     }
 
     @Transactional
-    public void setItemPurchase(ItemPurchaseOneDto itemPurchaseOneDto) {
+    public void setPurchaseItem(ItemPurchaseOneDto itemPurchaseOneDto) {
         String itemName = itemPurchaseOneDto.getItemName();
         String summonerName = itemPurchaseOneDto.getSummonerName();
+        String championName = itemPurchaseOneDto.getChampionName();
+
         if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
             championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
+        } else {
+            championInfoRepo.save(ChampionInfo.builder()
+                    .summonerName(summonerName)
+                    .championName(championName)
+                    .dSpellTime(0.)
+                    .fSpellTime(0.)
+                    .rSpellTime(0.)
+                    .skillAccel(0)
+                    .spellAccel(0)
+                    .countLegendary(0)
+                    .hasMystic(false)
+                    .updated(true)
+                    .build());
+        }
+
+        if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
+            Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
+            championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary + 1);
         }
 
         if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
@@ -85,15 +111,26 @@ public class ItemPurchaseService {
 
     @Transactional
     public void deletePurchaseItem(ItemPurchaseOneDto itemDto) {
+        String matchTeamCode = itemDto.getMatchTeamCode();
+        String summonerName = itemDto.getSummonerName();
+        String itemName = itemDto.getItemName();
+
+        if (championInfoRepo.findBySummonerName(summonerName).isEmpty())
+            throw new CSummonerNoItemInfoException();
+
         itemPurchaseRepository.removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(
-                itemDto.getMatchTeamCode(),
-                itemDto.getSummonerName(),
-                itemDto.getItemName()
+                matchTeamCode,
+                summonerName,
+                itemName
         );
 
-        String itemName = itemDto.getItemName();
+        if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
+            Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
+            championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary - 1);
+        }
+
         if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
-            championInfoRepo.findBySummonerName(itemName).get().setHasMystic(false);
+            championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(false);
         }
     }
 }

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: real,real_private
+    include: local,local_private
   devtools:
     livereload:
       enabled: true

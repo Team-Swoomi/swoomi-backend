@@ -30,8 +30,7 @@ public class ChampionInfo {
     private Integer skillAccel;
     private Boolean hasMystic;
     private Integer countLegendary;
-    @Builder.Default
-    private Boolean updated = true;
+    private Boolean updated;
 
     public ChampionInfoDto toInfoDto() {
         return ChampionInfoDto.builder()

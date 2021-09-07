@@ -10,7 +10,6 @@ import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.dto.socket.ItemMessage;
 import teamc.opgg.swoomi.dto.socket.Message;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
-import teamc.opgg.swoomi.service.MatchService;
 
 @Slf4j
 @RestController
@@ -26,10 +25,6 @@ public class MsgController {
     @SendTo("/sub/comm/room/{teamId}")
     public Message message(@DestinationVariable String teamId,
                            Message message) {
-        log.info("TEAM ID : " + teamId);
-        log.info("소환사 명 : "+ message.getSummonerName());
-        log.info("D : "+ message.getDSpellTime());
-        log.info("F : "+ message.getFSpellTime());
         return message;
     }
 
@@ -50,7 +45,7 @@ public class MsgController {
         if (itemMessage.getType().equals("DELETE")) {
             itemPurchaseService.deletePurchaseItem(itemDto);
         } else {
-            itemPurchaseService.setItemPurchase(itemDto);
+            itemPurchaseService.setPurchaseItem(itemDto);
         }
         return itemMessage;
     }

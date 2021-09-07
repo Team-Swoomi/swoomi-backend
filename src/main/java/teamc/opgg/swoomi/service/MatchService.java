@@ -18,8 +18,7 @@ import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -79,15 +78,25 @@ public class MatchService {
 
         for (Player p : opList) {
             String championName = p.getChampion().getName();
+            Set<String> set = new HashSet<>();
             List<ItemDto> list = championItemRepository.findAllByChampionName(championName)
                     .get()
                     .stream()
-                    .map((e) -> ItemDto.builder()
-                        .name(e.getItemName())
-                        .englishName(e.getEnglishName())
-                        .skillAccel(e.getSkillAccel())
-                        .src(e.getSrc())
-                        .build())
+                    .map((e) -> {
+                            if (!set.contains(e.getItemName())) {
+                                set.add(e.getItemName());
+                                return ItemDto.builder()
+                                        .name(e.getItemName())
+                                        .englishName(e.getEnglishName())
+                                        .skillAccel(e.getSkillAccel())
+                                        .src(e.getSrc())
+                                        .build();
+                            } else {
+                               return null;
+                            }
+                        }
+                    )
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())

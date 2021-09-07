@@ -11,6 +11,11 @@ logging:
 
 server:
   port: 443
+  ssl:
+    key-store-type: PKCS12
+    key-store: /home/ubuntu/app/swoomi/backend_swoomi_me.p12
+    key-alias: backend.swoomi.me
+    enabled: true
 
 spring:
   datasource:

@@ -143,20 +143,19 @@ public class MatchService {
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
 
-            MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
-                    .matchTeamCode(matchTeamCode)
-                    .summonerName(summonerName)
-                    .build();
-
-            matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+            if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
+                matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
+                        .setMatchTeamCode(matchTeamCode);
+            } else {
+                MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
+                        .matchTeamCode(matchTeamCode)
+                        .summonerName(summonerName)
+                        .build();
+                matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+            }
         }
         return matchStatusDto;
     }
-
-//    public void postItemPurchase(ItemPurchaseDto body) {
-//        List<ItemPurchase> list = body.convertToEntity();
-//        itemPurchaseRepository.saveAll(list);
-//    }
 
     @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {

@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface MatchTeamCodeSummonerRepository extends JpaRepository<MatchTeamCodeSummoner, Long> {
     Optional<MatchTeamCodeSummoner> findFirstByMatchTeamCode(String matchTeamCode);
+
+    Optional<MatchTeamCodeSummoner> findBySummonerName(String summonerName);
 }

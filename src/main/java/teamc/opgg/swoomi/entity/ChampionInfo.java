@@ -26,6 +26,8 @@ public class ChampionInfo {
     private Double dSpellTime;
     private Double fSpellTime;
     private Double rSpellTime;
+    private String dSpellName;
+    private String fSpellName;
     private Integer spellAccel;
     private Integer skillAccel;
     private Boolean hasMystic;
@@ -38,6 +40,8 @@ public class ChampionInfo {
                 .dSpellTime(dSpellTime)
                 .fSpellTime(fSpellTime)
                 .rSpellTime(rSpellTime)
+                .dSpellName(dSpellName)
+                .fSpellName(fSpellName)
                 .spellAccel(spellAccel)
                 .skillAccel(skillAccel)
                 .build();

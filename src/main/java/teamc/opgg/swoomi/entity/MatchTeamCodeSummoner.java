@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -16,5 +17,6 @@ public class MatchTeamCodeSummoner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String matchTeamCode;
+    @Column(unique = true)
     private String summonerName;
 }

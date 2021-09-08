@@ -23,6 +23,7 @@ import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
 import teamc.opgg.swoomi.repository.ChampionInfoRepo;
+import teamc.opgg.swoomi.repository.CloudDragonRepository;
 import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class ChampionInfoService {
     private final MatchService matchService;
     private final ChampionInfoRepo championInfoRepo;
     private final ItemPurchaseService itemPurchaseService;
+    private final CloudDragonRepository cloudDragonRepository;
 
     @Transactional
     public Player getPlayer(String summonerName) {

@@ -10,6 +10,7 @@ import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.dto.socket.ItemMessage;
 import teamc.opgg.swoomi.dto.socket.Message;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
+import teamc.opgg.swoomi.service.MsgService;
 
 @Slf4j
 @RestController
@@ -17,6 +18,7 @@ import teamc.opgg.swoomi.service.ItemPurchaseService;
 public class MsgController {
 
     private final ItemPurchaseService itemPurchaseService;
+    private final MsgService msgService;
 
     /***
      * publish [pub/comm/message/{teamId}]
@@ -48,5 +50,14 @@ public class MsgController {
             itemPurchaseService.setPurchaseItem(itemDto);
         }
         return itemMessage;
+    }
+
+    @MessageMapping("/comm/dragon/{matchTeamCode}")
+    @SendTo("/sub/comm/dragon/{matchTeamCode}")
+    public CloudDragonDto cloudDragonCount(@DestinationVariable String matchTeamCode,
+                                           CloudDragonDto dto) {
+        dto.setMatchTeamCode(matchTeamCode);
+        msgService.cloudDragonCount(dto);
+        return dto;
     }
 }

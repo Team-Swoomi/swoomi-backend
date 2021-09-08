@@ -8,10 +8,13 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import teamc.opgg.swoomi.advice.exception.CMsgRoomNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
+import teamc.opgg.swoomi.dto.CloudDragonDto;
 import teamc.opgg.swoomi.dto.MatchDto;
 import teamc.opgg.swoomi.dto.MatchStatusDto;
 import teamc.opgg.swoomi.dto.MsgRoomDto;
+import teamc.opgg.swoomi.entity.CloudDragonCount;
 import teamc.opgg.swoomi.entity.MsgRoom;
+import teamc.opgg.swoomi.repository.CloudDragonRepository;
 import teamc.opgg.swoomi.repository.MsgRoomRepository;
 
 import java.io.IOException;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 public class MsgService {
     private final MatchService matchService;
     private final ObjectMapper objectMapper;
+    private final CloudDragonRepository cloudDragonRepository;
     private final MsgRoomRepository msgRoomRepository;
 
     public List<MsgRoomDto> findAllRoom() {
@@ -53,5 +57,20 @@ public class MsgService {
             } else return msgRoomRepository.findByRoomId(thisRoomEndPoint).get().getRoomId();
         }
         throw new CSummonerNotInGameException();
+    }
+
+    public void cloudDragonCount(CloudDragonDto dto) {
+        Optional<CloudDragonCount> optionalCloudDragonCount = cloudDragonRepository.findCloudDragonCountByMatchTeamCode(dto.getMatchTeamCode());
+        if (optionalCloudDragonCount.isPresent()) {
+            CloudDragonCount cloudDragonCount = optionalCloudDragonCount.get();
+            cloudDragonCount.setDragonCount(dto.getDragonCount());
+        } else {
+            CloudDragonCount cloudDragonCount = CloudDragonCount.builder()
+                    .dragonCount(dto.getDragonCount())
+                    .matchTeamCode(dto.getMatchTeamCode())
+                    .build();
+
+            cloudDragonRepository.save(cloudDragonCount);
+        }
     }
 }

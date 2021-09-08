@@ -118,6 +118,8 @@ public class ItemPurchaseService {
         if (championInfoRepo.findBySummonerName(summonerName).isEmpty())
             throw new CSummonerNoItemInfoException();
 
+        championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
+
         itemPurchaseRepository.removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(
                 matchTeamCode,
                 summonerName,

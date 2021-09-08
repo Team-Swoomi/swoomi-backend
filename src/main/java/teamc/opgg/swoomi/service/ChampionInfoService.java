@@ -21,6 +21,7 @@ import teamc.opgg.swoomi.advice.exception.CSummonerNoRuneInfoException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionInfo;
+import teamc.opgg.swoomi.entity.CloudDragonCount;
 import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
 import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.CloudDragonRepository;
@@ -143,10 +144,16 @@ public class ChampionInfoService {
         Optional<ChampionInfo> championInfo = championInfoRepo.findBySummonerName(summonerName);
 
         if (championInfo.isPresent() && !infoIsUpdated(summonerName)) {
-
             ChampionInfo info = championInfo.get();
+            String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
 
             double skillAccel = info.getSkillAccel();
+            Optional<CloudDragonCount> cloudDragonCount = cloudDragonRepository.findCloudDragonCountByMatchTeamCode(matchTeamCode);
+
+            if (cloudDragonCount.isPresent()) {
+                skillAccel += cloudDragonCount.get().getDragonCount() * 12;
+            }
+
             Double cooltimeR = getInitialCooltimeInfo(summonerName, ultLevel).getCooltimeR();
             double skillCooldownPercent = (100 - (double) 100 * (skillAccel / (100 + skillAccel))) / 100;
             double cooltimeCalcedR = Math.round((cooltimeR * skillCooldownPercent) * 100) / (double) 100;

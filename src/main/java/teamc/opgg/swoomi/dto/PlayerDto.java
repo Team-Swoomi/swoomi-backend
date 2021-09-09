@@ -14,6 +14,8 @@ public class PlayerDto {
     private String championName;
     private String championImgUrl;
     private String ultImgUrl;
+    private String spellDName;
+    private String spellFName;
     private String spellDImgUrl;
     private String spellFImgUrl;
     private List<ItemDto> frequentItems;

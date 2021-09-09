@@ -103,6 +103,8 @@ public class MatchService {
                     .championName(championName)
                     .championImgUrl(p.getChampion().getImage().getURL())
                     .ultImgUrl(p.getChampion().getSpells().get(3).getImage().getURL())
+                    .spellDName(p.getSummonerSpellD().getName())
+                    .spellFName(p.getSummonerSpellF().getName())
                     .spellDImgUrl(p.getSummonerSpellD().getImage().getURL())
                     .spellFImgUrl(p.getSummonerSpellF().getImage().getURL())
                     .frequentItems(list)

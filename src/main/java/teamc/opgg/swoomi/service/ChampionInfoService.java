@@ -5,14 +5,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.merakianalytics.orianna.Orianna;
-import com.merakianalytics.orianna.types.common.Region;
-import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
-import com.merakianalytics.orianna.types.core.spectator.Runes;
-import com.merakianalytics.orianna.types.core.staticdata.ChampionSpell;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,12 +17,9 @@ import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.entity.CloudDragonCount;
-import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
 import teamc.opgg.swoomi.repository.ChampionInfoRepo;
 import teamc.opgg.swoomi.repository.CloudDragonRepository;
-import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

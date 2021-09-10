@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
@@ -58,8 +59,9 @@ public class MatchController {
     public SingleResult<MatchStatusDto> getMatchTeamCode(
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable String summonerName) {
-        MatchStatusDto matchStatusDto = matchService.getMatchTeamCode(summonerName);
-        return responseService.getSingleResult(matchStatusDto);
+        if (getMatchStatus(summonerName).getData().isMatchStatus()) {
+            return responseService.getSingleResult(matchService.getMatchTeamCode(summonerName));
+        } else throw new CSummonerNotInGameException();
     }
 
     @GetMapping("/frequent/{championName}/{position}")

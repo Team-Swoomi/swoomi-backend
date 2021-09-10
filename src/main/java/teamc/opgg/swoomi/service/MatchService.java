@@ -121,10 +121,7 @@ public class MatchService {
         boolean isMyTeam = false;
         long myTeam = 100;
         Summoner summoner;
-        MatchStatusDto matchStatusDto = MatchStatusDto.builder()
-                .isStarted(false)
-                .matchTeamCode("")
-                .build();
+        MatchStatusDto matchStatusDto;
 
         summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
@@ -133,6 +130,10 @@ public class MatchService {
 
         CurrentMatch currentMatch = Orianna.currentMatchForSummoner(summoner).get();
         if (currentMatch.getId() != 0) {
+            matchStatusDto = MatchStatusDto.builder()
+                    .isStarted(false)
+                    .matchTeamCode("")
+                    .build();
             for (int i = 0; i < 5; i++) {
                 Player player = currentMatch.getParticipants().get(i);
                 if (player.getSummoner().getName().equals(summonerName)) {
@@ -155,8 +156,8 @@ public class MatchService {
                         .build();
                 matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
             }
-        }
-        return matchStatusDto;
+            return matchStatusDto;
+        } else throw new CSummonerNotInGameException();
     }
 
     @Transactional(readOnly = true)

@@ -59,6 +59,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult otherException(HttpServletRequest request, Exception e) {
         log.error(e.toString());
+        e.printStackTrace();
         return responseService.getFailResult(
                 ErrorCode.UnDefinedError.getCode(),
                 ErrorCode.UnDefinedError.getMsg()

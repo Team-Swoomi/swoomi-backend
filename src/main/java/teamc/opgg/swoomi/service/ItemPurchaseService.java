@@ -49,8 +49,10 @@ public class ItemPurchaseService {
         Optional<ChampionInfo> championInfo
                 = championInfoRepo.findBySummonerName(purchaseReqDto.getSummonerName());
 
-        if (championInfo.isPresent() && championInfo.get().getHasMystic()) {
-            totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
+        if (championInfo.isPresent()) {
+            if (championInfo.get().getHasMystic()) {
+                totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
+            }
         }
 
         return totalItemSkillAccel;

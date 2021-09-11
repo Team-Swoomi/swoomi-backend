@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import teamc.opgg.swoomi.advice.exception.CMsgRoomNotFoundException;
@@ -59,6 +60,7 @@ public class MsgService {
         throw new CSummonerNotInGameException();
     }
 
+    @Transactional
     public void cloudDragonCount(CloudDragonDto dto) {
         Optional<CloudDragonCount> optionalCloudDragonCount = cloudDragonRepository.findCloudDragonCountByMatchTeamCode(dto.getMatchTeamCode());
         if (optionalCloudDragonCount.isPresent()) {

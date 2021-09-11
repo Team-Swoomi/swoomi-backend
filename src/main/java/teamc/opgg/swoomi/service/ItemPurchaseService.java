@@ -84,7 +84,14 @@ public class ItemPurchaseService {
         if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
             championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
         } else {
-            throw new CSummonerNoItemInfoException();
+            ChampionInfo info = ChampionInfo.builder()
+                    .summonerName(summonerName)
+                    .countLegendary(0)
+                    .hasMystic(false)
+                    .updated(false)
+                    .build();
+
+            championInfoRepo.save(info);
         }
 
         if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {

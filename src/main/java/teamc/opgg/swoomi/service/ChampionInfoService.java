@@ -207,6 +207,8 @@ public class ChampionInfoService {
             info.setUpdated(false);
         } else {
             ChampionInfo info = championInfoDto.toEntity();
+            info.setCountLegendary(0);
+            info.setHasMystic(false);
             info.setUpdated(false);
             championInfoRepo.save(info);
         }

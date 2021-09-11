@@ -80,23 +80,11 @@ public class ItemPurchaseService {
     public void setPurchaseItem(ItemPurchaseOneDto itemPurchaseOneDto) {
         String itemName = itemPurchaseOneDto.getItemName();
         String summonerName = itemPurchaseOneDto.getSummonerName();
-        String championName = itemPurchaseOneDto.getChampionName();
 
         if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
             championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
         } else {
-            championInfoRepo.save(ChampionInfo.builder()
-                    .summonerName(summonerName)
-                    .championName(championName)
-                    .dSpellTime(0.)
-                    .fSpellTime(0.)
-                    .rSpellTime(0.)
-                    .skillAccel(0)
-                    .spellAccel(0)
-                    .countLegendary(0)
-                    .hasMystic(false)
-                    .updated(true)
-                    .build());
+            throw new CSummonerNoItemInfoException();
         }
 
         if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {

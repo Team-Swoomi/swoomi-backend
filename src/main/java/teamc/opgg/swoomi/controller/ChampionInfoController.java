@@ -31,6 +31,9 @@ public class ChampionInfoController {
             @ApiParam(value = "궁 레벨 (lv 1, 2, 3)", required = true)
             @RequestParam int ultLevel)
     {
+        log.info("SUMMONER NAME : " + summonerName);
+        log.info("ULT LEVEL : " + ultLevel);
+
         ChampionCoolInfoDto championCoolInfoDto = championInfoService.getInitialCooltimeInfo(summonerName, ultLevel);
         return responseService.getSingleResult(championCoolInfoDto);
     }
@@ -43,6 +46,9 @@ public class ChampionInfoController {
             @ApiParam(value = "궁 레벨 (lv 1, 2, 3)", required = true)
             @RequestParam int ultLevel)
     {
+        log.info("SUMMONER NAME : " + summonerName);
+        log.info("ULT LEVEL : " + ultLevel);
+
         ChampionCoolInfoDto calcedCooltimeInfo = championInfoService
                 .getCalcedCooltimeInfo(summonerName, ultLevel);
         return responseService.getSingleResult(calcedCooltimeInfo);

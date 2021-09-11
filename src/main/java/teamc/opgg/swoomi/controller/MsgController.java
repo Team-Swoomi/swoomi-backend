@@ -40,6 +40,8 @@ public class MsgController {
     public ItemMessage message(@DestinationVariable String teamId,
                                ItemMessage itemMessage) {
 
+        log.info("Item Message : " + itemMessage.toString());
+
         for (String itemName : itemMessage.getItemNames()) {
             ItemPurchaseOneDto itemDto = ItemPurchaseOneDto.builder()
                     .matchTeamCode(teamId)

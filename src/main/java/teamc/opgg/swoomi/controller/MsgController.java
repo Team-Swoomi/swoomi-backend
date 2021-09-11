@@ -52,6 +52,21 @@ public class MsgController {
         return itemMessage;
     }
 
+    /**
+     * 새로운 유저가 접속하면
+     * 현재 감소하고 있는 쿨 타임 데이터 받기 위하여
+     * 접속했다고 알리기 위함
+     * @param teamId
+     * @param dto
+     * @return
+     */
+    @MessageMapping("/comm/newUser/{teamId}")
+    @SendTo("/sub/comm/newUser/{teamId}")
+    public NewUserDto newUser(@DestinationVariable String teamId,
+                           NewUserDto dto) {
+        return dto;
+    }
+
     @MessageMapping("/comm/dragon/{matchTeamCode}")
     @SendTo("/sub/comm/dragon/{matchTeamCode}")
     public CloudDragonDto cloudDragonCount(@DestinationVariable String matchTeamCode,

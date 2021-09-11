@@ -79,8 +79,8 @@ public class MsgController {
      * @param dto
      * @return
      */
-    @MessageMapping("/comm/ult/{teamId}")
-    @SendTo("/sub/comm/ult/{teamId}")
+    @MessageMapping("/comm/ult/{matchTeamCode}")
+    @SendTo("/sub/comm/ult/{matchTeamCode}")
     public UltDto ultMessage(@DestinationVariable String matchTeamCode,
                              UltDto dto) {
         return dto;

@@ -2,6 +2,8 @@ package teamc.opgg.swoomi.dto.socket;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -10,6 +12,7 @@ import lombok.*;
 public class ItemMessage {
     private String summonerName;
     private String championName;
-    private String itemName;
+    private List<String> itemNames;
     private String type;
+    private String method;
 }

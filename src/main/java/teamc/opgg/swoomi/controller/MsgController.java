@@ -12,6 +12,8 @@ import teamc.opgg.swoomi.dto.socket.Message;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
 import teamc.opgg.swoomi.service.MsgService;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -34,27 +36,31 @@ public class MsgController {
     publish [pub/comm/item/{teamId}]
      */
     @MessageMapping("/comm/item/{teamId}")
-    @SendTo("/sub/comm/room/{teamId}")
+    @SendTo("/sub/comm/item/{teamId}")
     public ItemMessage message(@DestinationVariable String teamId,
                                ItemMessage itemMessage) {
 
-        ItemPurchaseOneDto itemDto = ItemPurchaseOneDto.builder()
-                .matchTeamCode(teamId)
-                .itemName(itemMessage.getItemName())
-                .summonerName(itemMessage.getSummonerName())
-                .championName(itemMessage.getChampionName())
-                .build();
-        if (itemMessage.getType().equals("DELETE")) {
-            itemPurchaseService.deletePurchaseItem(itemDto);
-        } else {
-            itemPurchaseService.setPurchaseItem(itemDto);
+        for (String itemName : itemMessage.getItemNames()) {
+            ItemPurchaseOneDto itemDto = ItemPurchaseOneDto.builder()
+                    .matchTeamCode(teamId)
+                    .itemName(itemName)
+                    .summonerName(itemMessage.getSummonerName())
+                    .championName(itemMessage.getChampionName())
+                    .build();
+
+            if (itemMessage.getMethod().equals("DELETE") && itemMessage.getType().equals("ITEM")) {
+                itemPurchaseService.deletePurchaseItem(itemDto);
+            } else {
+                itemPurchaseService.setPurchaseItem(itemDto);
+            }
         }
+
         return itemMessage;
     }
 
     /**
      * 새로운 유저가 접속하면
-     * 현재 감소하고 있는 쿨 타임 데이터 받기 위하여
+     * 현재 초기 데이터에서 변화된 모든 데이터 필요하기 때문에 (동기화)
      * 접속했다고 알리기 위함
      * @param teamId
      * @param dto
@@ -67,6 +73,25 @@ public class MsgController {
         return dto;
     }
 
+    /**
+     * 궁 레벨 정보 통신
+     * @param matchTeamCode
+     * @param dto
+     * @return
+     */
+    @MessageMapping("/comm/ult/{teamId}")
+    @SendTo("/sub/comm/ult/{teamId}")
+    public UltDto ultMessage(@DestinationVariable String matchTeamCode,
+                             UltDto dto) {
+        return dto;
+    }
+
+    /**
+     * 바람용 정보 통신
+     * @param matchTeamCode
+     * @param dto
+     * @return
+     */
     @MessageMapping("/comm/dragon/{matchTeamCode}")
     @SendTo("/sub/comm/dragon/{matchTeamCode}")
     public CloudDragonDto cloudDragonCount(@DestinationVariable String matchTeamCode,

@@ -106,7 +106,7 @@ public class ChampionInfoService {
     @Transactional(readOnly = true)
     public ChampionCoolInfoDto getInitialCooltimeInfo(String summonerName, int ultLevel) {
 
-        if (ultLevel < 0 || ultLevel > 3) ultLevel = 1;
+        if (ultLevel < 1 || ultLevel > 3) ultLevel = 1;
 
         Player player = getPlayer(summonerName);
         Double cooldownDSpell = player.getSummonerSpellD().getCooldowns().get(0);

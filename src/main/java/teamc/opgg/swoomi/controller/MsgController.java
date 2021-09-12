@@ -1,11 +1,13 @@
 package teamc.opgg.swoomi.controller;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.dto.socket.ItemMessage;
 import teamc.opgg.swoomi.dto.socket.Message;
@@ -46,7 +48,7 @@ public class MsgController {
 
         log.info("Item Message : " + itemMessage.toString());
 
-        if (!championInfoRepo.findBySummonerName(itemMessage.getSummonerName()).isPresent()) {
+        if (championInfoRepo.findBySummonerName(itemMessage.getSummonerName()).isEmpty()) {
             championInfoService.calculateAndSaveChampionInfo(itemMessage.getSummonerName(), 1);
         }
 
@@ -109,5 +111,15 @@ public class MsgController {
         dto.setMatchTeamCode(matchTeamCode);
         msgService.cloudDragonCount(dto);
         return dto;
+    }
+
+    /***
+     * 새로 들어온 경우 전체 정보 전달
+     */
+    @MessageMapping("/comm/initData/{teamId}")
+    @SendTo("/sub/comm/initData{teamId}")
+    public String initData(@DestinationVariable String teamId,
+                         String initData) {
+        return initData;
     }
 }

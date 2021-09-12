@@ -26,7 +26,6 @@ public class ItemPurchaseService {
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
     private final ResponseService responseService;
-    private final ChampionInfoService championInfoService;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
@@ -85,7 +84,7 @@ public class ItemPurchaseService {
         String summonerName = itemPurchaseOneDto.getSummonerName();
 
         if (!championInfoRepo.findBySummonerName(summonerName).isPresent()) {
-            championInfoService.calculateAndSaveChampionInfo(summonerName, 1);
+            throw new CSummonerNoItemInfoException();
         }
 
         ChampionInfo championInfo = championInfoRepo.findBySummonerName(summonerName).get();

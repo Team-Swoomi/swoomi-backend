@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.dto.socket.ItemMessage;
 import teamc.opgg.swoomi.dto.socket.Message;
+import teamc.opgg.swoomi.repository.ChampionInfoRepo;
+import teamc.opgg.swoomi.service.ChampionInfoService;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
 import teamc.opgg.swoomi.service.MsgService;
 
@@ -20,6 +22,8 @@ import java.util.List;
 public class MsgController {
 
     private final ItemPurchaseService itemPurchaseService;
+    private final ChampionInfoService championInfoService;
+    private final ChampionInfoRepo championInfoRepo;
     private final MsgService msgService;
 
     /***
@@ -41,6 +45,10 @@ public class MsgController {
                                ItemMessage itemMessage) {
 
         log.info("Item Message : " + itemMessage.toString());
+
+        if (!championInfoRepo.findBySummonerName(itemMessage.getSummonerName()).isPresent()) {
+            championInfoService.calculateAndSaveChampionInfo(itemMessage.getSummonerName(), 1);
+        }
 
         for (String itemName : itemMessage.getItemNames()) {
             ItemPurchaseOneDto itemDto = ItemPurchaseOneDto.builder()

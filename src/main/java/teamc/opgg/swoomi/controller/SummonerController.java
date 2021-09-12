@@ -29,7 +29,7 @@ public class SummonerController {
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable("name") String summonerName) {
 
-        log.info("summoner Name : " + summonerName);
+        log.info("Summoner Name : " + summonerName);
         SummonerResponseDto responseDto = oriannaService.SummonerFindByNameAndSave(summonerName);
         return responseService.getSingleResult(responseDto);
     }
@@ -40,8 +40,18 @@ public class SummonerController {
             @ApiParam(value = "스펠 명", required = true)
             @RequestParam SPELL spellName) {
 
-        log.info("spell Name : " + spellName.name());
+        log.info("Spell Name : " + spellName.name());
         String spellImgURL = oriannaService.findSpellImageByName(spellName);
         return responseService.getSingleResult(spellImgURL);
+    }
+
+    @ApiOperation(value = "소환사 프로필 이미지 검색", notes = "소환사명을 통해 프로필 이미지 URL을 가져옵니다.")
+    @GetMapping("/profileImgURL")
+    public SingleResult<String> findSummonerProfileImg(
+            @ApiParam(value = "소환사 명", required = true)
+            @RequestParam String summonerName) {
+        log.info("Summoner Name : " + summonerName);
+        String summonerProfileImg = oriannaService.findSummonerProfileImg(summonerName);
+        return responseService.getSingleResult(summonerProfileImg);
     }
 }

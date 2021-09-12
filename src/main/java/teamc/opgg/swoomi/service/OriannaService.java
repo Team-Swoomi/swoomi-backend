@@ -62,4 +62,13 @@ public class OriannaService {
                 .get();
         return summonerSpell.getImage().getURL();
     }
+
+    public String findSummonerProfileImg(String summonerName) {
+        Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
+        if (summoner.exists()) {
+            return summoner.getProfileIcon().getImage().getURL();
+        } else {
+            throw new CSummonerNotFoundException();
+        }
+    }
 }

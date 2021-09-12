@@ -26,6 +26,7 @@ public class ItemPurchaseService {
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
     private final ResponseService responseService;
+    private final ChampionInfoService championInfoService;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
@@ -83,22 +84,25 @@ public class ItemPurchaseService {
         String itemName = itemPurchaseOneDto.getItemName();
         String summonerName = itemPurchaseOneDto.getSummonerName();
 
-        if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
-            championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
-
-            if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
-                Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
-                championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary + 1);
-            }
-
-            if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
-                championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(true);
-            }
-
-            itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
-            return responseService.getSuccessResult();
+        if (!championInfoRepo.findBySummonerName(summonerName).isPresent()) {
+            championInfoService.calculateAndSaveChampionInfo(summonerName, 1);
         }
-        throw new CSummonerNoItemInfoException();
+
+        ChampionInfo championInfo = championInfoRepo.findBySummonerName(summonerName).get();
+        championInfo.setUpdated(true);
+
+        if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
+            Integer countLegendary = championInfo.getCountLegendary();
+            championInfo.setCountLegendary(countLegendary + 1);
+        }
+
+        if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
+            championInfo.setHasMystic(true);
+        }
+
+        itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
+
+        return responseService.getSuccessResult();
     }
 
     @Transactional

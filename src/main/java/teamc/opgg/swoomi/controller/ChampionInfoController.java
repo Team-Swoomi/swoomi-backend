@@ -15,7 +15,7 @@ import teamc.opgg.swoomi.service.ResponseService;
 
 @Slf4j
 @RestController
-@Api(tags = "5. 챔피언 쿨감/쿨타임 정보")
+@Api(tags = {"5. 챔피언 쿨감/쿨타임 정보"})
 @RequiredArgsConstructor
 @RequestMapping("/champion")
 public class ChampionInfoController {

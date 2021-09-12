@@ -16,7 +16,6 @@ import teamc.opgg.swoomi.service.QrService;
 import teamc.opgg.swoomi.service.ResponseService;
 import teamc.opgg.swoomi.service.SummonerService;
 
-@Service
 @Api(tags = {"4. QR code"})
 @Slf4j
 @RestController

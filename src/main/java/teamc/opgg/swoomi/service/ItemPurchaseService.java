@@ -10,6 +10,7 @@ import teamc.opgg.swoomi.dto.ItemPurchaserInfoDto;
 import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.ItemPurchase;
+import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.repository.*;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class ItemPurchaseService {
     private final ChampionInfoRepo championInfoRepo;
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
+    private final ResponseService responseService;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
@@ -77,59 +79,54 @@ public class ItemPurchaseService {
     }
 
     @Transactional
-    public void setPurchaseItem(ItemPurchaseOneDto itemPurchaseOneDto) {
+    public CommonResult setPurchaseItem(ItemPurchaseOneDto itemPurchaseOneDto) {
         String itemName = itemPurchaseOneDto.getItemName();
         String summonerName = itemPurchaseOneDto.getSummonerName();
 
         if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
             championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
-        } else {
-            ChampionInfo info = ChampionInfo.builder()
-                    .summonerName(summonerName)
-                    .countLegendary(0)
-                    .hasMystic(false)
-                    .updated(false)
-                    .build();
 
-            championInfoRepo.save(info);
+            if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
+                Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
+                championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary + 1);
+            }
+
+            if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
+                championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(true);
+            }
+
+            itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
+            return responseService.getSuccessResult();
         }
-
-        if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
-            Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
-            championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary + 1);
-        }
-
-        if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
-            championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(true);
-        }
-
-        itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
+        throw new CSummonerNoItemInfoException();
     }
 
     @Transactional
-    public void deletePurchaseItem(ItemPurchaseOneDto itemDto) {
+    public CommonResult deletePurchaseItem(ItemPurchaseOneDto itemDto) {
         String matchTeamCode = itemDto.getMatchTeamCode();
         String summonerName = itemDto.getSummonerName();
         String itemName = itemDto.getItemName();
 
-        if (championInfoRepo.findBySummonerName(summonerName).isEmpty())
-            throw new CSummonerNoItemInfoException();
+        if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
+            championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
 
-        championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
+            itemPurchaseRepository.removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(
+                    matchTeamCode,
+                    summonerName,
+                    itemName
+            );
 
-        itemPurchaseRepository.removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(
-                matchTeamCode,
-                summonerName,
-                itemName
-        );
+            if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
+                Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
+                championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary - 1);
+            }
 
-        if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
-            Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
-            championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary - 1);
+            if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
+                championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(false);
+            }
+
+            return responseService.getSuccessResult();
         }
-
-        if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
-            championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(false);
-        }
+        throw new CSummonerNoItemInfoException();
     }
 }

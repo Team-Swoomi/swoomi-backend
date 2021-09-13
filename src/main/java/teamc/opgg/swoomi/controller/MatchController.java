@@ -40,6 +40,15 @@ public class MatchController {
         return responseService.getSingleResult(dto);
     }
 
+    @GetMapping("/{matchTeamCode}")
+    @ApiOperation(value = "게임 시작 여부 반환 by matchTeamCode", notes = "matchTeamCode를 받아 현재 게임 시작 여부를 리턴합니다.")
+    public SingleResult<MatchDto> getMatchStatusByMatchTeamCode(
+            @ApiParam(value = "matchTeamCode", required = true)
+            @PathVariable String matchTeamCode) {
+        MatchDto dto = matchService.getMatchStatusByMatchTeamCode(matchTeamCode);
+        return responseService.getSingleResult(dto);
+    }
+
     @GetMapping("/data/{summonerName}")
     @ApiOperation(value ="상대팀 데이터 반환", notes="소환사명을 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
     public ListResult<PlayerDto> getOpData(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {

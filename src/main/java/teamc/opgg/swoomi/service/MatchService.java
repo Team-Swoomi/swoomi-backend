@@ -27,14 +27,9 @@ import java.util.stream.Collectors;
 public class MatchService {
 
     @Autowired
-    private ItemPurchaseRepository itemPurchaseRepository;
-    @Autowired
     private ChampionItemRepository championItemRepository;
     @Autowired
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
-
-    @Autowired
-    private ItemPurchaseService itemPurchaseService;
 
     @Transactional(readOnly = true)
     public MatchDto getMatchStatus(String summonerName) {
@@ -48,6 +43,14 @@ public class MatchService {
             throw new CSummonerNotFoundException();
         }
         return dto;
+    }
+
+    @Transactional(readOnly = true)
+    public MatchDto getMatchStatusByMatchTeamCode(String matchTeamCode) {
+        String summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(matchTeamCode)
+                .orElseThrow(CSummonerNotInGameException::new)
+                .getSummonerName();
+        return getMatchStatus(summonerName);
     }
 
     @Transactional(readOnly = true)

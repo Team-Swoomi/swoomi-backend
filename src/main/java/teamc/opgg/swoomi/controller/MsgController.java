@@ -120,6 +120,8 @@ public class MsgController {
     @SendTo("/sub/comm/initData{teamId}")
     public String initData(@DestinationVariable String teamId,
                          String initData) {
+        log.info("TEAM ID : "+teamId);
+        log.info(initData);
         return initData;
     }
 }

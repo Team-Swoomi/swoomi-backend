@@ -117,7 +117,7 @@ public class MsgController {
      * 새로 들어온 경우 전체 정보 전달
      */
     @MessageMapping("/comm/initData/{teamId}")
-    @SendTo("/sub/comm/initData{teamId}")
+    @SendTo("/sub/comm/initData/{teamId}")
     public String initData(@DestinationVariable String teamId,
                          String initData) {
         log.info("TEAM ID : "+teamId);

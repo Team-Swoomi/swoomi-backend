@@ -40,7 +40,7 @@ public class MatchController {
         return responseService.getSingleResult(dto);
     }
 
-    @GetMapping("/{matchTeamCode}")
+    @GetMapping("/teamCode/{matchTeamCode}")
     @ApiOperation(value = "게임 시작 여부 반환 by matchTeamCode", notes = "matchTeamCode를 받아 현재 게임 시작 여부를 리턴합니다.")
     public SingleResult<MatchDto> getMatchStatusByMatchTeamCode(
             @ApiParam(value = "matchTeamCode", required = true)

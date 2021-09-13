@@ -36,6 +36,7 @@ public class ChampionInfoService {
     @Transactional
     public Player getPlayer(String summonerName) {
 
+        log.info("\""+summonerName+"\"");
         String matchTeamCode = matchService
                 .getMatchTeamCode(summonerName)
                 .getMatchTeamCode();

@@ -38,10 +38,9 @@ public class ItemPurchaseService {
         Optional<ChampionItem> championItem;
         for (ItemPurchase item : itemPurchases)
         {
-            String itemName = item.getItemName();
             championItem = championItemRepository
                     .findFirstByItemNameAndChampionName(
-                            itemName,
+                            item.getItemName(),
                             purchaseReqDto.getChampionName());
             if (championItem.isPresent()) {
                 totalItemSkillAccel += Integer.parseInt(championItem.get().getSkillAccel());
@@ -51,12 +50,11 @@ public class ItemPurchaseService {
         Optional<ChampionInfo> championInfo
                 = championInfoRepo.findBySummonerName(purchaseReqDto.getSummonerName());
 
-        if (championInfo.isPresent()) {
-            if (championInfo.get().getHasMystic()) {
-                totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
-            }
+        if (championInfo.isPresent() && championInfo.get().getHasMystic()) {
+            totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
         }
 
+        log.info("SKILL ACCEL : " + totalItemSkillAccel);
         return totalItemSkillAccel;
     }
 
@@ -75,33 +73,35 @@ public class ItemPurchaseService {
                 break;
             }
         }
+
+        log.info("SPELL ACCEL : " + itemSpellAccel);
         return itemSpellAccel;
     }
 
     @Transactional
-    public CommonResult setPurchaseItem(ItemPurchaseOneDto itemPurchaseOneDto) {
-        String itemName = itemPurchaseOneDto.getItemName();
-        String summonerName = itemPurchaseOneDto.getSummonerName();
+    public CommonResult setPurchaseItem(ItemPurchaseOneDto itemDto) {
+        String itemName = itemDto.getItemName();
+        String summonerName = itemDto.getSummonerName();
 
-        if (!championInfoRepo.findBySummonerName(summonerName).isPresent()) {
-            throw new CSummonerNoItemInfoException();
+        if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
+            ChampionInfo info = championInfoRepo.findBySummonerName(summonerName).get();
+            info.setUpdated(true);
+
+            if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
+                Integer countLegendary = info.getCountLegendary();
+                info.setCountLegendary(++countLegendary);
+            }
+
+            if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
+                info.setHasMystic(true);
+            }
+
+            itemPurchaseRepository.save(itemDto.toEntity());
+
+            log.info("GET : " +  itemDto.getItemName() +" - " + itemDto.getSummonerName());
+            return responseService.getSuccessResult();
         }
-
-        ChampionInfo championInfo = championInfoRepo.findBySummonerName(summonerName).get();
-        championInfo.setUpdated(true);
-
-        if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
-            Integer countLegendary = championInfo.getCountLegendary();
-            championInfo.setCountLegendary(countLegendary + 1);
-        }
-
-        if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
-            championInfo.setHasMystic(true);
-        }
-
-        itemPurchaseRepository.save(itemPurchaseOneDto.toEntity());
-
-        return responseService.getSuccessResult();
+        throw new CSummonerNoItemInfoException();
     }
 
     @Transactional
@@ -111,7 +111,8 @@ public class ItemPurchaseService {
         String itemName = itemDto.getItemName();
 
         if (championInfoRepo.findBySummonerName(summonerName).isPresent()) {
-            championInfoRepo.findBySummonerName(summonerName).get().setUpdated(true);
+            ChampionInfo info = championInfoRepo.findBySummonerName(summonerName).get();
+            info.setUpdated(true);
 
             itemPurchaseRepository.removeItemPurchaseByMatchTeamCodeAndSummonerNameAndItemName(
                     matchTeamCode,
@@ -120,14 +121,15 @@ public class ItemPurchaseService {
             );
 
             if (LegendaryItemRepo.getInstance().getLegendaryItemSet().contains(itemName)) {
-                Integer countLegendary = championInfoRepo.findBySummonerName(summonerName).get().getCountLegendary();
-                championInfoRepo.findBySummonerName(summonerName).get().setCountLegendary(countLegendary - 1);
+                Integer countLegendary = info.getCountLegendary();
+                info.setCountLegendary(--countLegendary);
             }
 
             if (MysticItemRepo.getInstance().getMysticItemSet().contains(itemName)) {
-                championInfoRepo.findBySummonerName(summonerName).get().setHasMystic(false);
+                info.setHasMystic(false);
             }
 
+            log.info("DELETE : " +  itemDto.getItemName() +" - " + itemDto.getSummonerName());
             return responseService.getSuccessResult();
         }
         throw new CSummonerNoItemInfoException();

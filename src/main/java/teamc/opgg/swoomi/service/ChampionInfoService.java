@@ -166,8 +166,8 @@ public class ChampionInfoService {
                 .build();
 
         ChampionAccelInfoDto initialRuneInfo = getInitialRuneInfo(summonerName);
-        int finalSpellAccel = initialRuneInfo.getSpellAccel() + getTotalItemSpellAccel(purchaserInfoDto);
         int finalSkillAccel = initialRuneInfo.getSkillAccel() + getTotalItemSkillAccel(purchaserInfoDto);
+        int finalSpellAccel = initialRuneInfo.getSpellAccel() + getTotalItemSpellAccel(purchaserInfoDto);
 
         ChampionCoolInfoDto championCoolInfoDto = getInitialCooltimeInfo(summonerName, ultLevel);
         Double cooltimeD = championCoolInfoDto.getCooltimeD();
@@ -179,12 +179,12 @@ public class ChampionInfoService {
         double spellCooldownPercent = (100 - (double) 100 * ((double) finalSpellAccel / (double) (100 + finalSpellAccel))) / 100;
         double skillCooldownPercent = (100 - (double) 100 * ((double) finalSkillAccel / (double) (100 + finalSkillAccel))) / 100;
 
-        log.info("spell cooldown percent : " + spellCooldownPercent);
-        log.info("skill cooldown percent : " + skillCooldownPercent);
-
         double cooltimeCalcedD = Math.round((cooltimeD * spellCooldownPercent) * 100) / (double) 100;
         double cooltimeCalcedF = Math.round((cooltimeF * spellCooldownPercent) * 100) / (double) 100;
         double cooltimeCalcedR = Math.round((cooltimeR * skillCooldownPercent) * 100) / (double) 100;
+
+        log.info("FINAL COOL TIME D : " + cooltimeCalcedD);
+        log.info("FINAL COOL TIME F : " + cooltimeCalcedF);
 
         ChampionInfoDto championInfoDto = ChampionInfoDto.builder()
                 .summonerName(summonerName)
@@ -215,50 +215,6 @@ public class ChampionInfoService {
         }
 
         return championInfoDto;
-    }
-
-    @Transactional(readOnly = true)
-    public Integer getRuneSkillAccel(String summonerName) {
-        ChampionInfoDto championInfoDto = championInfoRepo
-                .findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new)
-                .toInfoDto();
-        return championInfoDto.getSkillAccel();
-    }
-
-    @Transactional(readOnly = true)
-    public Integer getRuneSpellAccel(String summonerName) {
-        ChampionInfoDto championInfoDto = championInfoRepo
-                .findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new)
-                .toInfoDto();
-        return championInfoDto.getSpellAccel();
-    }
-
-    @Transactional(readOnly = true)
-    public ChampionAccelInfoDto getTotalInfoAboutAccel(String summonerName) {
-        String championName = getPlayer(summonerName).getChampion().getName();
-        String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
-
-        ItemPurchaserInfoDto purchaserInfoDto = ItemPurchaserInfoDto.builder()
-                .championName(championName)
-                .summonerName(summonerName)
-                .matchTeamCode(matchTeamCode)
-                .build();
-
-        ChampionInfoDto championInfoDto = championInfoRepo
-                .findBySummonerName(summonerName)
-                .orElseThrow(CSummonerNoRuneInfoException::new)
-                .toInfoDto();
-
-        Integer totalSkillAccel = getTotalItemSkillAccel(purchaserInfoDto) + championInfoDto.getSkillAccel();
-        Integer totalSpellAccel = getTotalItemSpellAccel(purchaserInfoDto) + championInfoDto.getSpellAccel();
-
-        return ChampionAccelInfoDto.builder()
-                .summonerName(summonerName)
-                .skillAccel(totalSkillAccel)
-                .spellAccel(totalSpellAccel)
-                .build();
     }
 
     @Transactional

@@ -31,10 +31,15 @@ public class ItemPurchaseService {
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
-        List<ItemPurchase> itemPurchases = itemPurchaseRepository.findAllByMatchTeamCodeAndSummonerName(
+        List<ItemPurchase> itemPurchases = itemPurchaseRepository
+                .findAllByMatchTeamCodeAndSummonerName(
                         purchaseReqDto.getMatchTeamCode(),
                         purchaseReqDto.getSummonerName())
                 .orElseThrow(CSummonerNoItemInfoException::new);
+
+        for (ItemPurchase itemPurchase : itemPurchases) {
+            log.info("(skill) BUY ITEM > " + itemPurchase.getItemName());
+        }
 
         int totalItemSkillAccel = 0;
         Optional<ChampionItem> championItem;
@@ -73,10 +78,10 @@ public class ItemPurchaseService {
                 .findAllByMatchTeamCodeAndSummonerName(
                         purchaseReqDto.getMatchTeamCode(),
                         purchaseReqDto.getSummonerName())
-                .orElse(new ArrayList<>());
+                .orElseThrow(CSummonerNoItemInfoException::new);
 
         for (ItemPurchase itemPurchase : itemPurchases) {
-            log.info("BUY ITEM > " + itemPurchase.getItemName());
+            log.info("(spell) BUY ITEM > " + itemPurchase.getItemName());
         }
 
         int itemSpellAccel = 0;

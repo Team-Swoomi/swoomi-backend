@@ -21,7 +21,7 @@ public class QrService {
     @Autowired
     Environment env;
 
-    private final String realUrl = "http://3.34.111.116:8070";
+    private final String realUrl = "https://swoomi.me";
     private final String localUrl = "http://localhost:8070";
     private final RestTemplate restTemplate;
 
@@ -31,7 +31,7 @@ public class QrService {
         String URL;
         String property = env.getProperty("spring.profiles.include");
         if (property != null && property.contains("real")) {
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl="+realUrl+"/v1/summoner/";
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl="+realUrl+"/room/summoner/";
         } else {
             URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl="+localUrl+"/v1/summoner/";
         }

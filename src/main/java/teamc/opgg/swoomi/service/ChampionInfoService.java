@@ -169,6 +169,9 @@ public class ChampionInfoService {
         int finalSkillAccel = initialRuneInfo.getSkillAccel() + getTotalItemSkillAccel(purchaserInfoDto);
         int finalSpellAccel = initialRuneInfo.getSpellAccel() + getTotalItemSpellAccel(purchaserInfoDto);
 
+        log.info("FINAL SKILL ACCEL : " + finalSkillAccel);
+        log.info("FINAL SPELL ACCEL : " + finalSpellAccel);
+
         ChampionCoolInfoDto championCoolInfoDto = getInitialCooltimeInfo(summonerName, ultLevel);
         Double cooltimeD = championCoolInfoDto.getCooltimeD();
         Double cooltimeF = championCoolInfoDto.getCooltimeF();

@@ -62,7 +62,8 @@ public class MsgService {
 
     @Transactional
     public void cloudDragonCount(CloudDragonDto dto) {
-        Optional<CloudDragonCount> optionalCloudDragonCount = cloudDragonRepository.findCloudDragonCountByMatchTeamCode(dto.getMatchTeamCode());
+        Optional<CloudDragonCount> optionalCloudDragonCount =
+                cloudDragonRepository.findCloudDragonCountByMatchTeamCode(dto.getMatchTeamCode());
         if (optionalCloudDragonCount.isPresent()) {
             CloudDragonCount cloudDragonCount = optionalCloudDragonCount.get();
             cloudDragonCount.setDragonCount(dto.getDragonCount());

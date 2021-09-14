@@ -9,6 +9,7 @@ import teamc.opgg.swoomi.dto.ItemPurchaseOneDto;
 import teamc.opgg.swoomi.dto.ItemPurchaserInfoDto;
 import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.entity.ChampionItem;
+import teamc.opgg.swoomi.entity.CloudDragonCount;
 import teamc.opgg.swoomi.entity.ItemPurchase;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.repository.*;
@@ -26,6 +27,7 @@ public class ItemPurchaseService {
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
     private final ResponseService responseService;
+    private final CloudDragonRepository cloudDragonRepository;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
@@ -54,6 +56,13 @@ public class ItemPurchaseService {
             totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
         }
 
+        Optional<CloudDragonCount> cloudDto = cloudDragonRepository
+                .findCloudDragonCountByMatchTeamCode(purchaseReqDto.getMatchTeamCode());
+        if (cloudDto.isPresent()) {
+            totalItemSkillAccel += cloudDto.get().getDragonCount() * 12;
+            log.info("CLOUD CNT: " + cloudDto.get().getDragonCount());
+        }
+
         log.info("SKILL ACCEL : " + totalItemSkillAccel);
         return totalItemSkillAccel;
     }
@@ -70,6 +79,7 @@ public class ItemPurchaseService {
         for (ItemPurchase item : itemPurchases) {
             if (item.getItemName().equals("명석함의 아이오니아 장화")) {
                 itemSpellAccel += 12;
+                log.info("명석함의 아이오니아 장화 구매");
                 break;
             }
         }

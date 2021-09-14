@@ -47,7 +47,7 @@ public class ItemPurchaseService {
                             purchaseReqDto.getChampionName());
             if (championItem.isPresent()) {
                 totalItemSkillAccel += Integer.parseInt(championItem.get().getSkillAccel());
-            } else totalItemSkillAccel += 0;
+            }
         }
 
         Optional<ChampionInfo> championInfo
@@ -58,11 +58,12 @@ public class ItemPurchaseService {
         }
 
         Optional<CloudDragonCount> cloudDto = cloudDragonRepository
-                .findCloudDragonCountByMatchTeamCode(purchaseReqDto.getSummonerName());
+                .findCloudDragonCountByMatchTeamCode(purchaseReqDto.getMatchTeamCode());
         if (cloudDto.isPresent()) {
             totalItemSkillAccel += cloudDto.get().getDragonCount() * 12;
         }
 
+        log.debug("SKILL ACCEL : " + totalItemSkillAccel);
         return totalItemSkillAccel;
     }
 

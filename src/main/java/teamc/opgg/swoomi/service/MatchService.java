@@ -164,6 +164,18 @@ public class MatchService {
     }
 
     @Transactional(readOnly = true)
+    public String getMyMatchTeamCodeByEnemy(String summonerName) {
+
+        StringBuilder myCode = new StringBuilder(getMatchTeamCode(summonerName).getMatchTeamCode());
+        if (Integer.parseInt(myCode.substring(myCode.length() - 3)) == 100) {
+            myCode.replace(myCode.length()-3, myCode.length(), "200");
+        } else {
+            myCode.replace(myCode.length()-3, myCode.length(), "100");
+        }
+        return myCode.toString();
+    }
+
+    @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
         List<ItemDto> list = championItemRepository.findAllByChampionNameAndPosition(championName, position)
                 .get()

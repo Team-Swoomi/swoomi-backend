@@ -28,6 +28,7 @@ public class ItemPurchaseService {
     private final ChampionItemRepository championItemRepository;
     private final ResponseService responseService;
     private final CloudDragonRepository cloudDragonRepository;
+    private final MatchService matchService;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
@@ -61,8 +62,9 @@ public class ItemPurchaseService {
             totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
         }
 
+        String matchTeamCode = matchService.getMyMatchTeamCodeByEnemy(purchaseReqDto.getSummonerName());
         Optional<CloudDragonCount> cloudDto = cloudDragonRepository
-                .findCloudDragonCountByMatchTeamCode(purchaseReqDto.getMatchTeamCode());
+                .findCloudDragonCountByMatchTeamCode(matchTeamCode);
         if (cloudDto.isPresent()) {
             totalItemSkillAccel += cloudDto.get().getDragonCount() * 12;
             log.info("CLOUD CNT: " + cloudDto.get().getDragonCount());

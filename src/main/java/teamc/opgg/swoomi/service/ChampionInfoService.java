@@ -138,10 +138,11 @@ public class ChampionInfoService {
 
         if (championInfo.isPresent() && !infoIsUpdated(summonerName)) {
             ChampionInfo info = championInfo.get();
-            String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
+            String myMatchTeamCodeByEnemy = matchService.getMyMatchTeamCodeByEnemy(summonerName);
 
             double skillAccel = info.getSkillAccel();
-            Optional<CloudDragonCount> cloudDragonCount = cloudDragonRepository.findCloudDragonCountByMatchTeamCode(matchTeamCode);
+            Optional<CloudDragonCount> cloudDragonCount =
+                    cloudDragonRepository.findCloudDragonCountByMatchTeamCode(myMatchTeamCodeByEnemy);
 
             if (cloudDragonCount.isPresent()) {
                 skillAccel += cloudDragonCount.get().getDragonCount() * 12;
@@ -158,13 +159,13 @@ public class ChampionInfoService {
         }
 
         Player player = getPlayer(summonerName);
-        MatchStatusDto matchTeamCode = matchService.getMatchTeamCode(summonerName);
+        String myMatchTeamCode = matchService.getMyMatchTeamCodeByEnemy(summonerName);
         String championName = player.getChampion().getName();
 
         ItemPurchaserInfoDto purchaserInfoDto = ItemPurchaserInfoDto.builder()
                 .championName(championName)
                 .summonerName(summonerName)
-                .matchTeamCode(matchTeamCode.getMatchTeamCode())
+                .matchTeamCode(myMatchTeamCode)
                 .build();
 
         ChampionAccelInfoDto initialRuneInfo = getInitialRuneInfo(summonerName);

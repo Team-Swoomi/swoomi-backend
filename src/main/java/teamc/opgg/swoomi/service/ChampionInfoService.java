@@ -145,6 +145,8 @@ public class ChampionInfoService {
 
             if (cloudDragonCount.isPresent()) {
                 skillAccel += cloudDragonCount.get().getDragonCount() * 12;
+                log.info("CLOUD COUNT : " + cloudDragonCount.get().getDragonCount());
+                log.info("SKILL ACCEL : " + skillAccel);
             }
 
             Double cooltimeR = getInitialCooltimeInfo(summonerName, ultLevel).getCooltimeR();

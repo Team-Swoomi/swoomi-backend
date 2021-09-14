@@ -75,8 +75,13 @@ public class ItemPurchaseService {
                         purchaseReqDto.getSummonerName())
                 .orElse(new ArrayList<>());
 
+        for (ItemPurchase itemPurchase : itemPurchases) {
+            log.info("BUY ITEM > " + itemPurchase.getItemName());
+        }
+
         int itemSpellAccel = 0;
         for (ItemPurchase item : itemPurchases) {
+            log.info("EQUAL? : " + item.getItemName().equals("명석함의 아이오니아 장화"));
             if (item.getItemName().equals("명석함의 아이오니아 장화")) {
                 itemSpellAccel += 12;
                 log.info("명석함의 아이오니아 장화 구매");

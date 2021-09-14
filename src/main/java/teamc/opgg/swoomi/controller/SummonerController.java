@@ -29,8 +29,8 @@ public class SummonerController {
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable("name") String summonerName) {
 
-        log.info("Summoner Name : " + summonerName);
         SummonerResponseDto responseDto = oriannaService.SummonerFindByNameAndSave(summonerName);
+        log.info("RET NAME : " + responseDto.getSummonerName());
         return responseService.getSingleResult(responseDto);
     }
 

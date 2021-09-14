@@ -16,6 +16,8 @@ import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.MySummoner;
 import teamc.opgg.swoomi.repository.SummonerRepo;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -44,7 +46,10 @@ public class OriannaService {
                             .summonerLevel(summoner.getLevel())
                             .profileIconId(summoner.getProfileIcon().getId())
                             .build();
-                    summonerRepo.save(mySummoner);
+                    Optional<MySummoner> bySummonerId = summonerRepo.findBySummonerId(summoner.getId());
+                    if (bySummonerId.isPresent()) {
+                        return new SummonerResponseDto(bySummonerId.get());
+                    } else summonerRepo.save(mySummoner);
                 }
             } catch (IllegalStateException illegalStateException) {
                 log.error("NO SUMMONER");

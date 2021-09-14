@@ -36,7 +36,7 @@ public class ChampionInfoService {
     @Transactional
     public Player getPlayer(String summonerName) {
 
-        log.info("\""+summonerName+"\"");
+        log.info("["+summonerName+"]");
         String matchTeamCode = matchService
                 .getMatchTeamCode(summonerName)
                 .getMatchTeamCode();
@@ -104,7 +104,7 @@ public class ChampionInfoService {
         return itemPurchaseService.getTotalItemSpellAccelFromSummoner(purchaseReqDto);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ChampionCoolInfoDto getInitialCooltimeInfo(String summonerName, int ultLevel) {
 
         if (ultLevel < 1 || ultLevel > 3) ultLevel = 1;
@@ -118,10 +118,6 @@ public class ChampionInfoService {
 
         if (cooldownDSpell == 0) cooldownDSpell = cooldownFSpell;
         else if (cooldownFSpell == 0) cooldownFSpell = cooldownDSpell;
-
-        log.info("cooldown D : " + cooldownDSpell);
-        log.info("cooldown F : " + cooldownFSpell);
-        log.info("cooldown R : " + cooldownRSpell);
 
         return ChampionCoolInfoDto.builder()
                 .cooltimeD(cooldownDSpell)
@@ -146,8 +142,6 @@ public class ChampionInfoService {
 
             if (cloudDragonCount.isPresent()) {
                 skillAccel += cloudDragonCount.get().getDragonCount() * 12;
-                log.info("CLOUD COUNT : " + cloudDragonCount.get().getDragonCount());
-                log.info("SKILL ACCEL : " + skillAccel);
             }
 
             Double cooltimeR = getInitialCooltimeInfo(summonerName, ultLevel).getCooltimeR();
@@ -185,9 +179,9 @@ public class ChampionInfoService {
         double spellCooldownPercent = (100 - (double) 100 * ((double) finalSpellAccel / (double) (100 + finalSpellAccel))) / 100;
         double skillCooldownPercent = (100 - (double) 100 * ((double) finalSkillAccel / (double) (100 + finalSkillAccel))) / 100;
 
-        double cooltimeCalcedD = Math.round((cooltimeD * spellCooldownPercent) * 100) / (double) 100;
-        double cooltimeCalcedF = Math.round((cooltimeF * spellCooldownPercent) * 100) / (double) 100;
-        double cooltimeCalcedR = Math.round((cooltimeR * skillCooldownPercent) * 100) / (double) 100;
+        double cooltimeCalcedD = Math.round(cooltimeD * spellCooldownPercent);
+        double cooltimeCalcedF = Math.round(cooltimeF * spellCooldownPercent);
+        double cooltimeCalcedR = Math.round(cooltimeR * skillCooldownPercent);
 
         log.info("FINAL COOL TIME D : " + cooltimeCalcedD);
         log.info("FINAL COOL TIME F : " + cooltimeCalcedF);

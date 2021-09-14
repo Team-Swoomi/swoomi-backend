@@ -28,7 +28,6 @@ public class ItemPurchaseService {
     private final ChampionItemRepository championItemRepository;
     private final ResponseService responseService;
     private final CloudDragonRepository cloudDragonRepository;
-    private final MatchService matchService;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {
@@ -37,10 +36,6 @@ public class ItemPurchaseService {
                         purchaseReqDto.getMatchTeamCode(),
                         purchaseReqDto.getSummonerName())
                 .orElseThrow(CSummonerNoItemInfoException::new);
-
-        for (ItemPurchase itemPurchase : itemPurchases) {
-            log.info("(skill) BUY ITEM > " + itemPurchase.getItemName());
-        }
 
         int totalItemSkillAccel = 0;
         Optional<ChampionItem> championItem;
@@ -62,15 +57,12 @@ public class ItemPurchaseService {
             totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
         }
 
-        String matchTeamCode = matchService.getMyMatchTeamCodeByEnemy(purchaseReqDto.getSummonerName());
         Optional<CloudDragonCount> cloudDto = cloudDragonRepository
-                .findCloudDragonCountByMatchTeamCode(matchTeamCode);
+                .findCloudDragonCountByMatchTeamCode(purchaseReqDto.getSummonerName());
         if (cloudDto.isPresent()) {
             totalItemSkillAccel += cloudDto.get().getDragonCount() * 12;
-            log.info("CLOUD CNT: " + cloudDto.get().getDragonCount());
         }
 
-        log.info("SKILL ACCEL : " + totalItemSkillAccel);
         return totalItemSkillAccel;
     }
 
@@ -82,21 +74,14 @@ public class ItemPurchaseService {
                         purchaseReqDto.getSummonerName())
                 .orElseThrow(CSummonerNoItemInfoException::new);
 
-        for (ItemPurchase itemPurchase : itemPurchases) {
-            log.info("(spell) BUY ITEM > " + itemPurchase.getItemName());
-        }
-
         int itemSpellAccel = 0;
         for (ItemPurchase item : itemPurchases) {
-            log.info("EQUAL? : " + item.getItemName().equals("명석함의 아이오니아 장화"));
             if (item.getItemName().equals("명석함의 아이오니아 장화")) {
                 itemSpellAccel += 12;
-                log.info("명석함의 아이오니아 장화 구매");
                 break;
             }
         }
 
-        log.info("SPELL ACCEL : " + itemSpellAccel);
         return itemSpellAccel;
     }
 

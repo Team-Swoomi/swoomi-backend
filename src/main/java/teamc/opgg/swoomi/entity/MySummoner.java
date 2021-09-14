@@ -20,13 +20,13 @@ public class MySummoner extends BaseTimeEntity {
     @Column(nullable = false)
     String summonerId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String accountId;
 
     @Column(nullable = false)
     int profileIconId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String summonerName;
 
     @Column(nullable = false)

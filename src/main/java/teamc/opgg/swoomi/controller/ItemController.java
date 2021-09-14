@@ -5,12 +5,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import teamc.opgg.swoomi.dto.ItemPurchaseOneDto;
-import teamc.opgg.swoomi.entity.ItemPurchase;
 import teamc.opgg.swoomi.entity.response.CommonResult;
-import teamc.opgg.swoomi.entity.response.SingleResult;
 import teamc.opgg.swoomi.service.ChampionInfoService;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
 

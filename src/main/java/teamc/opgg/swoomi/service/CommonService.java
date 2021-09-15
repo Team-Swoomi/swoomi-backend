@@ -40,6 +40,7 @@ public class CommonService {
                     .build();
 
             championNameSet.add(dto.getId());
+            initChampionNameHasItem();
 
             championItemRepository.save(championItem);
         }
@@ -50,10 +51,8 @@ public class CommonService {
         List<ChampionItem> all = championItemRepository.findAll();
         ChampionHasItemRepo nameRepo = ChampionHasItemRepo.getInstance();
 
-        if (nameRepo.getChampionSet().size() == 0) {
-            for (ChampionItem championItem : all) {
-                nameRepo.getChampionSet().add(championItem.getChampionName());
-            }
+        for (ChampionItem championItem : all) {
+            nameRepo.getChampionSet().add(championItem.getChampionName());
         }
     }
 }

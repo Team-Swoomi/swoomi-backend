@@ -41,7 +41,7 @@ public class OriannaService {
 
                 for (int i = 0; i < summonerName.length(); i++) {
                     char c = summonerName.charAt(i);
-                    if (!(c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A')) {
+                    if (!(c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A' || c <= '9' && c >= '0')) {
                         onlyEng = false;
                         break;
                     }

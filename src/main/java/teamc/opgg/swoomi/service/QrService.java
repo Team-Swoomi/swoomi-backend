@@ -39,10 +39,10 @@ public class QrService {
 
         UriComponentsBuilder builder;
         if (matchService.getMatchStatus(summonerName).isMatchStatus()) {
-            String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
-            builder = UriComponentsBuilder.fromHttpUrl(URL + "/game/" + matchTeamCode);
+//            String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
+//            builder = UriComponentsBuilder.fromHttpUrl(URL + "/game/" + matchTeamCode);
+            builder = UriComponentsBuilder.fromHttpUrl(URL + "/room/" + summonerName);
         } else {
-            summonerName = summonerName.replaceAll(" ", "%20");
             builder = UriComponentsBuilder.fromHttpUrl(URL + "/room/" + summonerName);
         }
 

@@ -9,9 +9,14 @@ import teamc.opgg.swoomi.dto.ItemDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class CommonService {
+
+    final static Set<String> championNameSet = new HashSet<>();
 
     @Autowired
     ChampionItemRepository championItemRepository;
@@ -31,6 +36,8 @@ public class CommonService {
                     .src(item.getSrc())
                     .position(dto.getPosition())
                     .build();
+
+            championNameSet.add(dto.getId());
 
             championItemRepository.save(championItem);
         }

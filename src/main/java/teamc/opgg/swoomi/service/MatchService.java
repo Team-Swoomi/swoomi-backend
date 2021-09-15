@@ -15,9 +15,7 @@ import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
-import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
-import teamc.opgg.swoomi.repository.ItemPurchaseRepository;
 import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
 import java.util.*;
@@ -32,8 +30,6 @@ public class MatchService {
     private ChampionItemRepository championItemRepository;
     @Autowired
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
-    @Autowired
-    private CommonService commonService;
 
     @Transactional(readOnly = true)
     public MatchDto getMatchStatus(String summonerName) {
@@ -83,35 +79,42 @@ public class MatchService {
         // 2. 상대팀 멤버 구하기
         SearchableList<Player> opList = sList.filter((player) -> !player.getTeam().toString().equals(teamId));
 
-        commonService.initChampionNameHasItem();
-
         for (Player p : opList) {
-            String championName = p.getChampion().getName().replaceAll(" ", "");
+            String championName = p.getChampion().getName();
             Set<String> set = new HashSet<>();
-
-            List<ItemDto> list = new ArrayList<>();
-            if (ChampionHasItemRepo.getInstance().getChampionSet().contains(championName)) {
-                list = championItemRepository.findAllByChampionName(championName)
-                        .get()
+            Optional<List<ChampionItem>> optionalChampionItems = championItemRepository.findAllByChampionName(championName);
+            List<ItemDto> list;
+            if (optionalChampionItems.isPresent()) {
+                list = optionalChampionItems.get()
                         .stream()
                         .map((e) -> {
-                                    if (!set.contains(e.getItemName())) {
-                                        set.add(e.getItemName());
-                                        return e.toDto();
-                                    } else {
-                                        return null;
-                                    }
+                                if (!set.contains(e.getItemName())) {
+                                    set.add(e.getItemName());
+                                    return ItemDto.builder()
+                                            .name(e.getItemName())
+                                            .englishName(e.getEnglishName())
+                                            .skillAccel(e.getSkillAccel())
+                                            .src(e.getSrc())
+                                            .build();
+                                } else {
+                                   return null;
                                 }
+                            }
                         )
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-            }else {
-                log.info("노 쿨감 아이템 챔피언 : " + championName);
-                Optional<ChampionItem> itemOptional =
-                        championItemRepository.findFirstByItemName("명석함의 아이오니아 장화");
-                if (itemOptional.isPresent()) list.add(itemOptional.get().toDto());
-            }
+            } else {
+                list = new ArrayList<>();
 
+                list.add(
+                        ItemDto.builder()
+                            .name("명석함의 아이오니아 장화")
+                            .englishName("Ionian Boots of Lucidity")
+                            .skillAccel("20")
+                            .src("https://opgg-static.akamaized.net/images/lol/item/3158.png?image=q_auto:best&v=1628647804")
+                            .build()
+                );
+            }
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
                     .championName(championName)
                     .championImgUrl(p.getChampion().getImage().getURL())
@@ -187,11 +190,15 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
-        championName = championName.replaceAll(" ", "");
         List<ItemDto> list = championItemRepository.findAllByChampionNameAndPosition(championName, position)
                 .get()
                 .stream()
-                .map(ChampionItem::toDto)
+                .map((i) -> ItemDto.builder()
+                        .name(i.getItemName())
+                        .englishName(i.getEnglishName())
+                        .src(i.getSrc())
+                        .skillAccel(i.getSkillAccel())
+                        .build())
                 .collect(Collectors.toList())
         ;
         return list;

@@ -57,12 +57,6 @@ public class ItemPurchaseService {
             totalItemSkillAccel += championInfo.get().getCountLegendary() * 5;
         }
 
-        Optional<CloudDragonCount> cloudDto = cloudDragonRepository
-                .findCloudDragonCountByMatchTeamCode(purchaseReqDto.getMatchTeamCode());
-        if (cloudDto.isPresent()) {
-            totalItemSkillAccel += cloudDto.get().getDragonCount() * 12;
-        }
-
         log.debug("SKILL ACCEL : " + totalItemSkillAccel);
         return totalItemSkillAccel;
     }

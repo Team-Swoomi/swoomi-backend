@@ -165,7 +165,14 @@ public class ChampionInfoService {
         int finalSkillAccel = initialRuneInfo.getSkillAccel() + getTotalItemSkillAccel(purchaserInfoDto);
         int finalSpellAccel = initialRuneInfo.getSpellAccel() + getTotalItemSpellAccel(purchaserInfoDto);
 
-        log.info("FINAL SKILL ACCEL : " + finalSkillAccel);
+        int cloudSkillAccel = 0;
+        Optional<CloudDragonCount> cloudDto = cloudDragonRepository
+                .findCloudDragonCountByMatchTeamCode(myMatchTeamCodeByEnemy);
+        if (cloudDto.isPresent()) {
+            cloudSkillAccel += cloudDto.get().getDragonCount() * 12;
+        }
+
+        log.info("FINAL SKILL ACCEL : " + finalSkillAccel + cloudSkillAccel);
         log.info("FINAL SPELL ACCEL : " + finalSpellAccel);
 
         ChampionCoolInfoDto championCoolInfoDto = getInitialCooltimeInfo(summonerName, ultLevel);
@@ -175,8 +182,9 @@ public class ChampionInfoService {
         String spellFName = championCoolInfoDto.getSpellFName();
         Double cooltimeR = championCoolInfoDto.getCooltimeR();
 
+        int tmpTotalSkillAccel = finalSkillAccel + cloudSkillAccel;
         double spellCooldownPercent = (100 - (double) 100 * ((double) finalSpellAccel / (double) (100 + finalSpellAccel))) / 100;
-        double skillCooldownPercent = (100 - (double) 100 * ((double) finalSkillAccel / (double) (100 + finalSkillAccel))) / 100;
+        double skillCooldownPercent = (100 - (double) 100 * ((double) tmpTotalSkillAccel / (double) (100 + tmpTotalSkillAccel))) / 100;
 
         double cooltimeCalcedD = Math.round(cooltimeD * spellCooldownPercent);
         double cooltimeCalcedF = Math.round(cooltimeF * spellCooldownPercent);
@@ -184,6 +192,7 @@ public class ChampionInfoService {
 
         log.info("FINAL COOL TIME D : " + cooltimeCalcedD);
         log.info("FINAL COOL TIME F : " + cooltimeCalcedF);
+        log.info("FINAL COOL TIME R : " + cooltimeCalcedR);
 
         ChampionInfoDto championInfoDto = ChampionInfoDto.builder()
                 .summonerName(summonerName)

@@ -80,7 +80,7 @@ public class MatchService {
         SearchableList<Player> opList = sList.filter((player) -> !player.getTeam().toString().equals(teamId));
 
         for (Player p : opList) {
-            String championName = p.getChampion().getName();
+            String championName = p.getChampion().getName().replace(" ", "");
             Set<String> set = new HashSet<>();
             Optional<List<ChampionItem>> optionalChampionItems = championItemRepository.findAllByChampionName(championName);
             List<ItemDto> list;

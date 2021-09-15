@@ -33,11 +33,7 @@ public class QrController {
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable("name") String summonerName) {
 
-        String name = summonerService
-                .findBySummonerName(summonerName)
-                .getSummonerName()
-                .replaceAll(" ", "%20");
-        QrDto qrDto = qrService.getQrCodeURL(name);
+        QrDto qrDto = qrService.getQrCodeURL(summonerName);
         return responseService.getSingleResult(qrDto);
     }
 }

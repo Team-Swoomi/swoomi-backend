@@ -48,11 +48,13 @@ public class CommonService {
 
     @Transactional
     public void initChampionNameHasItem() {
-        List<ChampionItem> all = championItemRepository.findAll();
         ChampionHasItemRepo nameRepo = ChampionHasItemRepo.getInstance();
 
-        for (ChampionItem championItem : all) {
-            nameRepo.getChampionSet().add(championItem.getChampionName());
+        if (nameRepo.getChampionSet().isEmpty()) {
+            List<ChampionItem> all = championItemRepository.findAll();
+            for (ChampionItem championItem : all) {
+                nameRepo.getChampionSet().add(championItem.getChampionName());
+            }
         }
     }
 }

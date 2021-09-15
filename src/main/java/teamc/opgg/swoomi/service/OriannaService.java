@@ -32,6 +32,32 @@ public class OriannaService {
         } catch (CSummonerNotFoundException notFoundException) {
             MySummoner mySummoner;
             try {
+
+                // only Eng => 전부 붙임
+                // else => 다 띄움
+                boolean onlyEng = true;
+
+                summonerName = summonerName.replace(" ", "");
+
+                for (int i = 0; i < summonerName.length(); i++) {
+                    char c = summonerName.charAt(i);
+                    if (!(c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A')) {
+                        onlyEng = false;
+                        break;
+                    }
+                }
+
+                if (!onlyEng) {
+                    StringBuilder spaceName = new StringBuilder();
+                    for (int i = 0; i < summonerName.length(); i++) {
+                        char c = summonerName.charAt(i);
+                        if (c == ' ') spaceName.append(c);
+                        else if (i == summonerName.length() - 1) spaceName.append(c);
+                        else spaceName.append(c).append(" ");
+                    }
+                    summonerName = spaceName.toString();
+                }
+
                 Summoner summoner = Orianna
                         .summonerNamed(summonerName)
                         .withRegion(Region.KOREA)

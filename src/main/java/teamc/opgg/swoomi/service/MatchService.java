@@ -15,6 +15,7 @@ import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
+import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 public class MatchService {
 
+    @Autowired
+    CommonService commonService;
     @Autowired
     private ChampionItemRepository championItemRepository;
     @Autowired
@@ -57,7 +60,7 @@ public class MatchService {
     public List<PlayerDto> getOpData(String data, boolean flag) {
         String summonerName = data;
         if (flag) {
-           summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummonerName();
+            summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummonerName();
         }
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
@@ -79,40 +82,36 @@ public class MatchService {
         // 2. 상대팀 멤버 구하기
         SearchableList<Player> opList = sList.filter((player) -> !player.getTeam().toString().equals(teamId));
 
+        commonService.initChampionNameHasItem();
+
         for (Player p : opList) {
             String championName = p.getChampion().getName().replace(" ", "");
             Set<String> set = new HashSet<>();
             Optional<List<ChampionItem>> optionalChampionItems = championItemRepository.findAllByChampionName(championName);
-            List<ItemDto> list;
-            if (optionalChampionItems.isPresent()) {
+            List<ItemDto> list = new ArrayList<>();
+            if (ChampionHasItemRepo.getInstance().getChampionSet().contains(championName)
+                    && optionalChampionItems.isPresent()) {
                 list = optionalChampionItems.get()
                         .stream()
                         .map((e) -> {
-                                if (!set.contains(e.getItemName())) {
-                                    set.add(e.getItemName());
-                                    return ItemDto.builder()
-                                            .name(e.getItemName())
-                                            .englishName(e.getEnglishName())
-                                            .skillAccel(e.getSkillAccel())
-                                            .src(e.getSrc())
-                                            .build();
-                                } else {
-                                   return null;
+                                    if (!set.contains(e.getItemName())) {
+                                        set.add(e.getItemName());
+                                        return e.toDto();
+                                    } else {
+                                        return null;
+                                    }
                                 }
-                            }
                         )
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
             } else {
-                list = new ArrayList<>();
-
                 list.add(
                         ItemDto.builder()
-                            .name("명석함의 아이오니아 장화")
-                            .englishName("Ionian Boots of Lucidity")
-                            .skillAccel("20")
-                            .src("https://opgg-static.akamaized.net/images/lol/item/3158.png?image=q_auto:best&v=1628647804")
-                            .build()
+                                .name("명석함의 아이오니아 장화")
+                                .englishName("Ionian Boots of Lucidity")
+                                .skillAccel("20")
+                                .src("https://opgg-static.akamaized.net/images/lol/item/3158.png?image=q_auto:best&v=1628647804")
+                                .build()
                 );
             }
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
@@ -181,9 +180,9 @@ public class MatchService {
 
         StringBuilder myCode = new StringBuilder(getMatchTeamCode(summonerName).getMatchTeamCode());
         if (Integer.parseInt(myCode.substring(myCode.length() - 3)) == 100) {
-            myCode.replace(myCode.length()-3, myCode.length(), "200");
+            myCode.replace(myCode.length() - 3, myCode.length(), "200");
         } else {
-            myCode.replace(myCode.length()-3, myCode.length(), "100");
+            myCode.replace(myCode.length() - 3, myCode.length(), "100");
         }
         return myCode.toString();
     }
@@ -199,8 +198,7 @@ public class MatchService {
                         .src(i.getSrc())
                         .skillAccel(i.getSkillAccel())
                         .build())
-                .collect(Collectors.toList())
-        ;
+                .collect(Collectors.toList());
         return list;
     }
 

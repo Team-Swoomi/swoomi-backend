@@ -47,6 +47,10 @@ public class ItemPurchaseService {
                             purchaseReqDto.getChampionName());
             if (championItem.isPresent()) {
                 totalItemSkillAccel += Integer.parseInt(championItem.get().getSkillAccel());
+            } else {
+                championItem = championItemRepository.findFirstByItemName(item.getItemName());
+                if (championItem.isPresent())
+                    totalItemSkillAccel += Integer.parseInt(championItem.get().getSkillAccel());
             }
         }
 

@@ -153,7 +153,7 @@ public class ChampionInfoService {
         }
 
         Player player = getPlayer(summonerName);
-        String championName = player.getChampion().getName();
+        String championName = player.getChampion().getName().replaceAll(" ", "");
 
         ItemPurchaserInfoDto purchaserInfoDto = ItemPurchaserInfoDto.builder()
                 .championName(championName)

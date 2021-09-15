@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import teamc.opgg.swoomi.dto.ItemDto;
 
 import javax.persistence.*;
 
@@ -24,4 +25,13 @@ public class ChampionItem {
     private String skillAccel;
     private String englishName;
     private String src;
+
+    public ItemDto toDto() {
+        return ItemDto.builder()
+                .name(itemName)
+                .englishName(englishName)
+                .skillAccel(skillAccel)
+                .src(src)
+                .build();
+    }
 }

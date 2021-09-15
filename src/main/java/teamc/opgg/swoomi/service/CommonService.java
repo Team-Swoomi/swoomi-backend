@@ -7,7 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.dto.ChampionItemDto;
 import teamc.opgg.swoomi.dto.ItemDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
+import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
+
+import java.util.HashSet;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,6 +37,18 @@ public class CommonService {
                     .build();
 
             championItemRepository.save(championItem);
+        }
+    }
+
+    @Transactional
+    public void initChampionNameHasItem() {
+        List<ChampionItem> all = championItemRepository.findAll();
+        ChampionHasItemRepo nameRepo = ChampionHasItemRepo.getInstance();
+
+        if (nameRepo.getChampionSet().size() == 0) {
+            for (ChampionItem championItem : all) {
+                nameRepo.getChampionSet().add(championItem.getChampionName());
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import teamc.opgg.swoomi.entity.ChampionItem;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,6 @@ public interface ChampionItemRepository extends JpaRepository<ChampionItem, Long
     Optional<List<ChampionItem>> findAllByChampionName(String championName);
 
     Optional<ChampionItem> findFirstByItemNameAndChampionName(String itemName, String ChampionName);
+
+    Optional<ChampionItem> findFirstByItemName(String itemName);
 }

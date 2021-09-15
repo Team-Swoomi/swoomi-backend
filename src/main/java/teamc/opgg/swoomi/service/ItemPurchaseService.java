@@ -77,8 +77,10 @@ public class ItemPurchaseService {
 
         int itemSpellAccel = 0;
         for (ItemPurchase item : itemPurchases) {
+            log.debug("(BUY) items : " + item.getItemName());
             if (item.getItemName().equals("명석함의 아이오니아 장화")) {
                 itemSpellAccel += 12;
+                log.debug("(BUY) CHECK : 명석함의 아이오니아 장화");
                 break;
             }
         }

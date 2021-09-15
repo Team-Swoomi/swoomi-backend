@@ -32,9 +32,9 @@ public class QrService {
         String URL;
         String property = env.getProperty("spring.profiles.include");
         if (property != null && property.contains("real")) {
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chco=6675FF&chl=" + realUrl;
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + realUrl;
         } else {
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chco=6675FF&chl=" + localUrl + "/v1/summoner/";
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + localUrl + "/v1/summoner/";
         }
 
         UriComponentsBuilder builder;

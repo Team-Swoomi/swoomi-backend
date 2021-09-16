@@ -1,11 +1,13 @@
 package teamc.opgg.swoomi.config;
 
 import com.merakianalytics.orianna.Orianna;
+import com.merakianalytics.orianna.datapipeline.PipelineConfiguration;
 import com.merakianalytics.orianna.datapipeline.common.expiration.ExpirationPeriod;
 import com.merakianalytics.orianna.types.common.Platform;
 import com.merakianalytics.orianna.types.common.Region;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import teamc.opgg.swoomi.service.OriannaService;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +24,6 @@ public class OriannaConfig {
         Orianna.setDefaultPlatform(Platform.KOREA);
         Orianna.setDefaultRegion(Region.KOREA);
 
-        Orianna.Configuration config = new Orianna.Configuration();
-        config.setCurrentVersionExpiration(ExpirationPeriod.create(0, TimeUnit.SECONDS));
+        Orianna.loadConfiguration("override-orianna-config.json");
     }
 }

@@ -85,7 +85,8 @@ public class MatchService {
         commonService.initChampionNameHasItem();
 
         for (Player p : opList) {
-            String championName = p.getChampion().getName().replace(" ", "");
+            String championNameforDto = p.getChampion().getName();
+            String championName = championNameforDto.replace(" ", "");
             Set<String> set = new HashSet<>();
             Optional<List<ChampionItem>> optionalChampionItems = championItemRepository.findAllByChampionName(championName);
             List<ItemDto> list = new ArrayList<>();
@@ -115,7 +116,7 @@ public class MatchService {
                 );
             }
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
-                    .championName(championName)
+                    .championName(championNameforDto)
                     .championImgUrl(p.getChampion().getImage().getURL())
                     .ultImgUrl(p.getChampion().getSpells().get(3).getImage().getURL())
                     .spellDName(p.getSummonerSpellD().getName())

@@ -23,7 +23,5 @@ public class OriannaConfig {
         Orianna.setRiotAPIKey(RIOT_API_KEY);
         Orianna.setDefaultPlatform(Platform.KOREA);
         Orianna.setDefaultRegion(Region.KOREA);
-
-        Orianna.loadConfiguration("override-orianna-config.json");
     }
 }

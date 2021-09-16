@@ -13,6 +13,7 @@ import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
 import teamc.opgg.swoomi.service.MatchService;
+import teamc.opgg.swoomi.service.OppositeInfoService;
 import teamc.opgg.swoomi.service.ResponseService;
 
 import java.util.List;
@@ -28,6 +29,9 @@ public class MatchController {
 
     @Autowired
     private ResponseService responseService;
+
+    @Autowired
+    private OppositeInfoService oppositeInfoService;
 
     /**
      * GetMatchStatus
@@ -52,14 +56,14 @@ public class MatchController {
     @GetMapping("/data/{summonerName}")
     @ApiOperation(value ="상대팀 데이터 반환", notes="소환사명을 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
     public ListResult<PlayerDto> getOpData(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
-        List<PlayerDto> list = matchService.getOpData(summonerName, false);
+        List<PlayerDto> list = oppositeInfoService.getOpData(summonerName, false);
         return responseService.getListResult(list);
     }
 
     @GetMapping("/data/matchTeamCode/{matchTeamCode}")
     @ApiOperation(value ="상대팀 데이터 반환", notes="매치 팀 코드를 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
     public ListResult<PlayerDto> getOpDataMatchTeamCode(@ApiParam(value = "매치 팀 코드", required = true) @PathVariable String matchTeamCode) {
-        List<PlayerDto> list = matchService.getOpData(matchTeamCode, true);
+        List<PlayerDto> list = oppositeInfoService.getOpData(matchTeamCode, true);
         return responseService.getListResult(list);
     }
 

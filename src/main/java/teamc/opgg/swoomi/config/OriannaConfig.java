@@ -1,13 +1,16 @@
 package teamc.opgg.swoomi.config;
 
 import com.merakianalytics.orianna.Orianna;
+import com.merakianalytics.orianna.datapipeline.PipelineConfiguration;
+import com.merakianalytics.orianna.datapipeline.common.expiration.ExpirationPeriod;
 import com.merakianalytics.orianna.types.common.Platform;
 import com.merakianalytics.orianna.types.common.Region;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import teamc.opgg.swoomi.service.OriannaService;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class OriannaConfig {

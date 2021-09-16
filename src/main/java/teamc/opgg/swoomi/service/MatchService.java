@@ -41,7 +41,7 @@ public class MatchService {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
 
         if (summoner.exists()) {
-            dto.setMatchStatus(Orianna.currentMatchForSummoner(summoner).get().exists());
+            dto.setMatchStatus(summoner.isInGame());
             log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));
         } else {
             log.info("NO SUMMONER NAMED : " + summonerName);

@@ -8,9 +8,13 @@ import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
@@ -34,14 +38,31 @@ public class MatchService {
     private ChampionItemRepository championItemRepository;
     @Autowired
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
+    @Autowired
+    private SummonerService summonerService;
+    @Value("${riot.api.key}")
+    private String RIOT_API_KEY;
 
     @Transactional(readOnly = true)
     public MatchDto getMatchStatus(String summonerName) {
         MatchDto dto = new MatchDto();
+
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
+        String riotUrl = "https://kr.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/";
+        String encryptedSummonerName = summonerService.findBySummonerName(summonerName).getSummonerId();
+        riotUrl = riotUrl + encryptedSummonerName + "?api_key=" + RIOT_API_KEY;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response;
 
         if (summoner.exists()) {
-            dto.setMatchStatus(summoner.isInGame());
+            try {
+                response = restTemplate.getForEntity(riotUrl, String.class);
+                log.info(response.getBody());
+                dto.setMatchStatus(summoner.isInGame());
+            } catch (HttpClientErrorException e) {
+                dto.setMatchStatus(false);
+            }
             log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));
         } else {
             log.info("NO SUMMONER NAMED : " + summonerName);

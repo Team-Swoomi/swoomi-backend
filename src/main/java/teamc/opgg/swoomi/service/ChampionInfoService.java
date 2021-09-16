@@ -9,6 +9,7 @@ import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -129,6 +130,7 @@ public class ChampionInfoService {
     }
 
     @Transactional
+    @Synchronized
     public ChampionInfoDto calculateAndSaveChampionInfo(String summonerName, int ultLevel) {
         String myMatchTeamCodeByEnemy = matchService.getMyMatchTeamCodeByEnemy(summonerName);
         Optional<ChampionInfo> championInfo = championInfoRepo.findBySummonerName(

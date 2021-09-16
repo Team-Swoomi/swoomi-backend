@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
@@ -57,7 +58,7 @@ public class MatchService {
             response = restTemplate.getForEntity(riotUrl, String.class);
             log.info(response.getBody());
             dto.setMatchStatus(true);
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException client) {
             dto.setMatchStatus(false);
         }
         log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));

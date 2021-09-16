@@ -23,6 +23,7 @@ public class ChampionInfo {
     @Column(unique = true)
     private String summonerName;
     private String championName;
+    private String matchTeamCode;
     private Double dSpellTime;
     private Double fSpellTime;
     private Double rSpellTime;
@@ -37,6 +38,7 @@ public class ChampionInfo {
     public ChampionInfoDto toInfoDto() {
         return ChampionInfoDto.builder()
                 .summonerName(summonerName)
+                .matchTeamCode(matchTeamCode)
                 .dSpellTime(dSpellTime)
                 .fSpellTime(fSpellTime)
                 .rSpellTime(rSpellTime)

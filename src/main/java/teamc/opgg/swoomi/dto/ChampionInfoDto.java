@@ -14,6 +14,7 @@ import teamc.opgg.swoomi.entity.ChampionInfo;
 public class ChampionInfoDto {
     private String summonerName;
     private String championName;
+    private String matchTeamCode;
     private Double dSpellTime;
     private Double fSpellTime;
     private Double rSpellTime;
@@ -26,6 +27,7 @@ public class ChampionInfoDto {
         return ChampionInfo.builder()
                 .summonerName(summonerName)
                 .championName(championName)
+                .matchTeamCode(matchTeamCode)
                 .dSpellTime(dSpellTime)
                 .fSpellTime(fSpellTime)
                 .dSpellName(dSpellName)

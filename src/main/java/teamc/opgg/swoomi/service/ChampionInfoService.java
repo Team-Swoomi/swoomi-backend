@@ -130,10 +130,13 @@ public class ChampionInfoService {
 
     @Transactional
     public ChampionInfoDto calculateAndSaveChampionInfo(String summonerName, int ultLevel) {
-        Optional<ChampionInfo> championInfo = championInfoRepo.findBySummonerName(summonerName);
         String myMatchTeamCodeByEnemy = matchService.getMyMatchTeamCodeByEnemy(summonerName);
+        Optional<ChampionInfo> championInfo = championInfoRepo.findBySummonerName(
+                summonerName);
 
-        if (championInfo.isPresent() && !infoIsUpdated(summonerName)) {
+        if (championInfo.isPresent() && championInfo.get().getMatchTeamCode() != null
+                && championInfo.get().getMatchTeamCode().equals(myMatchTeamCodeByEnemy)
+                && !infoIsUpdated(summonerName)) {
             ChampionInfo info = championInfo.get();
 
             double skillAccel = info.getSkillAccel();
@@ -197,6 +200,7 @@ public class ChampionInfoService {
         ChampionInfoDto championInfoDto = ChampionInfoDto.builder()
                 .summonerName(summonerName)
                 .championName(championName)
+                .matchTeamCode(myMatchTeamCodeByEnemy)
                 .dSpellTime(cooltimeCalcedD)
                 .fSpellTime(cooltimeCalcedF)
                 .rSpellTime(cooltimeCalcedR)
@@ -213,6 +217,7 @@ public class ChampionInfoService {
             info.setRSpellTime(cooltimeCalcedR);
             info.setSkillAccel(finalSkillAccel);
             info.setSpellAccel(finalSpellAccel);
+            info.setMatchTeamCode(myMatchTeamCodeByEnemy);
             info.setUpdated(false);
         } else {
             ChampionInfo info = championInfoDto.toEntity();

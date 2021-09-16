@@ -46,8 +46,6 @@ public class MatchService {
     @Transactional(readOnly = true)
     public MatchDto getMatchStatus(String summonerName) {
         MatchDto dto = new MatchDto();
-
-        Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         String riotUrl = "https://kr.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/";
         String encryptedSummonerName = summonerService.findBySummonerName(summonerName).getSummonerId();
         riotUrl = riotUrl + encryptedSummonerName + "?api_key=" + RIOT_API_KEY;
@@ -55,19 +53,15 @@ public class MatchService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response;
 
-        if (summoner.exists()) {
-            try {
-                response = restTemplate.getForEntity(riotUrl, String.class);
-                log.info(response.getBody());
-                dto.setMatchStatus(summoner.isInGame());
-            } catch (HttpClientErrorException e) {
-                dto.setMatchStatus(false);
-            }
-            log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));
-        } else {
-            log.info("NO SUMMONER NAMED : " + summonerName);
-            throw new CSummonerNotFoundException();
+        try {
+            response = restTemplate.getForEntity(riotUrl, String.class);
+            log.info(response.getBody());
+            dto.setMatchStatus(true);
+        } catch (HttpClientErrorException e) {
+            dto.setMatchStatus(false);
         }
+        log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));
+
         return dto;
     }
 

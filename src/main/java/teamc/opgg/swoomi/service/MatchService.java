@@ -42,6 +42,7 @@ public class MatchService {
 
         if (summoner.exists()) {
             dto.setMatchStatus(Orianna.currentMatchForSummoner(summoner).get().exists());
+            log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));
         } else {
             log.info("NO SUMMONER NAMED : " + summonerName);
             throw new CSummonerNotFoundException();
@@ -56,81 +57,6 @@ public class MatchService {
                 .getSummonerName();
         return getMatchStatus(summonerName);
     }
-
-//    @Transactional(readOnly = true)
-//    public List<PlayerDto> getOpData(String data, boolean flag) {
-//        String summonerName = data;
-//        if (flag) {
-//            summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummonerName();
-//        }
-//        Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
-//        if (!summoner.exists()) {
-//            log.info("NO SUMMONER NAMED : " + summonerName);
-//            throw new CSummonerNotFoundException();
-//        }
-//        if (!summoner.isInGame()) {
-//            log.info("SUMMONER '" + summonerName + "' NOT IN GAME");
-//            throw new CSummonerNotInGameException();
-//        }
-//        List<PlayerDto> playerDtos = new ArrayList<>();
-//
-//        // 1. 상대팀 구하기
-//        SearchableList<Player> sList = summoner.getCurrentMatch().getParticipants();
-//        String finalSummonerName = summonerName;
-//        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(finalSummonerName));
-//        String teamId = tempPlayer.getTeam().toString();
-//
-//        // 2. 상대팀 멤버 구하기
-//        SearchableList<Player> opList = sList.filter((player) -> !player.getTeam().toString().equals(teamId));
-//
-//        commonService.initChampionNameHasItem();
-//
-//        for (Player p : opList) {
-//            String championNameforDto = p.getChampion().getName();
-//            String championName = championNameforDto.replace(" ", "");
-//            Set<String> set = new HashSet<>();
-//            Optional<List<ChampionItem>> optionalChampionItems = championItemRepository.findAllByChampionName(championName);
-//            List<ItemDto> list = new ArrayList<>();
-//            if (ChampionHasItemRepo.getInstance().getChampionSet().contains(championName)
-//                    && optionalChampionItems.isPresent()) {
-//                list = optionalChampionItems.get()
-//                        .stream()
-//                        .map((e) -> {
-//                                    if (!set.contains(e.getItemName())) {
-//                                        set.add(e.getItemName());
-//                                        return e.toDto();
-//                                    } else {
-//                                        return null;
-//                                    }
-//                                }
-//                        )
-//                        .filter(Objects::nonNull)
-//                        .collect(Collectors.toList());
-//            } else {
-//                list.add(
-//                        ItemDto.builder()
-//                                .name("명석함의 아이오니아 장화")
-//                                .englishName("Ionian Boots of Lucidity")
-//                                .skillAccel("20")
-//                                .src("https://opgg-static.akamaized.net/images/lol/item/3158.png?image=q_auto:best&v=1628647804")
-//                                .build()
-//                );
-//            }
-//            PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
-//                    .championName(championNameforDto)
-//                    .championImgUrl(p.getChampion().getImage().getURL())
-//                    .ultImgUrl(p.getChampion().getSpells().get(3).getImage().getURL())
-//                    .spellDName(p.getSummonerSpellD().getName())
-//                    .spellFName(p.getSummonerSpellF().getName())
-//                    .spellDImgUrl(p.getSummonerSpellD().getImage().getURL())
-//                    .spellFImgUrl(p.getSummonerSpellF().getImage().getURL())
-//                    .frequentItems(list)
-//                    .build();
-//
-//            playerDtos.add(dto);
-//        }
-//        return playerDtos;
-//    }
 
     @Transactional
     public MatchStatusDto getMatchTeamCode(String summonerName) {

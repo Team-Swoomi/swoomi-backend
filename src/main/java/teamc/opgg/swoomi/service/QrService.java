@@ -21,30 +21,28 @@ public class QrService {
     @Autowired
     Environment env;
 
-    private final String realUrl = "https://swoomi.me";
-    private final String localUrl = "http://localhost:8070";
+    private String realUrl = "https://swoomi.me";
+    private String localUrl = "http://localhost:8070";
     private final RestTemplate restTemplate;
-    private final MatchService matchService;
 
     public QrDto getQrCodeURL(String summonerName) {
 
         byte[] qRCodeByteArr;
         String URL;
         String property = env.getProperty("spring.profiles.include");
+        UriComponentsBuilder builder;
+
         if (property != null && property.contains("real")) {
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + realUrl;
+            URL = "https://api.qrserver.com/v1/create-qr-code/?data="
+                    + realUrl + "/room/" + summonerName + "&size=150x150&bgcolor=6675FF";
         } else {
+            localUrl = localUrl + "/room/" + summonerName;
             URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + localUrl + "/v1/summoner/";
         }
-
-        UriComponentsBuilder builder;
-        if (matchService.getMatchStatus(summonerName).isMatchStatus()) {
-//            String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
-//            builder = UriComponentsBuilder.fromHttpUrl(URL + "/game/" + matchTeamCode);
-            builder = UriComponentsBuilder.fromHttpUrl(URL + "/room/" + summonerName);
-        } else {
-            builder = UriComponentsBuilder.fromHttpUrl(URL + "/room/" + summonerName);
-        }
+        builder = UriComponentsBuilder.fromHttpUrl(URL);
+        log.info(builder.build().encode().toUri()+"");
+        log.info(builder.toUriString());
+        log.info(URL);
 
         try {
             qRCodeByteArr = restTemplate.getForObject(builder.build().encode().toUri(), byte[].class);

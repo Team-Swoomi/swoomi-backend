@@ -8,14 +8,15 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 public class RequestLoggingFilterConfig {
 
     @Bean
-    public CommonsRequestLoggingFilter loggingFilter() {
-        CommonsRequestLoggingFilter commonsRequestLoggingFilter
-                = new CommonsRequestLoggingFilter();
+    public SwoomiRequestLoggingFilter loggingFilter() {
+        SwoomiRequestLoggingFilter commonsRequestLoggingFilter
+                = new SwoomiRequestLoggingFilter();
         commonsRequestLoggingFilter.setIncludeQueryString(true);
         commonsRequestLoggingFilter.setIncludePayload(true);
         commonsRequestLoggingFilter.setMaxPayloadLength(10000);
         commonsRequestLoggingFilter.setIncludeHeaders(true);
-        commonsRequestLoggingFilter.setAfterMessagePrefix("# REQUEST : ");
+        commonsRequestLoggingFilter.setBeforeMessagePrefix("# BEFORE REQUEST : ");
+        commonsRequestLoggingFilter.setAfterMessagePrefix("# AFTER REQUEST : ");
         return commonsRequestLoggingFilter;
     }
 

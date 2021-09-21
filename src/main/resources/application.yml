@@ -7,10 +7,16 @@ spring:
       enabled: true
     restart:
       enabled: false
-
   freemarker:
     cache: false
     template-loader-path: classpath:/templates
     suffix: .ftlh
 
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
 

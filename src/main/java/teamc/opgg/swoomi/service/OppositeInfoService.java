@@ -37,11 +37,7 @@ public class OppositeInfoService {
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
 
     @Transactional
-    public List<PlayerDto> getOpData(String data, boolean flag) {
-        String summonerName = data;
-        if (flag) {
-            summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(data).get().getSummonerName();
-        }
+    public List<PlayerDto> getOpData(String summonerName) {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
             log.info("NO SUMMONER NAMED : " + summonerName);
@@ -114,5 +110,12 @@ public class OppositeInfoService {
             playerDtos.add(dto);
         }
         return playerDtos;
+    }
+
+    public List<PlayerDto> getOpDataMatchTeamCode(String matchTeamCode) {
+        String summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(matchTeamCode)
+                .get()
+                .getSummonerName();
+        return getOpData(summonerName);
     }
 }

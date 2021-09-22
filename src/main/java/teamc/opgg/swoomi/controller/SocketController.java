@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import teamc.opgg.swoomi.dto.RoomDto;
 import teamc.opgg.swoomi.dto.SocketDto;
 import teamc.opgg.swoomi.service.RoomService;
-import teamc.opgg.swoomi.util.ConstantStore;
 
 @Controller
 public class SocketController {

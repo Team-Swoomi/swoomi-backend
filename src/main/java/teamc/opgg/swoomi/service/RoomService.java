@@ -12,7 +12,6 @@ import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.dto.RoomDto;
 import teamc.opgg.swoomi.entity.Room;
 import teamc.opgg.swoomi.repository.RoomRepository;
-import teamc.opgg.swoomi.util.ConstantStore;
 
 import java.util.Optional;
 
@@ -40,7 +39,6 @@ public class RoomService {
     @Transactional(readOnly = true)
     public RoomDto findRoom(String roomNumber) {
         Room room = roomRepository.findOneByRoomNumber(roomNumber).orElseThrow(CRoomNotFoundException::new);
-        RoomDto dto = room.convertToDto();
-        return dto;
+        return room.convertToDto();
     }
 }

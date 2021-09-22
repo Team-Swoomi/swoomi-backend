@@ -11,10 +11,7 @@ import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.entity.response.SingleResult;
-import teamc.opgg.swoomi.service.ItemPurchaseService;
-import teamc.opgg.swoomi.service.MatchService;
-import teamc.opgg.swoomi.service.OppositeInfoService;
-import teamc.opgg.swoomi.service.ResponseService;
+import teamc.opgg.swoomi.service.*;
 
 import java.util.List;
 
@@ -33,14 +30,19 @@ public class MatchController {
     @Autowired
     private OppositeInfoService oppositeInfoService;
 
+    @Autowired
+    private OriannaService oriannaService;
     /**
      * GetMatchStatus
      * 소환사명을 파라미터로 받아 현재 게임 시작 여부를 리턴한다.
      */
     @GetMapping("/{summonerName}")
     @ApiOperation(value = "게임 시작 여부 반환", notes = "소환사명을 받아 현재 게임 시작 여부를 리턴합니다.")
-    public SingleResult<MatchDto> getMatchStatus(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
-        MatchDto dto = matchService.getMatchStatus(summonerName);
+    public SingleResult<MatchDto> getMatchStatus(
+            @ApiParam(value = "소환사명", required = true)
+            @PathVariable String summonerName) {
+        String summonerId = oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId();
+        MatchDto dto = matchService.getMatchStatus(summonerId);
         return responseService.getSingleResult(dto);
     }
 

@@ -9,6 +9,7 @@ import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -39,16 +40,14 @@ public class MatchService {
     private ChampionItemRepository championItemRepository;
     @Autowired
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
-    @Autowired
-    private SummonerService summonerService;
+
     @Value("${riot.api.key}")
     private String RIOT_API_KEY;
 
     @Transactional(readOnly = true)
-    public MatchDto getMatchStatus(String summonerName) {
+    public MatchDto getMatchStatus(String encryptedSummonerName) {
         MatchDto dto = new MatchDto();
         String riotUrl = "https://kr.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/";
-        String encryptedSummonerName = summonerService.findBySummonerName(summonerName).getSummonerId();
         riotUrl = riotUrl + encryptedSummonerName + "?api_key=" + RIOT_API_KEY;
 
         RestTemplate restTemplate = new RestTemplate();
@@ -56,8 +55,8 @@ public class MatchService {
 
         try {
             response = restTemplate.getForEntity(riotUrl, String.class);
-            log.info(response.getBody());
-            dto.setMatchStatus(true);
+            log.info(response.getStatusCode()+"");
+            dto.setMatchStatus(response.getStatusCode() == HttpStatus.OK);
         } catch (HttpClientErrorException | HttpServerErrorException client) {
             dto.setMatchStatus(false);
         }
@@ -68,7 +67,8 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public MatchDto getMatchStatusByMatchTeamCode(String matchTeamCode) {
-        String summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(matchTeamCode)
+        String summonerName = matchTeamCodeSummonerRepository
+                .findFirstByMatchTeamCode(matchTeamCode)
                 .orElseThrow(CSummonerNotInGameException::new)
                 .getSummonerName();
         return getMatchStatus(summonerName);
@@ -133,7 +133,8 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
-        List<ItemDto> list = championItemRepository.findAllByChampionNameAndPosition(championName, position)
+        return championItemRepository
+                .findAllByChampionNameAndPosition(championName, position)
                 .get()
                 .stream()
                 .map((i) -> ItemDto.builder()
@@ -143,8 +144,5 @@ public class MatchService {
                         .skillAccel(i.getSkillAccel())
                         .build())
                 .collect(Collectors.toList());
-        return list;
     }
-
-
 }

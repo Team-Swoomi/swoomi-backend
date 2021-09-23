@@ -115,8 +115,8 @@ public class ChampionInfoService {
         Double cooldownFSpell = player.getSummonerSpellF().getCooldowns().get(0);
         String spellDName = player.getSummonerSpellD().getName();
         String spellFName = player.getSummonerSpellF().getName();
-        Double cooldownRSpell = 0.;
-        if (ultLevel >= 1) {
+        Double cooldownRSpell = player.getChampion().getSpells().get(3).getCooldowns().get(0);
+        if (ultLevel > 1) {
             cooldownRSpell = player.getChampion().getSpells().get(3).getCooldowns().get(ultLevel - 1);
         }
 
@@ -182,10 +182,14 @@ public class ChampionInfoService {
                 skillAccel += cloudDragonCount.get().getDragonCount() * 12;
             }
 
-            Double cooltimeR = getInitialCooltimeInfo(summonerName, ultLevel).getCooltimeR();
+            ChampionCoolInfoDto cooltimeInfo = getInitialCooltimeInfo(summonerName, ultLevel);
+            Double cooltimeR = cooltimeInfo.getCooltimeR();
+
             double skillCooldownPercent = (100 - (double) 100 * (skillAccel / (100 + skillAccel))) / 100;
             double cooltimeCalcedR = Math.round(cooltimeR * skillCooldownPercent);
 
+            championInfo.get().setDSpellTime(cooltimeInfo.getCooltimeD());
+            championInfo.get().setFSpellTime(cooltimeInfo.getCooltimeF());
             championInfo.get().setRSpellTime(cooltimeCalcedR);
             return championInfo.get().toInfoDto();
         }

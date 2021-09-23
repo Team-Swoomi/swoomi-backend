@@ -108,17 +108,28 @@ public class ChampionInfoService {
     @Transactional
     public ChampionCoolInfoDto getInitialCooltimeInfo(String summonerName, int ultLevel) {
 
-        if (ultLevel < 1 || ultLevel > 3) ultLevel = 1;
+        if (ultLevel < 0 || ultLevel > 3) ultLevel = 1;
 
         Player player = getPlayer(summonerName);
         Double cooldownDSpell = player.getSummonerSpellD().getCooldowns().get(0);
         Double cooldownFSpell = player.getSummonerSpellF().getCooldowns().get(0);
         String spellDName = player.getSummonerSpellD().getName();
         String spellFName = player.getSummonerSpellF().getName();
-        Double cooldownRSpell = player.getChampion().getSpells().get(3).getCooldowns().get(ultLevel - 1);
+        Double cooldownRSpell = 0.;
+        if (ultLevel >= 1) {
+            cooldownRSpell = player.getChampion().getSpells().get(3).getCooldowns().get(ultLevel - 1);
+        }
 
-        if (cooldownDSpell == 0) cooldownDSpell = cooldownFSpell;
-        else if (cooldownFSpell == 0) cooldownFSpell = cooldownDSpell;
+//        궁 0레벨 - 420초
+//        궁 1레벨 - 358초
+//        궁 2레벨 - 296초
+//        궁 3레벨 - 235초
+
+        if (cooldownDSpell == 0 && spellDName.equals("순간이동")) {
+            cooldownDSpell = setTeleportCooldown(ultLevel, cooldownDSpell);
+        } else if (cooldownFSpell == 0 && spellFName.equals("순간이동")) {
+            cooldownFSpell = setTeleportCooldown(ultLevel, cooldownFSpell);
+        }
 
         return ChampionCoolInfoDto.builder()
                 .cooltimeD(cooldownDSpell)
@@ -127,6 +138,28 @@ public class ChampionInfoService {
                 .spellFName(spellFName)
                 .cooltimeR(cooldownRSpell)
                 .build();
+    }
+
+    private Double setTeleportCooldown(int ultLevel, Double spellCooldown) {
+        switch (ultLevel) {
+            case 0 : {
+                spellCooldown = 420.;
+                break;
+            }
+            case 1: {
+                spellCooldown = 358.;
+                break;
+            }
+            case 2: {
+                spellCooldown = 296.;
+                break;
+            }
+            case 3: {
+                spellCooldown = 235.;
+                break;
+            }
+        }
+        return spellCooldown;
     }
 
     @Transactional

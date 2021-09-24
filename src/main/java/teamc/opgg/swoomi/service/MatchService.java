@@ -80,7 +80,7 @@ public class MatchService {
     }
 
     @Synchronized
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public MatchStatusDto getMatchTeamCode(String summonerName) {
 
         log.info("GET MATCH TEAM CODE : "+summonerName);

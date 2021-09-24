@@ -58,6 +58,7 @@ public class MatchService {
             log.info(response.getStatusCode()+"");
             dto.setMatchStatus(response.getStatusCode() == HttpStatus.OK);
         } catch (HttpClientErrorException | HttpServerErrorException client) {
+            client.printStackTrace();
             dto.setMatchStatus(false);
         }
         log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));

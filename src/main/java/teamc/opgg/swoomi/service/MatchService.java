@@ -112,7 +112,7 @@ public class MatchService {
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
 
-            synchronized (this.matchTeamCodeSummonerRepository) {
+            synchronized (this) {
                 if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
                     matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
                             .setMatchTeamCode(matchTeamCode);

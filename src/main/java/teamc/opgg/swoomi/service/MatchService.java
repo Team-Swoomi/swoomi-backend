@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -60,7 +61,6 @@ public class MatchService {
             log.info("Response Code : " + response.getStatusCode());
             dto.setMatchStatus(response.getStatusCode() == HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             dto.setMatchStatus(false);
         }
         log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));
@@ -68,7 +68,7 @@ public class MatchService {
         return dto;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public MatchDto getMatchStatusByMatchTeamCode(String matchTeamCode) {
         String summonerName = matchTeamCodeSummonerRepository
                 .findFirstByMatchTeamCode(matchTeamCode)
@@ -78,9 +78,10 @@ public class MatchService {
         return getMatchStatus(summonerId);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public MatchStatusDto getMatchTeamCode(String summonerName) {
 
+        log.info("GET MATCH TEAM CODE : "+summonerName);
         boolean isMyTeam = false;
         long myTeam = 100;
         Summoner summoner;
@@ -93,6 +94,7 @@ public class MatchService {
 
         CurrentMatch currentMatch = Orianna.currentMatchForSummoner(summoner).get();
         if (currentMatch.getId() != 0) {
+            log.info("MATCH IS EXIST");
             matchStatusDto = MatchStatusDto.builder()
                     .isStarted(false)
                     .matchTeamCode("")
@@ -106,25 +108,31 @@ public class MatchService {
             }
             if (!isMyTeam) myTeam = 200;
             String matchTeamCode = String.valueOf(currentMatch.getId() * 1000 + myTeam);
+            log.info("MATCH TEAM CODE : " + matchTeamCode);
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
-            synchronized (this.matchTeamCodeSummonerRepository) {
-                if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
-                    matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
-                            .setMatchTeamCode(matchTeamCode);
-                } else {
-                    MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
-                            .matchTeamCode(matchTeamCode)
-                            .summonerName(summonerName)
-                            .build();
-                    matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
-                }
+
+            if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
+                matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
+                        .setMatchTeamCode(matchTeamCode);
+                log.info("기존값 저장");
+            } else {
+                MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
+                        .matchTeamCode(matchTeamCode)
+                        .summonerName(summonerName)
+                        .build();
+                matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+                log.info("새로 저장");
             }
             return matchStatusDto;
-        } else throw new CSummonerNotInGameException();
+        }
+        else {
+            log.info("NOT MATCHING");
+            throw new CSummonerNotInGameException();
+        }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String getMyMatchTeamCodeByEnemy(String summonerName) {
 
         StringBuilder myCode = new StringBuilder(getMatchTeamCode(summonerName).getMatchTeamCode());

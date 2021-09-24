@@ -108,16 +108,17 @@ public class MatchService {
             String matchTeamCode = String.valueOf(currentMatch.getId() * 1000 + myTeam);
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
-
-            if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
-                matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
-                        .setMatchTeamCode(matchTeamCode);
-            } else {
-                MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
-                        .matchTeamCode(matchTeamCode)
-                        .summonerName(summonerName)
-                        .build();
-                matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+            synchronized (this.matchTeamCodeSummonerRepository) {
+                if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
+                    matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
+                            .setMatchTeamCode(matchTeamCode);
+                } else {
+                    MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
+                            .matchTeamCode(matchTeamCode)
+                            .summonerName(summonerName)
+                            .build();
+                    matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+                }
             }
             return matchStatusDto;
         } else throw new CSummonerNotInGameException();

@@ -112,17 +112,19 @@ public class MatchService {
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
 
-            if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
-                matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
-                        .setMatchTeamCode(matchTeamCode);
-                log.info("기존값 저장");
-            } else {
-                MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
-                        .matchTeamCode(matchTeamCode)
-                        .summonerName(summonerName)
-                        .build();
-                matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
-                log.info("새로 저장");
+            synchronized (this.matchTeamCodeSummonerRepository) {
+                if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
+                    matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
+                            .setMatchTeamCode(matchTeamCode);
+                    log.info("기존값 저장");
+                } else {
+                    MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
+                            .matchTeamCode(matchTeamCode)
+                            .summonerName(summonerName)
+                            .build();
+                    matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+                    log.info("새로 저장");
+                }
             }
             return matchStatusDto;
         }

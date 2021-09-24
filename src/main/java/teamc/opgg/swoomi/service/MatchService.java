@@ -79,8 +79,8 @@ public class MatchService {
         return getMatchStatus(summonerId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Synchronized
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public MatchStatusDto getMatchTeamCode(String summonerName) {
 
         log.info("GET MATCH TEAM CODE : "+summonerName);

@@ -4,6 +4,7 @@ import com.merakianalytics.orianna.Orianna;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.dto.SummonerRequestDto;
@@ -31,7 +32,7 @@ public class SummonerService {
         return new SummonerResponseDto(summoner);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public SummonerResponseDto findBySummonerName(String summonerName) {
         MySummoner summoner = summonerRepo.findBySummonerName(summonerName)
                 .orElseThrow(CSummonerNotFoundException::new);

@@ -10,6 +10,7 @@ import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.dto.SPELL;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
@@ -26,6 +27,7 @@ public class OriannaService {
     private final SummonerRepo summonerRepo;
     private final SummonerService summonerService;
 
+    @Transactional
     public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
         try {
             return summonerService.findBySummonerName(summonerName);
@@ -74,6 +76,7 @@ public class OriannaService {
                             .build();
                     Optional<MySummoner> bySummonerId = summonerRepo.findBySummonerId(summoner.getId());
                     if (bySummonerId.isPresent()) {
+                        bySummonerId.get().setSummonerName(summoner.getName());
                         return new SummonerResponseDto(bySummonerId.get());
                     } else summonerRepo.save(mySummoner);
                 }

@@ -6,6 +6,7 @@ import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,6 +80,7 @@ public class MatchService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Synchronized
     public MatchStatusDto getMatchTeamCode(String summonerName) {
 
         log.info("GET MATCH TEAM CODE : "+summonerName);
@@ -112,19 +114,17 @@ public class MatchService {
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
 
-            synchronized (this) {
-                if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
-                    matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
-                            .setMatchTeamCode(matchTeamCode);
-                    log.info("기존값 저장");
-                } else {
-                    MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
-                            .matchTeamCode(matchTeamCode)
-                            .summonerName(summonerName)
-                            .build();
-                    matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
-                    log.info("새로 저장");
-                }
+            if (matchTeamCodeSummonerRepository.findBySummonerName(summonerName).isPresent()) {
+                matchTeamCodeSummonerRepository.findBySummonerName(summonerName).get()
+                        .setMatchTeamCode(matchTeamCode);
+                log.info("기존값 저장");
+            } else {
+                MatchTeamCodeSummoner matchTeamCodeSummoner = MatchTeamCodeSummoner.builder()
+                        .matchTeamCode(matchTeamCode)
+                        .summonerName(summonerName)
+                        .build();
+                matchTeamCodeSummonerRepository.save(matchTeamCodeSummoner);
+                log.info("새로 저장");
             }
             return matchStatusDto;
         }

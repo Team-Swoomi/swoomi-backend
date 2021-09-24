@@ -59,8 +59,8 @@ public class MatchService {
             response = restTemplate.getForEntity(riotUrl, String.class);
             log.info("Response Code : " + response.getStatusCode());
             dto.setMatchStatus(response.getStatusCode() == HttpStatus.OK);
-        } catch (HttpClientErrorException | HttpServerErrorException client) {
-            client.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             dto.setMatchStatus(false);
         }
         log.info("현재 매치 상태 : " + (dto.isMatchStatus() ? "시작 함" : "시작 안함"));

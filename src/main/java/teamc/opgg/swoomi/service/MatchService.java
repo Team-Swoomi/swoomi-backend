@@ -40,6 +40,8 @@ public class MatchService {
     private ChampionItemRepository championItemRepository;
     @Autowired
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
+    @Autowired
+    private OriannaService oriannaService;
 
     @Value("${riot.api.key}")
     private String RIOT_API_KEY;
@@ -55,7 +57,7 @@ public class MatchService {
 
         try {
             response = restTemplate.getForEntity(riotUrl, String.class);
-            log.info(response.getStatusCode()+"");
+            log.info("Response Code : " + response.getStatusCode());
             dto.setMatchStatus(response.getStatusCode() == HttpStatus.OK);
         } catch (HttpClientErrorException | HttpServerErrorException client) {
             client.printStackTrace();
@@ -72,7 +74,8 @@ public class MatchService {
                 .findFirstByMatchTeamCode(matchTeamCode)
                 .orElseThrow(CSummonerNotInGameException::new)
                 .getSummonerName();
-        return getMatchStatus(summonerName);
+        String summonerId = oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId();
+        return getMatchStatus(summonerId);
     }
 
     @Transactional

@@ -34,13 +34,9 @@ public class ChampionInfoService {
     private final ItemPurchaseService itemPurchaseService;
     private final CloudDragonRepository cloudDragonRepository;
 
-    @Transactional
-    public Player getPlayer(String summonerName) {
+    public Player getPlayer(String summonerName, String matchTeamCode) {
 
-        log.info("["+summonerName+"]");
-        String matchTeamCode = matchService
-                .getMatchTeamCode(summonerName)
-                .getMatchTeamCode();
+        log.info("GET PLAYER : ["+summonerName+"]");
 
         int teamCode = Integer.parseInt(matchTeamCode.substring(matchTeamCode.length() - 3));
         Summoner summoner = Orianna.summonerNamed(summonerName).get();
@@ -62,7 +58,6 @@ public class ChampionInfoService {
                     .getParticipants()
                     .find(o -> o.getSummoner().getName().equals(summonerName));
         }
-        log.info("PLAYER : " + player.getSummoner().getName());
         return player;
     }
 
@@ -73,9 +68,8 @@ public class ChampionInfoService {
         return true;
     }
 
-    @Transactional
-    public ChampionAccelInfoDto getInitialRuneInfo(String summonerName) {
-        Player player = getPlayer(summonerName);
+    public ChampionAccelInfoDto getInitialRuneInfo(String summonerName, String matchTeamCode) {
+        Player player = getPlayer(summonerName, matchTeamCode);
 
         JsonObject runeJson = gson.fromJson(player.getRunes().toJSON(), JsonObject.class);
         JsonArray RunesData = runeJson.getAsJsonArray("data");
@@ -105,12 +99,11 @@ public class ChampionInfoService {
         return itemPurchaseService.getTotalItemSpellAccelFromSummoner(purchaseReqDto);
     }
 
-    @Transactional
-    public ChampionCoolInfoDto getInitialCooltimeInfo(String summonerName, int ultLevel) {
+    public ChampionCoolInfoDto getInitialCooltimeInfo(String summonerName, String matchTeamCode, int ultLevel) {
 
         if (ultLevel < 0 || ultLevel > 3) ultLevel = 1;
 
-        Player player = getPlayer(summonerName);
+        Player player = getPlayer(summonerName, matchTeamCode);
         Double cooldownDSpell = player.getSummonerSpellD().getCooldowns().get(0);
         Double cooldownFSpell = player.getSummonerSpellF().getCooldowns().get(0);
         String spellDName = player.getSummonerSpellD().getName();
@@ -165,24 +158,25 @@ public class ChampionInfoService {
     @Transactional
     @Synchronized
     public ChampionInfoDto calculateAndSaveChampionInfo(String summonerName, int ultLevel) {
-        String myMatchTeamCodeByEnemy = matchService.getMyMatchTeamCodeByEnemy(summonerName);
-        Optional<ChampionInfo> championInfo = championInfoRepo.findBySummonerName(
-                summonerName);
+        String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
+        String myCode = matchService.getMyMatchTeamCodeByEnemy(matchTeamCode);
+        Optional<ChampionInfo> championInfo =
+                championInfoRepo.findBySummonerName(summonerName);
 
         if (championInfo.isPresent() && championInfo.get().getMatchTeamCode() != null
-                && championInfo.get().getMatchTeamCode().equals(myMatchTeamCodeByEnemy)
+                && championInfo.get().getMatchTeamCode().equals(myCode)
                 && !infoIsUpdated(summonerName)) {
             ChampionInfo info = championInfo.get();
 
             double skillAccel = info.getSkillAccel();
             Optional<CloudDragonCount> cloudDragonCount =
-                    cloudDragonRepository.findCloudDragonCountByMatchTeamCode(myMatchTeamCodeByEnemy);
+                    cloudDragonRepository.findCloudDragonCountByMatchTeamCode(myCode);
 
             if (cloudDragonCount.isPresent()) {
                 skillAccel += cloudDragonCount.get().getDragonCount() * 12;
             }
 
-            ChampionCoolInfoDto cooltimeInfo = getInitialCooltimeInfo(summonerName, ultLevel);
+            ChampionCoolInfoDto cooltimeInfo = getInitialCooltimeInfo(summonerName, matchTeamCode, ultLevel);
             Double cooltimeR = cooltimeInfo.getCooltimeR();
 
             double skillCooldownPercent = (100 - (double) 100 * (skillAccel / (100 + skillAccel))) / 100;
@@ -194,22 +188,22 @@ public class ChampionInfoService {
             return championInfo.get().toInfoDto();
         }
 
-        Player player = getPlayer(summonerName);
+        Player player = getPlayer(summonerName, matchTeamCode);
         String championName = player.getChampion().getName().replaceAll(" ", "");
 
         ItemPurchaserInfoDto purchaserInfoDto = ItemPurchaserInfoDto.builder()
                 .championName(championName)
                 .summonerName(summonerName)
-                .matchTeamCode(myMatchTeamCodeByEnemy)
+                .matchTeamCode(myCode)
                 .build();
 
-        ChampionAccelInfoDto initialRuneInfo = getInitialRuneInfo(summonerName);
+        ChampionAccelInfoDto initialRuneInfo = getInitialRuneInfo(summonerName, matchTeamCode);
         int finalSkillAccel = initialRuneInfo.getSkillAccel() + getTotalItemSkillAccel(purchaserInfoDto);
         int finalSpellAccel = initialRuneInfo.getSpellAccel() + getTotalItemSpellAccel(purchaserInfoDto);
 
         int cloudSkillAccel = 0;
         Optional<CloudDragonCount> cloudDto = cloudDragonRepository
-                .findCloudDragonCountByMatchTeamCode(myMatchTeamCodeByEnemy);
+                .findCloudDragonCountByMatchTeamCode(myCode);
         if (cloudDto.isPresent()) {
             cloudSkillAccel += cloudDto.get().getDragonCount() * 12;
         }
@@ -217,7 +211,7 @@ public class ChampionInfoService {
         log.info("FINAL SKILL ACCEL : " + finalSkillAccel + cloudSkillAccel);
         log.info("FINAL SPELL ACCEL : " + finalSpellAccel);
 
-        ChampionCoolInfoDto championCoolInfoDto = getInitialCooltimeInfo(summonerName, ultLevel);
+        ChampionCoolInfoDto championCoolInfoDto = getInitialCooltimeInfo(summonerName, matchTeamCode, ultLevel);
         Double cooltimeD = championCoolInfoDto.getCooltimeD();
         Double cooltimeF = championCoolInfoDto.getCooltimeF();
         String spellDName = championCoolInfoDto.getSpellDName();
@@ -239,7 +233,7 @@ public class ChampionInfoService {
         ChampionInfoDto championInfoDto = ChampionInfoDto.builder()
                 .summonerName(summonerName)
                 .championName(championName)
-                .matchTeamCode(myMatchTeamCodeByEnemy)
+                .matchTeamCode(myCode)
                 .dSpellTime(cooltimeCalcedD)
                 .fSpellTime(cooltimeCalcedF)
                 .rSpellTime(cooltimeCalcedR)
@@ -256,7 +250,7 @@ public class ChampionInfoService {
             info.setRSpellTime(cooltimeCalcedR);
             info.setSkillAccel(finalSkillAccel);
             info.setSpellAccel(finalSpellAccel);
-            info.setMatchTeamCode(myMatchTeamCodeByEnemy);
+            info.setMatchTeamCode(myCode);
             info.setUpdated(false);
         } else {
             ChampionInfo info = championInfoDto.toEntity();
@@ -269,7 +263,6 @@ public class ChampionInfoService {
         return championInfoDto;
     }
 
-    @Transactional
     public ChampionCoolInfoDto getCalcedCooltimeInfo(String summonerName, int ultLv) {
 
         ChampionInfoDto championInfoDto = calculateAndSaveChampionInfo(summonerName, ultLv);

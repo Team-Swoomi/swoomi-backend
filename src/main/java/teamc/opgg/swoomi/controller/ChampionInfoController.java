@@ -11,6 +11,7 @@ import teamc.opgg.swoomi.dto.ChampionCoolInfoDto;
 import teamc.opgg.swoomi.dto.ChampionInfoDto;
 import teamc.opgg.swoomi.entity.response.SingleResult;
 import teamc.opgg.swoomi.service.ChampionInfoService;
+import teamc.opgg.swoomi.service.MatchService;
 import teamc.opgg.swoomi.service.ResponseService;
 
 @Slf4j
@@ -22,6 +23,7 @@ public class ChampionInfoController {
 
     private final ChampionInfoService championInfoService;
     private final ResponseService responseService;
+    private final MatchService matchService;
 
     @GetMapping("/defaultCooltimeInfo")
     @ApiOperation(value = "챔피언 궁/스펠 쿨감 미적용 쿨타임 정보", notes = "소환사 명 입력 시 쿨감이 적용되지 않은 궁/스펠 쿨타임 반환")
@@ -29,12 +31,14 @@ public class ChampionInfoController {
             @ApiParam(value = "소환사명", required = true)
             @RequestParam String summonerName,
             @ApiParam(value = "궁 레벨 (lv 1, 2, 3)", required = true)
-            @RequestParam int ultLevel)
-    {
+            @RequestParam int ultLevel) {
+
         log.info("SUMMONER NAME : " + summonerName);
         log.info("ULT LEVEL : " + ultLevel);
 
-        ChampionCoolInfoDto championCoolInfoDto = championInfoService.getInitialCooltimeInfo(summonerName, ultLevel);
+        String matchTeamCode = matchService.getMatchTeamCode(summonerName).getMatchTeamCode();
+        ChampionCoolInfoDto championCoolInfoDto =
+                championInfoService.getInitialCooltimeInfo(summonerName, matchTeamCode, ultLevel);
         return responseService.getSingleResult(championCoolInfoDto);
     }
 

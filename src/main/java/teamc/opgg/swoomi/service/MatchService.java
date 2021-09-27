@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -82,7 +83,6 @@ public class MatchService {
     @Synchronized
     @Transactional
     public MatchStatusDto getMatchTeamCode(String summonerName) {
-
         log.info("GET MATCH TEAM CODE : "+summonerName);
         boolean isMyTeam = false;
         long myTeam = 100;
@@ -96,7 +96,6 @@ public class MatchService {
 
         CurrentMatch currentMatch = Orianna.currentMatchForSummoner(summoner).get();
         if (currentMatch.getId() != 0) {
-            log.info("MATCH IS EXIST");
             matchStatusDto = MatchStatusDto.builder()
                     .isStarted(false)
                     .matchTeamCode("")
@@ -110,7 +109,6 @@ public class MatchService {
             }
             if (!isMyTeam) myTeam = 200;
             String matchTeamCode = String.valueOf(currentMatch.getId() * 1000 + myTeam);
-            log.info("MATCH TEAM CODE : " + matchTeamCode);
             matchStatusDto.setIsStarted(true);
             matchStatusDto.setMatchTeamCode(matchTeamCode);
 
@@ -129,15 +127,12 @@ public class MatchService {
             return matchStatusDto;
         }
         else {
-            log.info("NOT MATCHING");
             throw new CSummonerNotInGameException();
         }
     }
 
-    @Transactional
-    public String getMyMatchTeamCodeByEnemy(String summonerName) {
-
-        StringBuilder myCode = new StringBuilder(getMatchTeamCode(summonerName).getMatchTeamCode());
+    public String getMyMatchTeamCodeByEnemy(String matchTeamCode) {
+        StringBuilder myCode = new StringBuilder(matchTeamCode);
         if (Integer.parseInt(myCode.substring(myCode.length() - 3)) == 100) {
             myCode.replace(myCode.length() - 3, myCode.length(), "200");
         } else {

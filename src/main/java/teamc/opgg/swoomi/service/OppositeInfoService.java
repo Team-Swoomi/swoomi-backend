@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@EnableAsync
 public class OppositeInfoService {
     @Autowired
     private CommonService commonService;
@@ -36,7 +35,6 @@ public class OppositeInfoService {
     @Autowired
     private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
 
-    @Transactional
     public List<PlayerDto> getOpData(String summonerName) {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
@@ -47,12 +45,10 @@ public class OppositeInfoService {
             log.info("SUMMONER '" + summonerName + "' NOT IN GAME");
             throw new CSummonerNotInGameException();
         }
-        List<PlayerDto> playerDtos = new ArrayList<>();
 
         // 1. 상대팀 구하기
         SearchableList<Player> sList = summoner.getCurrentMatch().getParticipants();
-        String finalSummonerName = summonerName;
-        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(finalSummonerName));
+        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(summonerName));
         String teamId = tempPlayer.getTeam().toString();
 
         // 2. 상대팀 멤버 구하기
@@ -60,12 +56,20 @@ public class OppositeInfoService {
 
         commonService.initChampionNameHasItem();
 
+        return getPlayerDtos(opList);
+    }
+
+    public List<PlayerDto> getPlayerDtos(SearchableList<Player> opList) {
+
+        List<PlayerDto> playerDtos = new ArrayList<>();
+
         for (Player p : opList) {
-            String championNameforDto = p.getChampion().getName();
-            String championName = championNameforDto.replace(" ", "");
+            String championNameForDto = p.getChampion().getName();
+            String championName = championNameForDto.replace(" ", "");
             Set<String> set = new HashSet<>();
-            Optional<List<ChampionItem>> optionalChampionItems = championItemRepository.findAllByChampionName(championName);
             List<ItemDto> list = new ArrayList<>();
+            Optional<List<ChampionItem>> optionalChampionItems =
+                    championItemRepository.findAllByChampionName(championName);
 
             new Thread(
                     () -> championInfoService.calculateAndSaveChampionInfo(p.getSummoner().getName(), 1)
@@ -97,7 +101,7 @@ public class OppositeInfoService {
                 );
             }
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
-                    .championName(championNameforDto)
+                    .championName(championNameForDto)
                     .championImgUrl(p.getChampion().getImage().getURL())
                     .ultImgUrl(p.getChampion().getSpells().get(3).getImage().getURL())
                     .spellDName(p.getSummonerSpellD().getName())

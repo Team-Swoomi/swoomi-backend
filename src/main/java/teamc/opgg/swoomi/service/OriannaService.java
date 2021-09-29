@@ -36,7 +36,7 @@ public class OriannaService {
             try {
 
                 // only Eng => 전부 붙임
-                // else => 다 띄움
+                // else => 영어, 숫자 제외 다 띄움
                 boolean onlyEng = true;
 
                 summonerName = summonerName.replace(" ", "");
@@ -53,9 +53,13 @@ public class OriannaService {
                     StringBuilder spaceName = new StringBuilder();
                     for (int i = 0; i < summonerName.length(); i++) {
                         char c = summonerName.charAt(i);
-                        if (c == ' ') spaceName.append(c);
-                        else if (i == summonerName.length() - 1) spaceName.append(c);
-                        else spaceName.append(c).append(" ");
+                        if (c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A' || c <= '9' && c >= '0' || c == ' ') {
+                            spaceName.append(c);
+                        } else if (i == summonerName.length() - 1) {
+                            spaceName.append(c);
+                        } else {
+                            spaceName.append(c).append(" ");
+                        }
                     }
                     summonerName = spaceName.toString();
                 }
@@ -77,7 +81,7 @@ public class OriannaService {
                     Optional<MySummoner> bySummonerId = summonerRepo.findBySummonerId(summoner.getId());
                     if (bySummonerId.isPresent()) {
                         bySummonerId.get().setSummonerName(summoner.getName());
-                        return new SummonerResponseDto(bySummonerId.get());
+                        return bySummonerId.get().toDto();
                     } else summonerRepo.save(mySummoner);
                 }
             } catch (IllegalStateException illegalStateException) {
@@ -103,6 +107,25 @@ public class OriannaService {
             return summoner.getProfileIcon().getImage().getURL();
         } else {
             throw new CSummonerNotFoundException();
+        }
+    }
+
+    public SummonerResponseDto findSummonerByRiot(String summonerName) {
+        Summoner summoner = Orianna
+                .summonerNamed(summonerName)
+                .withRegion(Region.KOREA)
+                .get();
+        if (!summoner.exists()) {
+            throw new CSummonerNotFoundException();
+        } else {
+            MySummoner mySummoner = MySummoner.builder()
+                    .accountId(summoner.getAccountId())
+                    .summonerId(summoner.getId())
+                    .summonerName(summoner.getName())
+                    .summonerLevel(summoner.getLevel())
+                    .profileIconId(summoner.getProfileIcon().getId())
+                    .build();
+            return mySummoner.toDto();
         }
     }
 }

@@ -2,6 +2,7 @@ package teamc.opgg.swoomi.entity;
 
 import io.swagger.annotations.Api;
 import lombok.*;
+import teamc.opgg.swoomi.dto.SummonerResponseDto;
 
 import javax.persistence.*;
 
@@ -43,5 +44,12 @@ public class MySummoner extends BaseTimeEntity {
                 ", summonerName='" + summonerName + '\'' +
                 ", summonerLevel=" + summonerLevel +
                 '}';
+    }
+
+    public SummonerResponseDto toDto() {
+        return SummonerResponseDto.builder()
+                .summonerId(summonerId)
+                .summonerName(summonerName)
+                .build();
     }
 }

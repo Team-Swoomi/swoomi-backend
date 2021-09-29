@@ -34,6 +34,17 @@ public class SummonerController {
         return responseService.getSingleResult(responseDto);
     }
 
+    @ApiOperation(value = "Riot 소환사 검색", notes = "공식서버 소환사 검색")
+    @GetMapping("/summoner/riot/{name}")
+    public SingleResult<SummonerResponseDto> findSummoner(
+            @ApiParam(value = "소환사 명", required = true)
+            @PathVariable("name") String summonerName
+    ) {
+        SummonerResponseDto responseDto = oriannaService.findSummonerByRiot(summonerName);
+        log.info("RET NAME : " + responseDto.getSummonerName());
+        return responseService.getSingleResult(responseDto);
+    }
+
     @ApiOperation(value = "스펠 이미지 검색", notes = "스펠 명을 통해 스펠 이미지 URL을 가져옵니다.")
     @GetMapping("/spellURL")
     public SingleResult<String> findSpellImgUrl(

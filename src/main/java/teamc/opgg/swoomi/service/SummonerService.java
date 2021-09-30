@@ -22,26 +22,26 @@ public class SummonerService {
     public SummonerResponseDto findById(Long id) {
         MySummoner summoner = summonerRepo.findById(id)
                 .orElseThrow(CSummonerNotFoundException::new);
-        return new SummonerResponseDto(summoner);
+        return summoner.toDto();
     }
 
     @Transactional(readOnly = true)
     public SummonerResponseDto findBySummonerId(String summonerId) {
         MySummoner summoner = summonerRepo.findBySummonerId(summonerId)
                 .orElseThrow(CSummonerNotFoundException::new);
-        return new SummonerResponseDto(summoner);
+        return summoner.toDto();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public SummonerResponseDto findBySummonerName(String summonerName) {
         MySummoner summoner = summonerRepo.findBySummonerName(summonerName)
                 .orElseThrow(CSummonerNotFoundException::new);
-        return new SummonerResponseDto(summoner);
+        return summoner.toDto();
     }
 
     public SummonerResponseDto findAccountId(String accountId) {
         MySummoner summoner = summonerRepo.findByAccountId(accountId)
                 .orElseThrow(CSummonerNotFoundException::new);
-        return new SummonerResponseDto(summoner);
+        return summoner.toDto();
     }
 }

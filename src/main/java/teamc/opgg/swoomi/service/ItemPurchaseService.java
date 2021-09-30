@@ -27,7 +27,6 @@ public class ItemPurchaseService {
     private final ItemPurchaseRepository itemPurchaseRepository;
     private final ChampionItemRepository championItemRepository;
     private final ResponseService responseService;
-    private final CloudDragonRepository cloudDragonRepository;
 
     @Transactional(readOnly = true)
     public Integer getTotalItemSkillAccelFromSummoner(ItemPurchaserInfoDto purchaseReqDto) {

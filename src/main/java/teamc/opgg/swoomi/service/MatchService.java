@@ -83,7 +83,7 @@ public class MatchService {
     @Synchronized
     @Transactional
     public MatchStatusDto getMatchTeamCode(String summonerName) {
-        log.info("GET MATCH TEAM CODE : "+summonerName);
+        log.info("["+summonerName+"] CASE : GET MATCH_TEAM_CODE");
         boolean isMyTeam = false;
         long myTeam = 100;
         Summoner summoner;

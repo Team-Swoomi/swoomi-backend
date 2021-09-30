@@ -88,7 +88,7 @@ public class OriannaService {
                 log.error("NO SUMMONER");
                 throw new CSummonerNotFoundException();
             }
-            return new SummonerResponseDto(mySummoner);
+            return mySummoner.toDto();
         }
     }
 

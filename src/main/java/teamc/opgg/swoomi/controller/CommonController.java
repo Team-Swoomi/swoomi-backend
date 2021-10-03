@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,9 +40,6 @@ public class CommonController {
         Object obj = restTemplate.getForObject("http://3.34.111.116:9000/champion/item", Object.class);
         Gson gson = new Gson();
 
-        //JsonReader reader = new JsonReader(new FileReader("src/main/resources/customData.json"));
-        //ChampionItemDto[] dtos = gson.fromJson(reader, ChampionItemDto[].class);
-
         JsonObject jobj = (JsonObject) gson.toJsonTree(obj);
         JsonArray jarr = jobj.getAsJsonArray("champData");
 
@@ -51,5 +49,10 @@ public class CommonController {
         }
 
         return responseService.getSuccessResult();
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<String> pingUpstreamServer() {
+        return commonService.pingUpstreamServer();
     }
 }

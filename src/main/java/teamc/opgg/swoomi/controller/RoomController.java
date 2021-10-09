@@ -14,7 +14,7 @@ import teamc.opgg.swoomi.service.RoomService;
 
 @Controller
 @RequestMapping("/v1/room")
-@Api(tags = {"3.Room Creation and Join"})
+@Api(tags = {"3. Room Creation and Join"})
 public class RoomController {
 
     @Autowired

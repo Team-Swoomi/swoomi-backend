@@ -1,7 +1,10 @@
 package teamc.opgg.swoomi.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,38 +17,37 @@ import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CommonService {
-
-    final static Set<String> championNameSet = new HashSet<>();
-
-    @Autowired
-    ChampionItemRepository championItemRepository;
+    private final ChampionItemRepository championItemRepository;
 
     @Transactional
-    public void refreshFrequentItems(ChampionItemDto dto) {
-        for (int i=0; i<dto.getItems().size(); i++) {
-            ItemDto item = dto.getItems().get(i);
-            if (item.getSkillAccel().isEmpty()) {
-                item.setSkillAccel("0");
+    public void refreshFrequentItems(JsonArray jarr) {
+        championItemRepository.deleteAll();
+        Gson gson = new Gson();
+
+        for (JsonElement e : jarr) {
+            ChampionItemDto dto = gson.fromJson(e, ChampionItemDto.class);
+            for (int i=0; i<dto.getItems().size(); i++) {
+                ItemDto item = dto.getItems().get(i);
+                if (item.getSkillAccel().isEmpty()) {
+                    item.setSkillAccel("0");
+                }
+                ChampionItem championItem = ChampionItem.builder()
+                        .championName(dto.getId())
+                        .skillAccel(item.getSkillAccel())
+                        .englishName(item.getEnglishName())
+                        .itemName(item.getName())
+                        .src(item.getSrc())
+                        .position(dto.getPosition())
+                        .build();
+
+                initChampionNameHasItem();
+                championItemRepository.save(championItem);
             }
-            ChampionItem championItem = ChampionItem.builder()
-                    .championName(dto.getId())
-                    .skillAccel(item.getSkillAccel())
-                    .englishName(item.getEnglishName())
-                    .itemName(item.getName())
-                    .src(item.getSrc())
-                    .position(dto.getPosition())
-                    .build();
-
-            championNameSet.add(dto.getId());
-            initChampionNameHasItem();
-
-            championItemRepository.save(championItem);
         }
     }
 

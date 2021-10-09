@@ -11,7 +11,7 @@ import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.service.ChampionInfoService;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
 
-@Api(tags = {"6. 아이템"})
+@Api(tags = {"6. Items"})
 @Slf4j
 @RestController
 @RequiredArgsConstructor

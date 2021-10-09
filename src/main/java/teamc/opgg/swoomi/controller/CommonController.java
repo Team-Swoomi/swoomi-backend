@@ -22,7 +22,7 @@ import teamc.opgg.swoomi.service.ResponseService;
 @Slf4j
 @RestController
 @RequestMapping("/v1/common")
-@Api(tags = {"Common API"})
+@Api(tags = {"7. Common API"})
 public class CommonController {
 
     @Autowired
@@ -43,11 +43,7 @@ public class CommonController {
         JsonObject jobj = (JsonObject) gson.toJsonTree(obj);
         JsonArray jarr = jobj.getAsJsonArray("champData");
 
-        for (JsonElement e : jarr) {
-            ChampionItemDto dto = gson.fromJson(e, ChampionItemDto.class);
-            commonService.refreshFrequentItems(dto);
-        }
-
+        commonService.refreshFrequentItems(jarr);
         return responseService.getSuccessResult();
     }
 

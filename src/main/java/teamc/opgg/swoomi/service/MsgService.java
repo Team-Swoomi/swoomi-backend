@@ -1,16 +1,12 @@
 package teamc.opgg.swoomi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 import teamc.opgg.swoomi.advice.exception.CMsgRoomNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.CloudDragonDto;
-import teamc.opgg.swoomi.dto.MatchDto;
 import teamc.opgg.swoomi.dto.MatchStatusDto;
 import teamc.opgg.swoomi.dto.MsgRoomDto;
 import teamc.opgg.swoomi.entity.CloudDragonCount;
@@ -18,7 +14,6 @@ import teamc.opgg.swoomi.entity.MsgRoom;
 import teamc.opgg.swoomi.repository.CloudDragonRepository;
 import teamc.opgg.swoomi.repository.MsgRoomRepository;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,7 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MsgService {
     private final MatchService matchService;
-    private final ObjectMapper objectMapper;
     private final CloudDragonRepository cloudDragonRepository;
     private final MsgRoomRepository msgRoomRepository;
 

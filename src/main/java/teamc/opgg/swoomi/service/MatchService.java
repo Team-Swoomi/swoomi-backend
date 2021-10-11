@@ -2,30 +2,23 @@ package teamc.opgg.swoomi.service;
 
 import com.merakianalytics.orianna.Orianna;
 import com.merakianalytics.orianna.types.common.Region;
-import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.CurrentMatch;
 import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
+import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
 import teamc.opgg.swoomi.dto.*;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
-import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
 
@@ -35,16 +28,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MatchService {
-
-    @Autowired
-    CommonService commonService;
-    @Autowired
-    private ChampionItemRepository championItemRepository;
-    @Autowired
-    private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
-    @Autowired
-    private OriannaService oriannaService;
+    private final ChampionItemRepository championItemRepository;
+    private final MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
+    private final OriannaService oriannaService;
 
     @Value("${riot.api.key}")
     private String RIOT_API_KEY;
@@ -143,16 +131,18 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public List<ItemDto> getFrequentItems(String championName, String position) {
-        return championItemRepository
-                .findAllByChampionNameAndPosition(championName, position)
-                .get()
+        Optional<List<ChampionItem>> frequentItems =
+                championItemRepository.findAllByChampionNameAndPosition(championName, position);
+        return frequentItems.map(championItems -> championItems
                 .stream()
-                .map((i) -> ItemDto.builder()
-                        .name(i.getItemName())
-                        .englishName(i.getEnglishName())
-                        .src(i.getSrc())
-                        .skillAccel(i.getSkillAccel())
-                        .build())
-                .collect(Collectors.toList());
+                .map(
+                        (i) -> ItemDto.builder()
+                                .name(i.getItemName())
+                                .englishName(i.getEnglishName())
+                                .src(i.getSrc())
+                                .skillAccel(i.getSkillAccel())
+                                .build()
+                )
+                .collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
 }

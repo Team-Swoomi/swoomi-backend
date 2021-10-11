@@ -62,7 +62,8 @@ public class ExceptionAdvice {
         e.printStackTrace();
         return responseService.getFailResult(
                 ErrorCode.UnDefinedError.getCode(),
-                ErrorCode.UnDefinedError.getMsg()
+                ErrorCode.UnDefinedError.getMsg() + " : " +
+                e.getMessage()
         );
     }
 

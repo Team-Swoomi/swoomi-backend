@@ -3,6 +3,7 @@ package teamc.opgg.swoomi.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +14,13 @@ import teamc.opgg.swoomi.service.ResponseService;
 import teamc.opgg.swoomi.service.RoomService;
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/v1/room")
 @Api(tags = {"3. Room Creation and Join"})
 public class RoomController {
 
-    @Autowired
-    private RoomService roomService;
-    @Autowired
-    private ResponseService responseService;
+    private final RoomService roomService;
+    private final ResponseService responseService;
 
     /**
      * 방장 방 생성

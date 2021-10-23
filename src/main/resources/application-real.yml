@@ -27,7 +27,7 @@ spring:
     properties.hibernate:
       format_sql: auto
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     generate-ddl: false
     show-sql: true
     open-in-view: false

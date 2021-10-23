@@ -68,11 +68,13 @@ public class CommonService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response;
         response = restTemplate.getForEntity(riotUrl, String.class);
-
-        if (response.getBody().replaceAll("\\s+","").contains("<td>KR</td><td>0%</td>")) {
-            response = new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        String replacedBody = response.getBody().replaceAll("\\s+", "").toUpperCase();
+        if (replacedBody.contains("CHAMPION-V3(") ||
+            replacedBody.contains("SPECTATOR-V4(") ||
+            replacedBody.contains("SUMMONER-V4(")) {
+            response = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
-            response = new ResponseEntity(HttpStatus.OK);
+            response = new ResponseEntity<String>(HttpStatus.OK);
         }
         return response;
     }

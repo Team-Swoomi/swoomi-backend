@@ -69,9 +69,9 @@ public class CommonService {
         ResponseEntity<String> response;
         response = restTemplate.getForEntity(riotUrl, String.class);
         String replacedBody = response.getBody().replaceAll("\\s+", "").toUpperCase();
-        if (replacedBody.contains("CHAMPION-V3(") ||
-            replacedBody.contains("SPECTATOR-V4(") ||
-            replacedBody.contains("SUMMONER-V4(")) {
+        if (replacedBody.matches(".*(CHAMPION-V3)\\(.*(KR)*\\).*") ||
+            replacedBody.matches(".*(SPECTATOR-V4)\\(.*(KR)*\\).*") ||
+            replacedBody.matches(".*(SUMMONER-V4)\\(.*(KR)*\\).*")) {
             response = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
             response = new ResponseEntity<String>(HttpStatus.OK);

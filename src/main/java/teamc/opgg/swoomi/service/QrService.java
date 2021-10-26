@@ -33,11 +33,11 @@ public class QrService {
         UriComponentsBuilder builder;
 
         if (property != null && property.contains("real")) {
-            URL = "https://api.qrserver.com/v1/create-qr-code/?data="
-                    + realUrl + "/room/" + summonerName + "&size=150x150&bgcolor=6675FF";
+            realUrl = realUrl + "/room/" + summonerName;
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + realUrl;
         } else {
             localUrl = localUrl + "/room/" + summonerName;
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + localUrl + "/v1/summoner/";
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + localUrl;
         }
         builder = UriComponentsBuilder.fromHttpUrl(URL);
         log.info(builder.build().encode().toUri()+"");

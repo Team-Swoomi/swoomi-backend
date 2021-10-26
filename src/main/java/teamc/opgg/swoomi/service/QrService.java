@@ -33,11 +33,9 @@ public class QrService {
         UriComponentsBuilder builder;
 
         if (property != null && property.contains("real")) {
-            realUrl = realUrl + "/room/" + summonerName;
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + realUrl;
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + realUrl+ "/room/" + summonerName;
         } else {
-            localUrl = localUrl + "/room/" + summonerName;
-            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + localUrl;
+            URL = "https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=" + localUrl+ "/room/" + summonerName;
         }
         builder = UriComponentsBuilder.fromHttpUrl(URL);
         log.info(builder.build().encode().toUri()+"");

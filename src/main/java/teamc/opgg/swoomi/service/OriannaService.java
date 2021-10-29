@@ -8,8 +8,11 @@ import com.merakianalytics.orianna.types.core.staticdata.Sprite;
 import com.merakianalytics.orianna.types.core.staticdata.SummonerSpell;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Synchronize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.dto.SPELL;
@@ -27,7 +30,8 @@ public class OriannaService {
     private final SummonerRepo summonerRepo;
     private final SummonerService summonerService;
 
-    @Transactional
+    @Synchronized
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
         try {
             return summonerService.findFirstSummonerName(summonerName);
@@ -83,9 +87,7 @@ public class OriannaService {
                         bySummonerId.get().setSummonerName(summoner.getName());
                         return bySummonerId.get().toDto();
                     } else {
-                        synchronized (OriannaService.class) {
-                            summonerRepo.save(mySummoner);
-                        }
+                        summonerRepo.save(mySummoner);
                     }
                 }
             } catch (IllegalStateException illegalStateException) {

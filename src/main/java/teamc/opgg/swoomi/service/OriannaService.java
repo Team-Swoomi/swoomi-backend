@@ -32,41 +32,42 @@ public class OriannaService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
+
+        // only Eng => 전부 붙임
+        // else => 영어, 숫자 제외 다 띄움
+        boolean onlyEng = true;
+
+        summonerName = summonerName.replaceAll(" ", "");
+
+        for (int i = 0; i < summonerName.length(); i++) {
+            char c = summonerName.charAt(i);
+            if (!((c <= 'z' && c >= 'a') || (c <= 'Z' && c >= 'A') || (c <= '9' && c >= '0'))) {
+                onlyEng = false;
+                break;
+            }
+        }
+
+        if (!onlyEng) {
+            StringBuilder spaceName = new StringBuilder();
+            for (int i = 0; i < summonerName.length(); i++) {
+                char c = summonerName.charAt(i);
+                if (c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A' || c <= '9' && c >= '0' || c == ' ') {
+                    spaceName.append(c);
+                } else if (i == summonerName.length() - 1) {
+                    spaceName.append(c);
+                } else {
+                    spaceName.append(c).append(" ");
+                }
+            }
+            summonerName = spaceName.toString();
+        }
+
         try {
             return summonerService.findFirstSummonerName(summonerName);
         } catch (CSummonerNotFoundException notFoundException) {
+            log.info("NOT IN DB NAME : [" + summonerName + "]");
             MySummoner mySummoner;
             try {
-
-                // only Eng => 전부 붙임
-                // else => 영어, 숫자 제외 다 띄움
-                boolean onlyEng = true;
-
-                summonerName = summonerName.replaceAll(" ", "");
-
-                for (int i = 0; i < summonerName.length(); i++) {
-                    char c = summonerName.charAt(i);
-                    if (!((c <= 'z' && c >= 'a') || (c <= 'Z' && c >= 'A') || (c <= '9' && c >= '0'))) {
-                        onlyEng = false;
-                        break;
-                    }
-                }
-
-                if (!onlyEng) {
-                    StringBuilder spaceName = new StringBuilder();
-                    for (int i = 0; i < summonerName.length(); i++) {
-                        char c = summonerName.charAt(i);
-                        if (c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A' || c <= '9' && c >= '0' || c == ' ') {
-                            spaceName.append(c);
-                        } else if (i == summonerName.length() - 1) {
-                            spaceName.append(c);
-                        } else {
-                            spaceName.append(c).append(" ");
-                        }
-                    }
-                    summonerName = spaceName.toString();
-                }
-
                 Summoner summoner = Orianna
                         .summonerNamed(summonerName)
                         .withRegion(Region.KOREA)

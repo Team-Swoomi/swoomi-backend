@@ -30,7 +30,7 @@ public class OriannaService {
     @Transactional
     public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
         try {
-            return summonerService.findBySummonerName(summonerName);
+            return summonerService.findFirstSummonerName(summonerName);
         } catch (CSummonerNotFoundException notFoundException) {
             MySummoner mySummoner;
             try {
@@ -82,7 +82,11 @@ public class OriannaService {
                     if (bySummonerId.isPresent()) {
                         bySummonerId.get().setSummonerName(summoner.getName());
                         return bySummonerId.get().toDto();
-                    } else summonerRepo.save(mySummoner);
+                    } else {
+                        synchronized (OriannaService.class) {
+                            summonerRepo.save(mySummoner);
+                        }
+                    }
                 }
             } catch (IllegalStateException illegalStateException) {
                 log.error("NO SUMMONER");

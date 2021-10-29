@@ -13,6 +13,8 @@ public interface SummonerRepo extends JpaRepository<MySummoner, Long> {
 
     Optional<MySummoner> findBySummonerId(String summonerId);
 
+    Optional<MySummoner> findFirstBySummonerId(String summonerId);
+
     Optional<MySummoner> findByAccountId(String accountId);
 
     Optional<MySummoner> findFirstBySummonerName(String name);

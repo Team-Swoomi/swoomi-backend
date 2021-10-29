@@ -82,12 +82,15 @@ public class OriannaService {
                             .summonerLevel(summoner.getLevel())
                             .profileIconId(summoner.getProfileIcon().getId())
                             .build();
-                    Optional<MySummoner> bySummonerId = summonerRepo.findBySummonerId(summoner.getId());
+                    Optional<MySummoner> bySummonerId = summonerRepo.findFirstBySummonerId(summoner.getId());
                     if (bySummonerId.isPresent()) {
                         bySummonerId.get().setSummonerName(summoner.getName());
                         return bySummonerId.get().toDto();
                     } else {
-                        summonerRepo.save(mySummoner);
+                        synchronized (MySummoner.class) {
+                            if (summonerRepo.findBySummonerId(summoner.getId()).isEmpty())
+                                summonerRepo.save(mySummoner);
+                        }
                     }
                 }
             } catch (IllegalStateException illegalStateException) {

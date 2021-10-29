@@ -30,8 +30,7 @@ public class OriannaService {
     private final SummonerRepo summonerRepo;
     private final SummonerService summonerService;
 
-    @Synchronized
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
         try {
             return summonerService.findFirstSummonerName(summonerName);

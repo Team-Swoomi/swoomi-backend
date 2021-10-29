@@ -50,14 +50,14 @@ public class MatchController {
     }
 
     @GetMapping("/opponents/{summonerName}")
-    @ApiOperation(value ="상대팀 데이터 반환", notes="소환사명을 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
+    @ApiOperation(value ="자신의 소환사명으로 상대팀 데이터 반환", notes="소환사명을 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
     public ListResult<PlayerDto> getOpData(@ApiParam(value = "소환사명", required = true) @PathVariable String summonerName) {
         List<PlayerDto> list = oppositeInfoService.getOpData(summonerName);
         return responseService.getListResult(list);
     }
 
     @GetMapping("/opponents/by-match-team-code/{matchTeamCode}")
-    @ApiOperation(value ="상대팀 데이터 반환", notes="매치 팀 코드를 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
+    @ApiOperation(value ="matchTeamCode로 상대팀 데이터 반환", notes="매치 팀 코드를 받아 현재 게임 상대팀의 모든 정보를 가져옵니다.")
     public ListResult<PlayerDto> getOpDataMatchTeamCode(@ApiParam(value = "매치 팀 코드", required = true) @PathVariable String matchTeamCode) {
         List<PlayerDto> list = oppositeInfoService.getOpDataMatchTeamCode(matchTeamCode);
         return responseService.getListResult(list);

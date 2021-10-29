@@ -42,11 +42,11 @@ public class OriannaService {
                 // else => 영어, 숫자 제외 다 띄움
                 boolean onlyEng = true;
 
-                summonerName = summonerName.replace(" ", "");
+                summonerName = summonerName.replaceAll(" ", "");
 
                 for (int i = 0; i < summonerName.length(); i++) {
                     char c = summonerName.charAt(i);
-                    if (!(c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A' || c <= '9' && c >= '0')) {
+                    if (!((c <= 'z' && c >= 'a') || (c <= 'Z' && c >= 'A') || (c <= '9' && c >= '0'))) {
                         onlyEng = false;
                         break;
                     }

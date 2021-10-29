@@ -39,7 +39,7 @@ public class SummonerService {
         return summoner.toDto();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public SummonerResponseDto findFirstSummonerName(String summonerName) {
         MySummoner summoner = summonerRepo.findFirstBySummonerName(summonerName)
                 .orElseThrow(CSummonerNotFoundException::new);

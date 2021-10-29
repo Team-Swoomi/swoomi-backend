@@ -22,6 +22,12 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:database-web-c.cxadkdwc8e90.ap-northeast-2.rds.amazonaws.com}:3306/swoomi
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
+    hikari:
+      connection-timeout: 3000
+      validation-timeout: 3000
+      minimum-idle: 5
+      max-lifetime: 120000
+      maximum-pool-size: 100
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     properties.hibernate:

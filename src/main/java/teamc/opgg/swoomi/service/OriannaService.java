@@ -28,11 +28,50 @@ import java.util.Optional;
 public class OriannaService {
 
     private final SummonerRepo summonerRepo;
-    private final SummonerService summonerService;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
+        Optional<MySummoner> firstSummoner = summonerRepo.findFirstBySummonerName(summonerName);
+        if (firstSummoner.isEmpty()) {
+            log.info("NOT IN DB NAME : [" + summonerName + "]");
+            summonerName = refactoringName(summonerName);
+            MySummoner mySummoner;
+            try {
+                Summoner summoner = Orianna
+                        .summonerNamed(summonerName)
+                        .withRegion(Region.KOREA)
+                        .get();
+                if (!summoner.exists()) {
+                    throw new CSummonerNotFoundException();
+                } else {
+                    mySummoner = MySummoner.builder()
+                            .accountId(summoner.getAccountId())
+                            .summonerId(summoner.getId())
+                            .summonerName(summoner.getName())
+                            .summonerLevel(summoner.getLevel())
+                            .profileIconId(summoner.getProfileIcon().getId())
+                            .build();
+                    Optional<MySummoner> bySummonerId = summonerRepo.findFirstBySummonerId(summoner.getId());
+                    if (bySummonerId.isPresent()) {
+                        bySummonerId.get().setSummonerName(summoner.getName());
+                        return bySummonerId.get().toDto();
+                    } else {
+                        synchronized (MySummoner.class) {
+                            if (summonerRepo.findBySummonerId(summoner.getId()).isEmpty())
+                                summonerRepo.save(mySummoner);
+                        }
+                    }
+                }
+            } catch (IllegalStateException illegalStateException) {
+                log.error("NO SUMMONER");
+                throw new CSummonerNotFoundException();
+            }
+            return mySummoner.toDto();
+        }
+        return firstSummoner.get().toDto();
+    }
 
+    private String refactoringName(String summonerName) {
         // only Eng => 전부 붙임
         // else => 영어, 숫자 제외 다 띄움
         boolean onlyEng = true;
@@ -51,7 +90,7 @@ public class OriannaService {
             StringBuilder spaceName = new StringBuilder();
             for (int i = 0; i < summonerName.length(); i++) {
                 char c = summonerName.charAt(i);
-                if (c <= 'z' && c >= 'a' || c <= 'Z' && c >= 'A' || c <= '9' && c >= '0' || c == ' ') {
+                if ((c <= 'z' && c >= 'a') || (c <= 'Z' && c >= 'A') || (c <= '9' && c >= '0') || c == ' ') {
                     spaceName.append(c);
                 } else if (i == summonerName.length() - 1) {
                     spaceName.append(c);
@@ -61,40 +100,9 @@ public class OriannaService {
             }
             summonerName = spaceName.toString();
         }
-
-        MySummoner mySummoner;
-        try {
-            Summoner summoner = Orianna
-                    .summonerNamed(summonerName)
-                    .withRegion(Region.KOREA)
-                    .get();
-            if (!summoner.exists()) {
-                throw new CSummonerNotFoundException();
-            } else {
-                mySummoner = MySummoner.builder()
-                        .accountId(summoner.getAccountId())
-                        .summonerId(summoner.getId())
-                        .summonerName(summoner.getName())
-                        .summonerLevel(summoner.getLevel())
-                        .profileIconId(summoner.getProfileIcon().getId())
-                        .build();
-                Optional<MySummoner> bySummonerId = summonerRepo.findFirstBySummonerId(summoner.getId());
-                if (bySummonerId.isPresent()) {
-                    bySummonerId.get().setSummonerName(summoner.getName());
-                    return bySummonerId.get().toDto();
-                } else {
-                    synchronized (MySummoner.class) {
-                        if (summonerRepo.findBySummonerId(summoner.getId()).isEmpty())
-                            summonerRepo.save(mySummoner);
-                    }
-                }
-            }
-        } catch (IllegalStateException illegalStateException) {
-            log.error("NO SUMMONER");
-            throw new CSummonerNotFoundException();
-        }
-        return mySummoner.toDto();
+        return summonerName;
     }
+
 
     public String findSpellImageByName(SPELL spell) {
         SummonerSpell summonerSpell = SummonerSpell

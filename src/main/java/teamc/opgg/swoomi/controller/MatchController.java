@@ -68,7 +68,7 @@ public class MatchController {
     public SingleResult<MatchStatusDto> getMatchTeamCode(
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable String summonerName) {
-        if (getMatchStatus(summonerName).getData().isMatchStatus()) {
+        if (matchService.getMatchStatus(matchService.getEncryptedSummonerId(summonerName)).isMatchStatus()) {
             return responseService.getSingleResult(matchService.getMatchTeamCode(summonerName));
         } else throw new CSummonerNotInGameException();
     }

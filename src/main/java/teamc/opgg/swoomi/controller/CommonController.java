@@ -37,7 +37,7 @@ public class CommonController {
 
     @GetMapping("/refresh")
     public CommonResult refreshFrequentItems() {
-        Object obj = restTemplate.getForObject("http://3.34.111.116:9000/champion/item", Object.class);
+        Object obj = restTemplate.getForObject("https://backend.swoomi.me:9000/champion/item", Object.class);
         Gson gson = new Gson();
 
         JsonObject jobj = (JsonObject) gson.toJsonTree(obj);

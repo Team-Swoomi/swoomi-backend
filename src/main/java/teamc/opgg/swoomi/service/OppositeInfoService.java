@@ -34,14 +34,14 @@ public class OppositeInfoService {
     private final ChampionInfoService championInfoService;
     private final MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
     private final MatchService matchService;
-
+    private final OriannaService oriannaService;
     public List<PlayerDto> getOpData(String summonerName) {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
             log.info("NO SUMMONER NAMED : " + summonerName);
             throw new CSummonerNotFoundException();
         }
-        if (!matchService.getMatchStatus(matchService.getEncryptedSummonerId(summonerName)).isMatchStatus()) {
+        if (!matchService.getMatchStatus(oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId()).isMatchStatus()) {
             log.info("SUMMONER '" + summonerName + "' NOT IN GAME");
             throw new CSummonerNotInGameException();
         }

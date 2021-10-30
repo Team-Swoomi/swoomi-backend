@@ -25,7 +25,6 @@ spring:
     hikari:
       connection-timeout: 15000
       validation-timeout: 5000
-      minimum-idle: 5
       max-lifetime: 600000
       maximum-pool-size: 290
   jpa:

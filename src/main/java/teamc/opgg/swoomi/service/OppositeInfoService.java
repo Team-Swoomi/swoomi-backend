@@ -41,7 +41,7 @@ public class OppositeInfoService {
             log.info("NO SUMMONER NAMED : " + summonerName);
             throw new CSummonerNotFoundException();
         }
-        if (matchService.getMatchStatus(matchService.getEncryptedSummonerId(summonerName)).isMatchStatus()) {
+        if (!matchService.getMatchStatus(matchService.getEncryptedSummonerId(summonerName)).isMatchStatus()) {
             log.info("SUMMONER '" + summonerName + "' NOT IN GAME");
             throw new CSummonerNotInGameException();
         }

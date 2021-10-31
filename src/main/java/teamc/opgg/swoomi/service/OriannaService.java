@@ -55,13 +55,7 @@ public class OriannaService {
                     if (bySummonerId.isPresent()) {
                         bySummonerId.get().setSummonerName(summoner.getName());
                         return bySummonerId.get().toDto();
-                    } else {
-                        synchronized (summonerRepo) {
-                            Optional<MySummoner> firstBySummonerId = summonerRepo.findFirstBySummonerId(summoner.getId());
-                            if (firstBySummonerId.isEmpty())
-                                summonerRepo.save(mySummoner);
-                        }
-                    }
+                    } else summonerRepo.save(mySummoner);
                 }
             } catch (IllegalStateException illegalStateException) {
                 log.error("NO SUMMONER");

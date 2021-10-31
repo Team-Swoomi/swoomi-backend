@@ -5,6 +5,7 @@ import com.merakianalytics.orianna.types.common.Region;
 import com.merakianalytics.orianna.types.core.searchable.SearchableList;
 import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -25,23 +26,22 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OppositeInfoService {
-    @Autowired
-    private CommonService commonService;
-    @Autowired
-    private ChampionItemRepository championItemRepository;
-    @Autowired
-    private ChampionInfoService championInfoService;
-    @Autowired
-    private MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
 
+    private final CommonService commonService;
+    private final ChampionItemRepository championItemRepository;
+    private final ChampionInfoService championInfoService;
+    private final MatchTeamCodeSummonerRepository matchTeamCodeSummonerRepository;
+    private final MatchService matchService;
+    private final OriannaService oriannaService;
     public List<PlayerDto> getOpData(String summonerName) {
         Summoner summoner = Orianna.summonerNamed(summonerName).withRegion(Region.KOREA).get();
         if (!summoner.exists()) {
             log.info("NO SUMMONER NAMED : " + summonerName);
             throw new CSummonerNotFoundException();
         }
-        if (!summoner.isInGame()) {
+        if (!matchService.getMatchStatus(oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId()).isMatchStatus()) {
             log.info("SUMMONER '" + summonerName + "' NOT IN GAME");
             throw new CSummonerNotInGameException();
         }

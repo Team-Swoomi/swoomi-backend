@@ -145,4 +145,12 @@ public class MatchService {
                 )
                 .collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
+
+    public String getEncryptedSummonerId(String summonerName) {
+        return Orianna
+                .summonerNamed(summonerName)
+                .withRegion(Region.KOREA)
+                .get()
+                .getId();
+    }
 }

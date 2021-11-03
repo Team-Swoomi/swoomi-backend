@@ -26,9 +26,8 @@ public class ExceptionAdvice {
     private final ResponseService responseService;
     private final MailService mailService;
 
-    //    @Value("${notify.email}")
-    private static final String[] RECEIVERS =
-            new String[]{"dnstlr2933@naver.com", "dosemfb0920@gmail.com", "kanghg1116@gmail.com", "0615gggg@seoultech.ac.kr"};
+    @Value("${notify_to.emails}")
+    private String[] RECEIVERS;
 
     @ExceptionHandler(CSummonerNotInGameException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

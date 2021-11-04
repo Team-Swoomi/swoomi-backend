@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
+    EmailSendException(9999, "이메일 전송 테스트"),
     UnDefinedError(-9999, "정의되지 않은 에러입니다."),
     SummonerNotFoundException(-1001, "소환사를 찾을 수 없습니다."),
     RoomNotFoundException(-1002, "방을 찾을 수 없습니다."),
@@ -18,4 +19,4 @@ public enum ErrorCode {
 
     private int code;
     private String msg;
-}
+    }

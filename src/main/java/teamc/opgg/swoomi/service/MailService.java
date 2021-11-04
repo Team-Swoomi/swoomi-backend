@@ -10,11 +10,9 @@ import teamc.opgg.swoomi.dto.MailDto;
 @AllArgsConstructor
 public class MailService {
     private JavaMailSender mailSender;
-    private static final String SENDER_EMAIL = "dnstlr2933@gmail.com";
 
     public void mailSend(MailDto mailDto) {
         SimpleMailMessage mailMsg = new SimpleMailMessage();
-        mailMsg.setFrom(SENDER_EMAIL);
         mailMsg.setTo(mailDto.getTo());
         mailMsg.setSentDate(mailDto.getSentDate());
         mailMsg.setSubject(mailDto.getSubject());

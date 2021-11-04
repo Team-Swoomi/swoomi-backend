@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import teamc.opgg.swoomi.advice.exception.*;
@@ -62,6 +63,30 @@ public class ExceptionAdvice {
         return responseService.getFailResult(
                 ErrorCode.QrCodeFailException.getCode(),
                 ErrorCode.QrCodeFailException.getMsg()
+        );
+    }
+
+    /*
+        error code : 9999
+     */
+    @ExceptionHandler(CEmailSendException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult emailTestException(HttpServletRequest request, Exception e) {
+        StringBuilder log = new StringBuilder()
+                .append("REQ URI: ").append(request.getMethod()).append(" ").append(request.getRequestURI()).append("\n\n")
+                .append("EXCEPTION: ").append(e).append("\n\n")
+                .append("SYS ERR: ").append(System.err);
+
+        mailService.mailSend(MailDto.builder()
+                .to(RECEIVERS)
+                .sentDate(Date.from(Instant.now()))
+                .subject("🚨 SWOOMI EMAIL TEST 🚨")
+                .text(log.toString())
+                .build());
+
+        return responseService.getFailResult(
+                ErrorCode.EmailSendException.getCode(),
+                ErrorCode.EmailSendException.getMsg()
         );
     }
 

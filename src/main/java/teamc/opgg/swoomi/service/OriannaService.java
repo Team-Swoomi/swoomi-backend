@@ -55,13 +55,15 @@ public class OriannaService {
                     if (bySummonerId.isPresent()) {
                         bySummonerId.get().setSummonerName(summoner.getName());
                         return bySummonerId.get().toDto();
-                    } else summonerRepo.save(mySummoner);
+                    } else {
+                        new Thread(() -> summonerRepo.save(mySummoner)).start();
+                        return mySummoner.toDto();
+                    }
                 }
             } catch (IllegalStateException illegalStateException) {
                 log.error("NO SUMMONER");
                 throw new CSummonerNotFoundException();
             }
-            return mySummoner.toDto();
         }
         return firstSummoner.get().toDto();
     }

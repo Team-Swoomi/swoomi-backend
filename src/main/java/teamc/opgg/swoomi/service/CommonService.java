@@ -16,11 +16,13 @@ import teamc.opgg.swoomi.dto.ClientErrorLogDto;
 import teamc.opgg.swoomi.dto.ItemDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
 import teamc.opgg.swoomi.entity.ClientErrorLog;
+import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.ClientErrorLogRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -87,5 +89,9 @@ public class CommonService {
     public ResponseEntity<Void> logClientError(ClientErrorLogDto clientErrorLogDto) {
         clientErrorLogRepository.save(clientErrorLogDto.toEntity());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public List<ClientErrorLogDto> getClientError() {
+        return clientErrorLogRepository.findAll().stream().map(ClientErrorLog::toDto).collect(Collectors.toList());
     }
 }

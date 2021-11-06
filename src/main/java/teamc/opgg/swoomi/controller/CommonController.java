@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import teamc.opgg.swoomi.dto.ChampionItemDto;
 import teamc.opgg.swoomi.dto.ClientErrorLogDto;
 import teamc.opgg.swoomi.entity.response.CommonResult;
+import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.service.CommonService;
 import teamc.opgg.swoomi.service.ResponseService;
 
@@ -49,6 +50,11 @@ public class CommonController {
     @GetMapping("/ping")
     public ResponseEntity<Void> pingUpstreamServer() {
         return commonService.pingUpstreamServer();
+    }
+
+    @GetMapping("/client/error")
+    public ListResult<ClientErrorLogDto> logClientError() {
+        return responseService.getListResult(commonService.getClientError());
     }
 
     @PostMapping("/client/error")

@@ -9,11 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import teamc.opgg.swoomi.dto.ChampionItemDto;
+import teamc.opgg.swoomi.dto.ClientErrorLogDto;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.service.CommonService;
 import teamc.opgg.swoomi.service.ResponseService;
@@ -48,7 +47,12 @@ public class CommonController {
     }
 
     @GetMapping("/ping")
-    public ResponseEntity<String> pingUpstreamServer() {
+    public ResponseEntity<Void> pingUpstreamServer() {
         return commonService.pingUpstreamServer();
+    }
+
+    @PostMapping("/client/error")
+    public ResponseEntity<Void> logClientError(@RequestBody ClientErrorLogDto dto) {
+        return commonService.logClientError(dto);
     }
 }

@@ -5,16 +5,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import teamc.opgg.swoomi.dto.ChampionItemDto;
+import teamc.opgg.swoomi.dto.ClientErrorLogDto;
 import teamc.opgg.swoomi.dto.ItemDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
+import teamc.opgg.swoomi.entity.ClientErrorLog;
 import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
+import teamc.opgg.swoomi.repository.ClientErrorLogRepository;
 
 import java.util.List;
 
@@ -23,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommonService {
     private final ChampionItemRepository championItemRepository;
+    private final ClientErrorLogRepository clientErrorLogRepository;
 
     @Transactional
     public void refreshFrequentItems(JsonArray jarr) {
@@ -63,19 +68,24 @@ public class CommonService {
         }
     }
 
-    public ResponseEntity<String> pingUpstreamServer() {
+    public ResponseEntity<Void> pingUpstreamServer() {
         String riotUrl = "https://developer.riotgames.com/api-status/";
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response;
         response = restTemplate.getForEntity(riotUrl, String.class);
         String replacedBody = response.getBody().replaceAll("\\s+", "").toUpperCase();
+
         if (replacedBody.matches(".*(CHAMPION-V3)\\(.*(KR)*\\).*") ||
             replacedBody.matches(".*(SPECTATOR-V4)\\(.*(KR)*\\).*") ||
             replacedBody.matches(".*(SUMMONER-V4)\\(.*(KR)*\\).*")) {
-            response = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } else {
-            response = new ResponseEntity<String>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return response;
+    }
+
+    public ResponseEntity<Void> logClientError(ClientErrorLogDto clientErrorLogDto) {
+        clientErrorLogRepository.save(clientErrorLogDto.toEntity());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

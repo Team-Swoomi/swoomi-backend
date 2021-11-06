@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class SwoomiRequestLoggingFilter extends AbstractRequestLoggingFilter {
 
     @Override
-    protected void beforeRequest(HttpServletRequest request, String message) { log(message); }
+    protected void beforeRequest(HttpServletRequest request, String message) {}
 
     @Override
     protected void afterRequest(HttpServletRequest request, String message) { log(message); }

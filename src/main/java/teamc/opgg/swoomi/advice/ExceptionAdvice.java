@@ -115,7 +115,7 @@ public class ExceptionAdvice {
 
         return responseService.getFailResult(
                 ErrorCode.UnDefinedError.getCode(),
-                e.getMessage()
+                ErrorCode.UnDefinedError.getMsg()
         );
     }
 

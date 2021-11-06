@@ -17,7 +17,7 @@
 - Java Thread를 이용한 비동기 처리
 - STOMP+SockJS를 이용한 Web Socket 사용
 - AWS EC2, RDS, Route53을 이용해서 배포 및 DNS 적용
-- Docker, Jenkins 를 이용한 CI/CD 적용 (진행중)
+- Jenkins 를 이용한 CI/CD 적용
 
 ### 구현목록
 

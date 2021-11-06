@@ -15,6 +15,8 @@ import teamc.opgg.swoomi.service.MailService;
 import teamc.opgg.swoomi.service.ResponseService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -93,12 +95,16 @@ public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResult otherException(HttpServletRequest request, Exception e) {
-        e.printStackTrace();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String sStackTrace = sw.toString();
 
         StringBuilder log = new StringBuilder()
                 .append("REQ URI: ").append(request.getMethod()).append(" ").append(request.getRequestURI()).append("\n\n")
                 .append("EXCEPTION: ").append(e).append("\n\n")
-                .append("SYS ERR: ").append(System.err);
+                .append("SYS ERR: ").append(System.err).append("\n\n")
+                .append("STACK TRACE: ").append(sStackTrace);
 
         mailService.mailSend(MailDto.builder()
                 .to(RECEIVERS)

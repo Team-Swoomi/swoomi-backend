@@ -15,12 +15,6 @@ spring:
     serialization:
       INDENT_OUTPUT: true
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, prometheus
-
 logging:
   level:
     teamc:

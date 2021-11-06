@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import teamc.opgg.swoomi.dto.ItemPurchaseDto;
 import teamc.opgg.swoomi.dto.ItemPurchaseOneDto;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.service.ChampionInfoService;
 import teamc.opgg.swoomi.service.ItemPurchaseService;
+import teamc.opgg.swoomi.service.ResponseService;
 
 @Api(tags = {"6. Items"})
 @Slf4j
@@ -20,14 +22,34 @@ public class ItemController {
 
     private final ItemPurchaseService itemPurchaseService;
     private final ChampionInfoService championInfoService;
+    private final ResponseService responseService;
 
     @PostMapping("/buy")
-    @ApiOperation(value = "아이템 구매", notes = "소한사의 아이템 구매 목록에 추가합니다.")
+    @ApiOperation(value = "아이템 구매", notes = "소환사의 아이템 구매 목록에 추가합니다.")
     public CommonResult buyItem(
             @ApiParam(name = "아이템 구매 요청", required = true)
             @RequestBody ItemPurchaseOneDto itemPurchaseOneDto) {
         championInfoService.calculateAndSaveChampionInfo(itemPurchaseOneDto.getSummonerName(), 1);
         return itemPurchaseService.setPurchaseItem(itemPurchaseOneDto);
+    }
+
+    @PostMapping("/buy/many")
+    @ApiOperation(value = "아이템 구매(복수)", notes = "소환사의 아이템 구매 목록에 추가합니다.(복수)")
+    public CommonResult buyItems(
+            @ApiParam(name = "아이템 구매 요청", required = true)
+            @RequestBody ItemPurchaseDto itemPurchaseDto) {
+        championInfoService.calculateAndSaveChampionInfo(itemPurchaseDto.getSummonerName(), 1);
+        for (String itemName : itemPurchaseDto.getItemNames()) {
+            ItemPurchaseOneDto itemDto = ItemPurchaseOneDto.builder()
+                    .matchTeamCode(itemPurchaseDto.getMatchTeamCode())
+                    .championName(itemPurchaseDto.getChampionName())
+                    .itemName(itemName)
+                    .summonerName(itemPurchaseDto.getSummonerName())
+                    .build();
+
+            itemPurchaseService.setPurchaseItem(itemDto);
+        }
+        return responseService.getSuccessResult();
     }
 
     @PostMapping("/sell")

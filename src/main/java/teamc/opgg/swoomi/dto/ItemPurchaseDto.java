@@ -15,6 +15,7 @@ public class ItemPurchaseDto {
 
     private String matchTeamCode;
     private String summonerName;
+    private String championName;
     private List<String> itemNames;
 
     public List<ItemPurchase> convertToEntity() {

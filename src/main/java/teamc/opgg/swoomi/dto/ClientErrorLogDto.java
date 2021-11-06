@@ -1,9 +1,6 @@
 package teamc.opgg.swoomi.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import teamc.opgg.swoomi.entity.ClientErrorLog;
 
 import java.time.LocalDateTime;
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ClientErrorLogDto {
     private String errorMessage;
     private LocalDateTime createdAt; // Response 용

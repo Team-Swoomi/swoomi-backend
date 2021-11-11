@@ -2,9 +2,11 @@ package teamc.opgg.swoomi.entity;
 
 import io.swagger.annotations.Api;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Getter
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "my_summoner")
-public class MySummoner extends BaseTimeEntity {
+public class MySummoner extends BaseTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

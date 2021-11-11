@@ -64,7 +64,7 @@ public class MatchService {
                 .findFirstByMatchTeamCode(matchTeamCode)
                 .orElseThrow(CSummonerNotInGameException::new)
                 .getSummonerName();
-        String summonerId = oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId();
+        String summonerId = oriannaService.summonerFindByNameAndSave(summonerName).getSummonerId();
         return getMatchStatus(summonerId);
     }
 

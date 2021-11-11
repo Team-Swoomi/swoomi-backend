@@ -10,15 +10,12 @@ import java.util.HashSet;
 @Getter
 public class ChampionHasItemRepo {
 
-    private static ChampionHasItemRepo championHasItemRepo;
+    private static final ChampionHasItemRepo championHasItemRepo = new ChampionHasItemRepo();
     private final HashSet<String> championSet = new HashSet<>();
 
     private ChampionHasItemRepo(){}
 
     public static ChampionHasItemRepo getInstance() {
-        if (championHasItemRepo == null) {
-            championHasItemRepo = new ChampionHasItemRepo();
-        }
         return championHasItemRepo;
     }
 }

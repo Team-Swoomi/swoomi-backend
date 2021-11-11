@@ -5,11 +5,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 import teamc.opgg.swoomi.dto.SPELL;
-import teamc.opgg.swoomi.dto.SummonerRequestDto;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.response.SingleResult;
+import teamc.opgg.swoomi.redis.CacheKey;
 import teamc.opgg.swoomi.service.OriannaService;
 import teamc.opgg.swoomi.service.ResponseService;
 
@@ -29,7 +30,7 @@ public class SummonerController {
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable("name") String summonerName) {
 
-        SummonerResponseDto responseDto = oriannaService.SummonerFindByNameAndSave(summonerName);
+        SummonerResponseDto responseDto = oriannaService.summonerFindByNameAndSave(summonerName);
         log.info("RET NAME : " + responseDto.getSummonerName());
         return responseService.getSingleResult(responseDto);
     }

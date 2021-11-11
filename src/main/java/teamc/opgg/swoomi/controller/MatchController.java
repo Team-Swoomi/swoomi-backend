@@ -35,7 +35,7 @@ public class MatchController {
     public SingleResult<MatchDto> getMatchStatus(
             @ApiParam(value = "소환사명", required = true)
             @PathVariable String summonerName) {
-        String summonerId = oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId();
+        String summonerId = oriannaService.summonerFindByNameAndSave(summonerName).getSummonerId();
         MatchDto dto = matchService.getMatchStatus(summonerId);
         return responseService.getSingleResult(dto);
     }
@@ -68,7 +68,7 @@ public class MatchController {
     public SingleResult<MatchStatusDto> getMatchTeamCode(
             @ApiParam(value = "소환사 명", required = true)
             @PathVariable String summonerName) {
-        if (matchService.getMatchStatus(oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId()).isMatchStatus()) {
+        if (matchService.getMatchStatus(oriannaService.summonerFindByNameAndSave(summonerName).getSummonerId()).isMatchStatus()) {
             return responseService.getSingleResult(matchService.getMatchTeamCode(summonerName));
         } else throw new CSummonerNotInGameException();
     }

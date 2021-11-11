@@ -57,7 +57,7 @@
             createRoom: function () {
                 if ("" === this.summoner_name) {
                     alert("소환사 명을 입력.");
-                    return;
+
                 } else {
                     var params = new URLSearchParams();
                     params.append("summonerName", this.summoner_name);

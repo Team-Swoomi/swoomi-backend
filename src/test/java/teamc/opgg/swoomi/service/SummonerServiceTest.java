@@ -7,19 +7,19 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.MySummoner;
-import teamc.opgg.swoomi.repository.SummonerRepo;
+import teamc.opgg.swoomi.repository.MySummonerRepo;
+
+import java.util.Optional;
 
 @SpringBootTest
 @Transactional
 @ActiveProfiles("local_private")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class SummonerServiceTest {
 
     @Autowired
@@ -27,14 +27,18 @@ class SummonerServiceTest {
     @Autowired
     private OriannaService oriannaService;
     @Autowired
-    private SummonerRepo summonerRepo;
+    private MySummonerRepo mySummonerRepo;
 
-    private static SummonerResponseDto summonerResponseDto;
-    private static String NAME ="이쁜학생";
+    private static SummonerResponseDto summonerResponseDto = null;
+    private static final String NAME ="이쁜학생";
 
     @BeforeEach
     public void saveSummoner() {
-        summonerResponseDto = oriannaService.SummonerFindByNameAndSave(NAME);
+        mySummonerRepo.deleteAll();
+        summonerResponseDto = null;
+        while (summonerResponseDto == null){
+            summonerResponseDto = oriannaService.summonerFindByNameAndSave(NAME);
+        }
     }
 
     @Test
@@ -65,17 +69,16 @@ class SummonerServiceTest {
     public void checkRepoOrianna() throws Exception
     {
         //given
-        MySummoner mySummoner = summonerRepo
-                .findBySummonerId(summonerResponseDto.getSummonerId())
-                .orElseThrow(CSummonerNotFoundException::new);
+        SummonerResponseDto summonerResponseDto
+                = oriannaService.summonerFindByNameAndSave(SummonerServiceTest.summonerResponseDto.getSummonerName());
 
         //when
         String id = Orianna.summonerNamed(NAME).withRegion(Region.KOREA).get().getId();
-        String accountId = Orianna.summonerNamed(NAME).withRegion(Region.KOREA).get().getAccountId();
+        String name = Orianna.summonerNamed(NAME).withRegion(Region.KOREA).get().getName();
 
         //then
-        Assertions.assertThat(mySummoner.getSummonerId()).isEqualTo(id);
-        Assertions.assertThat(mySummoner.getAccountId()).isEqualTo(accountId);
+        Assertions.assertThat(summonerResponseDto.getSummonerId()).isEqualTo(id);
+        Assertions.assertThat(summonerResponseDto.getSummonerName()).isEqualTo(name);
     }
 
     @Test

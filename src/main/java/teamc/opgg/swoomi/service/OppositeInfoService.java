@@ -7,13 +7,9 @@ import com.merakianalytics.orianna.types.core.spectator.Player;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
-import teamc.opgg.swoomi.dto.ChampionInfoDto;
 import teamc.opgg.swoomi.dto.ItemDto;
 import teamc.opgg.swoomi.dto.PlayerDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
@@ -42,7 +38,7 @@ public class OppositeInfoService {
             log.info("NO SUMMONER NAMED : " + summonerName);
             throw new CSummonerNotFoundException();
         }
-        if (!matchService.getMatchStatus(oriannaService.SummonerFindByNameAndSave(summonerName).getSummonerId()).isMatchStatus()) {
+        if (!matchService.getMatchStatus(oriannaService.summonerFindByNameAndSave(summonerName).getSummonerId()).isMatchStatus()) {
             log.info("SUMMONER '" + summonerName + "' NOT IN GAME");
             throw new CSummonerNotInGameException();
         }

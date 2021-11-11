@@ -21,8 +21,8 @@ public class QrService {
     @Autowired
     Environment env;
 
-    private String realUrl = "https://swoomi.me";
-    private String localUrl = "http://localhost:8070";
+    private final String realUrl = "https://swoomi.me";
+    private final String localUrl = "http://localhost:8070";
     private final RestTemplate restTemplate;
 
     public QrDto getQrCodeURL(String summonerName) {

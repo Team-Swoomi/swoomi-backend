@@ -5,6 +5,11 @@ logging:
 
 server:
   port: 8070
+  ssl:
+    key-store-type: PKCS12
+    key-store: backend_swoomi_me.p12
+    key-alias: backend.swoomi.me
+    enabled: true
 
 spring:
   h2:
@@ -26,3 +31,9 @@ spring:
   config:
     activate:
       on-profile: local
+  redis:
+    host: localhost
+    port: 6379
+  sql:
+    init:
+      mode: never

@@ -3,14 +3,11 @@ package teamc.opgg.swoomi.service;
 import com.merakianalytics.orianna.Orianna;
 import com.merakianalytics.orianna.types.common.Platform;
 import com.merakianalytics.orianna.types.common.Region;
-import com.merakianalytics.orianna.types.core.staticdata.Image;
-import com.merakianalytics.orianna.types.core.staticdata.Sprite;
 import com.merakianalytics.orianna.types.core.staticdata.SummonerSpell;
 import com.merakianalytics.orianna.types.core.summoner.Summoner;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Synchronize;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +15,8 @@ import teamc.opgg.swoomi.advice.exception.CSummonerNotFoundException;
 import teamc.opgg.swoomi.dto.SPELL;
 import teamc.opgg.swoomi.dto.SummonerResponseDto;
 import teamc.opgg.swoomi.entity.MySummoner;
-import teamc.opgg.swoomi.repository.SummonerRepo;
+import teamc.opgg.swoomi.redis.CacheKey;
+import teamc.opgg.swoomi.repository.MySummonerRepo;
 
 import java.util.Optional;
 
@@ -27,11 +25,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OriannaService {
 
-    private final SummonerRepo summonerRepo;
+    private final MySummonerRepo mySummonerRepo;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public SummonerResponseDto SummonerFindByNameAndSave(String summonerName) {
-        Optional<MySummoner> firstSummoner = summonerRepo.findFirstBySummonerName(summonerName);
+    @Cacheable(value = CacheKey.SUMMONER)
+    public SummonerResponseDto summonerFindByNameAndSave(String summonerName) {
+        Optional<MySummoner> firstSummoner = mySummonerRepo.findFirstBySummonerName(summonerName);
         if (firstSummoner.isEmpty()) {
             log.info("NOT IN DB NAME : [" + summonerName + "]");
             summonerName = refactoringName(summonerName);
@@ -51,12 +50,12 @@ public class OriannaService {
                             .summonerLevel(summoner.getLevel())
                             .profileIconId(summoner.getProfileIcon().getId())
                             .build();
-                    Optional<MySummoner> bySummonerId = summonerRepo.findFirstBySummonerId(summoner.getId());
+                    Optional<MySummoner> bySummonerId = mySummonerRepo.findFirstBySummonerId(summoner.getId());
                     if (bySummonerId.isPresent()) {
                         bySummonerId.get().setSummonerName(summoner.getName());
                         return bySummonerId.get().toDto();
                     } else {
-                        new Thread(() -> summonerRepo.save(mySummoner)).start();
+                        new Thread(() -> mySummonerRepo.save(mySummoner)).start();
                         return mySummoner.toDto();
                     }
                 }

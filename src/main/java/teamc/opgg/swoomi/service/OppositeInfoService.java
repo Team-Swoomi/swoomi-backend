@@ -121,7 +121,7 @@ public class OppositeInfoService {
         Optional<MatchTeamCodeSummoner> firstByMatchTeamCode
                 = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(matchTeamCode);
         if (firstByMatchTeamCode.isPresent()) {
-            return getOpData(firstByMatchTeamCode.get().getMatchTeamCode());
+            return getOpData(firstByMatchTeamCode.get().getSummonerName());
         } else {
             throw new CSummonerNotInGameException();
         }

@@ -17,6 +17,7 @@ import teamc.opgg.swoomi.dto.ChampionInfoDto;
 import teamc.opgg.swoomi.dto.ItemDto;
 import teamc.opgg.swoomi.dto.PlayerDto;
 import teamc.opgg.swoomi.entity.ChampionItem;
+import teamc.opgg.swoomi.entity.MatchTeamCodeSummoner;
 import teamc.opgg.swoomi.repository.ChampionHasItemRepo;
 import teamc.opgg.swoomi.repository.ChampionItemRepository;
 import teamc.opgg.swoomi.repository.MatchTeamCodeSummonerRepository;
@@ -117,9 +118,12 @@ public class OppositeInfoService {
     }
 
     public List<PlayerDto> getOpDataMatchTeamCode(String matchTeamCode) {
-        String summonerName = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(matchTeamCode)
-                .get()
-                .getSummonerName();
-        return getOpData(summonerName);
+        Optional<MatchTeamCodeSummoner> firstByMatchTeamCode
+                = matchTeamCodeSummonerRepository.findFirstByMatchTeamCode(matchTeamCode);
+        if (firstByMatchTeamCode.isPresent()) {
+            return getOpData(firstByMatchTeamCode.get().getMatchTeamCode());
+        } else {
+            throw new CSummonerNotInGameException();
+        }
     }
 }

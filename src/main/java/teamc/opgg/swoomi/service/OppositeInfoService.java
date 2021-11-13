@@ -72,30 +72,31 @@ public class OppositeInfoService {
                     () -> championInfoService.calculateAndSaveChampionInfo(p.getSummoner().getName(), 1)
             ).start();
 
-            if (ChampionHasItemRepo.getInstance().getChampionSet().contains(championName)
-                    && optionalChampionItems.isPresent()) {
-                list = optionalChampionItems.get()
-                        .stream()
-                        .map((e) -> {
-                                    if (!set.contains(e.getItemName())) {
-                                        set.add(e.getItemName());
-                                        return e.toDto();
-                                    } else {
-                                        return null;
+            if (optionalChampionItems.isPresent()) {
+                if (optionalChampionItems.get().size() > 0) {
+                    list = optionalChampionItems.get()
+                            .stream()
+                            .map((e) -> {
+                                        if (!set.contains(e.getItemName())) {
+                                            set.add(e.getItemName());
+                                            return e.toDto();
+                                        } else {
+                                            return null;
+                                        }
                                     }
-                                }
-                        )
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-            } else {
-                list.add(
-                        ItemDto.builder()
-                                .name("명석함의 아이오니아 장화")
-                                .englishName("Ionian Boots of Lucidity")
-                                .skillAccel("20")
-                                .src("https://opgg-static.akamaized.net/images/lol/item/3158.png?image=q_auto:best&v=1628647804")
-                                .build()
-                );
+                            )
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+                } else {
+                    list.add(
+                            ItemDto.builder()
+                                    .name("명석함의 아이오니아 장화")
+                                    .englishName("Ionian Boots of Lucidity")
+                                    .skillAccel("20")
+                                    .src("https://opgg-static.akamaized.net/images/lol/item/3158.png?image=q_auto:best&v=1628647804")
+                                    .build()
+                    );
+                }
             }
             PlayerDto dto = PlayerDto.builder().summonerName(p.getSummoner().getName())
                     .championName(championNameForDto)

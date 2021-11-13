@@ -76,8 +76,7 @@ public class OppositeInfoService {
                     () -> championInfoService.calculateAndSaveChampionInfo(p.getSummoner().getName(), 1)
             ).start();
 
-            if (ChampionHasItemRepo.getInstance().getChampionSet().contains(championName)
-                    && optionalChampionItems.isPresent()) {
+            if (optionalChampionItems.isPresent()) {
                 list = optionalChampionItems.get()
                         .stream()
                         .map((e) -> {

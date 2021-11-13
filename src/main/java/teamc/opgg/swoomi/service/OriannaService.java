@@ -30,6 +30,7 @@ public class OriannaService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Cacheable(value = CacheKey.SUMMONER)
     public SummonerResponseDto summonerFindByNameAndSave(String summonerName) {
+        log.info("CHECK NAME: [" + summonerName + "]");
         Optional<MySummoner> firstSummoner = mySummonerRepo.findFirstBySummonerName(summonerName);
         if (firstSummoner.isEmpty()) {
             log.info("NOT IN DB NAME : [" + summonerName + "]");

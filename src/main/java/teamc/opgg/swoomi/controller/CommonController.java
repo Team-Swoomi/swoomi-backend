@@ -18,6 +18,13 @@ import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.service.CommonService;
 import teamc.opgg.swoomi.service.ResponseService;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
 
 @Slf4j
 @RestController
@@ -36,7 +43,22 @@ public class CommonController {
     RestTemplate restTemplate;
 
     @GetMapping("/refresh")
-    public CommonResult refreshFrequentItems() {
+    public CommonResult refreshFrequentItems() throws Exception {
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+        };
+
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
         Object obj = restTemplate.getForObject("https://backend.swoomi.me:9000/champion/item", Object.class);
         Gson gson = new Gson();
 

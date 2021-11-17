@@ -11,11 +11,11 @@ logging:
 
 server:
   port: 8070
-#  ssl:
-#    key-store-type: PKCS12
-#    key-store: backend_swoomi_me.p12
-#    key-alias: backend.swoomi.me
-#    enabled: true
+  ssl:
+    key-store-type: PKCS12
+    key-store: backend_swoomi_me.p12
+    key-alias: backend.swoomi.me
+    enabled: true
 
 spring:
   datasource:

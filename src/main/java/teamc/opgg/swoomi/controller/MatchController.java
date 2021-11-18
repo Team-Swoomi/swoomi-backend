@@ -76,9 +76,9 @@ public class MatchController {
     @GetMapping("/frequent-items/{championName}/{position}")
     @ApiOperation(value = "챔피언별 자주가는 아이템", notes = "챔피언명과 포지션을 받아서 자주가는 아이템을 리턴 해 줍니다.")
     public ListResult<ItemDto> getFrequentItems(
-            @ApiParam(value = "챔피언 명", required = true)
+            @ApiParam(value = "챔피언 명(e.g. 가렌 | 마오카이 | 럭스", required = true)
             @PathVariable String championName,
-            @ApiParam(value = "챔피언 포지션", required = true)
+            @ApiParam(value = "챔피언 포지션(e.g. top | mid | support | jungle | adc)", required = true)
             @PathVariable String position) {
         List<ItemDto> list = matchService.getFrequentItems(championName, position);
         return responseService.getListResult(list);

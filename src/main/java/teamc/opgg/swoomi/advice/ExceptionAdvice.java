@@ -110,7 +110,7 @@ public class ExceptionAdvice {
         mailService.mailSend(MailDto.builder()
                 .to(RECEIVERS)
                 .sentDate(Date.from(Instant.now()))
-                .subject("🚨 SWOOMI NON JUSTIFY EXCEPTION 🚨")
+                .subject("🚨 SWOOMI UNIDENTIFIED EXCEPTION 🚨")
                 .text(log.toString())
                 .build());
 

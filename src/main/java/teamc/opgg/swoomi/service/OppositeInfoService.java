@@ -45,7 +45,7 @@ public class OppositeInfoService {
 
         // 1. 상대팀 구하기
         SearchableList<Player> sList = summoner.getCurrentMatch().getParticipants();
-        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().equals(summonerName));
+        Player tempPlayer = sList.find((playerName) -> playerName.getSummoner().getName().trim().equals(summonerName));
         String teamId = tempPlayer.getTeam().toString();
 
         // 2. 상대팀 멤버 구하기

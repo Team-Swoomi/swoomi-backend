@@ -44,22 +44,22 @@ public class CommonController {
 
     @GetMapping("/refresh")
     public CommonResult refreshFrequentItems() throws Exception {
-        TrustManager[] trustAllCerts = new TrustManager[] {
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
+//        TrustManager[] trustAllCerts = new TrustManager[] {
+//                new X509TrustManager() {
+//                    public X509Certificate[] getAcceptedIssuers() {
+//                        return null;
+//                    }
+//
+//                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+//                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+//                }
+//        };
+//
+//        SSLContext sc = SSLContext.getInstance("SSL");
+//        sc.init(null, trustAllCerts, new SecureRandom());
+//        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-                }
-        };
-
-        SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, trustAllCerts, new SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-        Object obj = restTemplate.getForObject("https://backend.swoomi.me:9000/champion/item", Object.class);
+        Object obj = restTemplate.getForObject("http://3.34.111.116:9000/champion/item", Object.class);
         Gson gson = new Gson();
 
         JsonObject jobj = (JsonObject) gson.toJsonTree(obj);

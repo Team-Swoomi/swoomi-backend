@@ -3,9 +3,12 @@ package teamc.opgg.swoomi.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,11 +33,17 @@ import java.util.stream.Collectors;
 public class CommonService {
     private final ChampionItemRepository championItemRepository;
     private final ClientErrorLogRepository clientErrorLogRepository;
+    private final RestTemplate restTemplate;
 
     @Transactional
-    public void refreshFrequentItems(JsonArray jarr) {
-        championItemRepository.deleteAll();
+    public void refreshFrequentItems() {
+        Object obj = restTemplate.getForObject("http://3.34.111.116:9000/champion/item", Object.class);
         Gson gson = new Gson();
+
+        JsonObject jobj = (JsonObject) gson.toJsonTree(obj);
+        JsonArray jarr = jobj.getAsJsonArray("champData");
+
+        championItemRepository.deleteAll();
 
         for (JsonElement e : jarr) {
             ChampionItemDto dto = gson.fromJson(e, ChampionItemDto.class);

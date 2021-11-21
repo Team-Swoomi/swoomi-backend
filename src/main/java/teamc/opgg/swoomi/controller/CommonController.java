@@ -58,14 +58,7 @@ public class CommonController {
 //        SSLContext sc = SSLContext.getInstance("SSL");
 //        sc.init(null, trustAllCerts, new SecureRandom());
 //        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-        Object obj = restTemplate.getForObject("http://3.34.111.116:9000/champion/item", Object.class);
-        Gson gson = new Gson();
-
-        JsonObject jobj = (JsonObject) gson.toJsonTree(obj);
-        JsonArray jarr = jobj.getAsJsonArray("champData");
-
-        commonService.refreshFrequentItems(jarr);
+        commonService.refreshFrequentItems();
         return responseService.getSuccessResult();
     }
 

@@ -14,7 +14,7 @@ server:
   ssl:
     key-store-type: PKCS12
     key-store: backend_swoomi_me.p12
-    key-alias: backend.swoomi.me
+    key-alias: 1
     enabled: true
 
 spring:

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import teamc.opgg.swoomi.advice.exception.*;
 import teamc.opgg.swoomi.dto.MailDto;
 import teamc.opgg.swoomi.entity.response.CommonResult;
-//import teamc.opgg.swoomi.service.MailService;
+import teamc.opgg.swoomi.service.MailService;
 import teamc.opgg.swoomi.service.ResponseService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ import java.util.Date;
 public class ExceptionAdvice {
 
     private final ResponseService responseService;
-//    private final MailService mailService;
+    private final MailService mailService;
 
     @Value("${notify_to.emails}")
     private String[] RECEIVERS;
@@ -80,12 +80,12 @@ public class ExceptionAdvice {
                 .append("EXCEPTION: ").append(e).append("\n\n")
                 .append("SYS ERR: ").append(System.err);
 
-//        mailService.mailSend(MailDto.builder()
-//                .to(RECEIVERS)
-//                .sentDate(Date.from(Instant.now()))
-//                .subject("🚨 SWOOMI EMAIL TEST 🚨")
-//                .text(log.toString())
-//                .build());
+        mailService.mailSend(MailDto.builder()
+                .to(RECEIVERS)
+                .sentDate(Date.from(Instant.now()))
+                .subject("🚨 SWOOMI EMAIL TEST 🚨")
+                .text(log.toString())
+                .build());
 
         return responseService.getFailResult(
                 ErrorCode.EmailSendException.getCode(),
@@ -107,12 +107,12 @@ public class ExceptionAdvice {
                 .append("SYS ERR: ").append(System.err).append("\n\n")
                 .append("STACK TRACE: ").append(sStackTrace);
 
-//        mailService.mailSend(MailDto.builder()
-//                .to(RECEIVERS)
-//                .sentDate(Date.from(Instant.now()))
-//                .subject("🚨 SWOOMI UNIDENTIFIED EXCEPTION 🚨")
-//                .text(log.toString())
-//                .build());
+        mailService.mailSend(MailDto.builder()
+                .to(RECEIVERS)
+                .sentDate(Date.from(Instant.now()))
+                .subject("🚨 SWOOMI UNIDENTIFIED EXCEPTION 🚨")
+                .text(log.toString())
+                .build());
 
         return responseService.getFailResult(
                 ErrorCode.UnDefinedError.getCode(),

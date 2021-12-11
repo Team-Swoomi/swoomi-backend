@@ -1,29 +1,18 @@
 package teamc.opgg.swoomi.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import teamc.opgg.swoomi.dto.ChampionItemDto;
 import teamc.opgg.swoomi.dto.ClientErrorLogDto;
 import teamc.opgg.swoomi.entity.response.CommonResult;
 import teamc.opgg.swoomi.entity.response.ListResult;
 import teamc.opgg.swoomi.service.CommonService;
 import teamc.opgg.swoomi.service.ResponseService;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 
 
 @Slf4j
@@ -65,6 +54,11 @@ public class CommonController {
     @GetMapping("/ping")
     public ResponseEntity<Void> pingUpstreamServer() {
         return commonService.pingUpstreamServer();
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return new ResponseEntity<String>("OK", HttpStatus.OK);
     }
 
     @GetMapping("/client/error")

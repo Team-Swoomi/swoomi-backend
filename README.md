@@ -193,3 +193,13 @@
 - API 공장 : 최운식 (백엔드)
 - 서버 버그 담당 일진 : 한대건 (백엔드)
 - 스우미의 어머니 : 임효연 (디자이너)
+
+## 저작권
+Copyright 2021. Team-Swoomi All Rights Reserved.
+
+이 저작물은 저작자표시-비영리-변경금지 4.0 국제 라이선스에 따라 이용할 수 있습니다.
+This work is licensed under a Attribution-NonCommercial-NoDerivatives 4.0 International License.
+모든 제품명 및 상표는 해당 소유주의 자산입니다.
+All product names and trademarks are the property of their respective owners.
+저작권 위배 또는 잘못된 내용이 있으면 부담없이 메일 부탁드립니다.
+If there are copyright issues, please contact swoomi21@gmail.com. 

@@ -13,9 +13,11 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import teamc.opgg.swoomi.advice.exception.CSummonerNoRuneInfoException;
 import teamc.opgg.swoomi.advice.exception.CSummonerNotInGameException;
-import teamc.opgg.swoomi.dto.*;
+import teamc.opgg.swoomi.dto.ChampionAccelInfoDto;
+import teamc.opgg.swoomi.dto.ChampionCoolInfoDto;
+import teamc.opgg.swoomi.dto.ChampionInfoDto;
+import teamc.opgg.swoomi.dto.ItemPurchaserInfoDto;
 import teamc.opgg.swoomi.entity.ChampionInfo;
 import teamc.opgg.swoomi.entity.CloudDragonCount;
 import teamc.opgg.swoomi.repository.ChampionInfoRepo;
@@ -164,33 +166,6 @@ public class ChampionInfoService {
         String userCode = matchService.getMyMatchTeamCodeByEnemy(oppMatchTeamCode);
         Optional<ChampionInfo> championInfo =
                 championInfoRepo.findBySummonerName(oppSummonerName);
-
-        if (championInfo.isPresent() && championInfo.get().getMatchTeamCode() != null
-                && championInfo.get().getMatchTeamCode().equals(userCode)
-                && !infoIsUpdated(oppSummonerName)) {
-            log.info("["+ oppSummonerName +"] CASE : 정보 변경 없음]");
-            ChampionInfo info = championInfo.get();
-
-            double skillAccel = info.getSkillAccel();
-            Optional<CloudDragonCount> cloudDragonCount =
-                    cloudDragonRepository.findCloudDragonCountByMatchTeamCode(userCode);
-
-            if (cloudDragonCount.isPresent()) {
-                skillAccel += cloudDragonCount.get().getDragonCount() * 12;
-            }
-
-            ChampionCoolInfoDto cooltimeInfo = getInitialCooltimeInfo(oppSummonerName, oppMatchTeamCode, ultLevel);
-            Double cooltimeR = cooltimeInfo.getCooltimeR();
-
-            double skillCooldownPercent = (100 - (double) 100 * (skillAccel / (100 + skillAccel))) / 100;
-            double cooltimeCalcedR = Math.round(cooltimeR * skillCooldownPercent);
-
-            championInfo.get().setDSpellTime(cooltimeInfo.getCooltimeD());
-            championInfo.get().setFSpellTime(cooltimeInfo.getCooltimeF());
-            championInfo.get().setRSpellTime(cooltimeCalcedR);
-            return championInfo.get().toInfoDto();
-        }
-        log.info("["+ oppSummonerName +"] CASE : 정보 변경 발생]");
         Player player = getPlayer(oppSummonerName, oppMatchTeamCode);
         String championName = player.getChampion().getName().replaceAll(" ", "");
 

@@ -26,7 +26,7 @@ spring:
       connection-timeout: 15000
       validation-timeout: 5000
       max-lifetime: 250000
-      maximum-pool-size: 250
+      maximum-pool-size: 100
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     properties.hibernate:
